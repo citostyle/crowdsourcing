@@ -19,29 +19,31 @@ import tuwien.aic.crowdsourcing.persistence.dao.TestEntityDAO;
  */
 @Controller
 public class HomeController {
-	
-	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
-	
-	@Autowired
-	private TestEntityDAO testEntityDAO;
-	
-	/**
-	 * Simply selects the home view to render by returning its name.
-	 */
-	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public String home(Locale locale, Model model) {
-		logger.info("Welcome home! the client locale is "+ locale.toString());
-		
-		Date date = new Date();
-		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
-		
-		String formattedDate = dateFormat.format(date);
-		
-		testEntityDAO.findAll();
-		
-		model.addAttribute("serverTime", formattedDate );
-		
-		return "home";
-	}
-	
+
+    private static final Logger logger = LoggerFactory
+            .getLogger(HomeController.class);
+
+    @Autowired
+    private TestEntityDAO testEntityDAO;
+
+    /**
+     * Simply selects the home view to render by returning its name.
+     */
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public String home(Locale locale, Model model) {
+        logger.info("Welcome home! the client locale is " + locale.toString());
+
+        Date date = new Date();
+        DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG,
+                DateFormat.LONG, locale);
+
+        String formattedDate = dateFormat.format(date);
+
+        testEntityDAO.findAll();
+
+        model.addAttribute("serverTime", formattedDate);
+
+        return "home";
+    }
+
 }
