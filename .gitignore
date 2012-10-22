@@ -1,0 +1,20 @@
+# .project
+.metadata
+bin/**
+tmp/**
+tmp/**/*
+*.tmp
+*.bak
+local.properties
+.classpath
+.settings/
+.loadpath
+
+# External tool builders
+.externalToolBuilders/
+
+# Locally stored "Eclipse launch configurations"
+*.launch
+
+Crowdsourcing/target
+Servers
