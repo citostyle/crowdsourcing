@@ -45,7 +45,7 @@
 
 	<beans:bean id="jpaVendorAdapter"
 		class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-		<beans:property name="database" value="POSTGRESQL"/>
+		<beans:property name="database" value="POSTGRESQL" />
 		<beans:property name="showSql" value="true" />
 		<beans:property name="generateDdl" value="true" />
 		<beans:property name="databasePlatform"
@@ -54,7 +54,8 @@
 
 	<beans:bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
 		<beans:property name="driverClassName" value="org.postgresql.Driver" />
-		<beans:property name="url" value="jdbc:postgresql://localhost:5432/crowdsourcing" />
+		<beans:property name="url"
+			value="jdbc:postgresql://localhost:5432/crowdsourcing" />
 		<beans:property name="username" value="crowdsourcing" />
 		<!-- <beans:property name="password" value="" /> -->
 		<beans:property name="initialSize" value="5" />
@@ -64,6 +65,24 @@
 	<beans:bean id="transactionManager"
 		class="org.springframework.orm.jpa.JpaTransactionManager">
 		<beans:property name="entityManagerFactory" ref="entityManagerFactory" />
+	</beans:bean>
+
+	<!-- Jackson powered JSON Integration -->
+	<beans:bean id="jacksonMessageConverter"
+		class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+		<beans:property name="prefixJson" value="false" />
+		<beans:property name="supportedMediaTypes" value="application/json" />
+	</beans:bean>
+
+	<beans:bean
+		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<beans:property name="messageConverters">
+			<beans:list>
+				<beans:ref bean="jacksonMessageConverter" />
+				
+			</beans:list>
+		</beans:property>
+
 	</beans:bean>
 
 </beans:beans>

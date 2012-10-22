@@ -64,6 +64,14 @@
 			<version>9.1-901.jdbc4</version>
 		</dependency>
 
+		<!-- Jackson JSON Mapper -->
+
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+			<version>1.9.10</version>
+		</dependency>
+
 		<!-- AspectJ -->
 		<dependency>
 			<groupId>org.aspectj</groupId>
@@ -148,6 +156,12 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	<repositories>
+		<repository>
+			<id>codehaus-snapshots</id>
+			<url>http://snapshots.repository.codehaus.org</url>
+		</repository>
+	</repositories>
 	<build>
 		<plugins>
 			<plugin>
