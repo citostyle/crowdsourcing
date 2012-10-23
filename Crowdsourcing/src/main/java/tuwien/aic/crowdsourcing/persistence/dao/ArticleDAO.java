@@ -6,6 +6,6 @@ import tuwien.aic.crowdsourcing.persistence.entities.Article;
 
 public interface ArticleDAO extends JpaRepository<Article, Long> {
 
-    boolean exists(String url);
+    Article findByUrl(String url);
 
 }

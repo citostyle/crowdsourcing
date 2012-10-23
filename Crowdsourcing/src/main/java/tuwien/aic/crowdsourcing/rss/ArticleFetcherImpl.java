@@ -40,6 +40,8 @@ public class ArticleFetcherImpl implements ArticleFetcher {
 
     @Override
     public Map<String, String> getNewArticles() {
+        assert articleDAO != null;
+
         Map<String, String> ret = new HashMap<String, String>();
         for (String url : urls) {
             try {
@@ -49,7 +51,7 @@ public class ArticleFetcherImpl implements ArticleFetcher {
                 @SuppressWarnings("unchecked")
                 List<SyndEntry> entries = feed.getEntries();
                 for (SyndEntry entry : entries) {
-                    if (!articleDAO.exists(entry.getUri())) {
+                    if (articleDAO.findByUrl(entry.getUri()) == null) {
                         ret.put(entry.getUri(), entry.getTitle());
                     }
                 }
