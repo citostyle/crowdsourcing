@@ -1,0 +1,45 @@
+Article (ID, GUID, PublicationDate)
+    Primary Key: ID
+    Unique: GUID
+
+MWTask (ID, TaskID)
+    Primary Key: ID
+    Unique: TaskID
+
+Company (ID, Name)
+    Primary Key: ID
+
+Product (ID, Name)
+    Primary Key: ID
+
+Worker (ID, Ignore)
+    Primary Key: ID
+
+Die Join-Tables für die m:n-Beziehnung hab' ich nicht 
+extra notiert, weil da steckt nichts Besonderes dahinter.
+
+Für das Rating würde ich Werte von -5 bis +5 vorschlagen
+und einen zusätzlichen Error-Wert für "Wird im Artikel
+nicht erwähnt", weil es ja durchaus sein kann, dass ein
+Produkt bzw. eine Firma gar nicht tatsächlich erwähnt
+wird, obwohl die Worker im ersten Schritt sagen, es wird
+doch genannt.
+Das sollte natürlich auch in den anderen Workpackages
+berücksichtigt werden, wenn alle mit dieser Entscheidung
+einverstanden sind. In meinen Augen brauchen wir aber auf
+jeden Fall ein Werkzeug, damit wir erkennen können, ob die
+Arbeiter von Schritt 1 einen Blödsinn gemacht haben und da
+bietet sich eben so ein Error-Wert an, den der Arbeiter in
+Schritt 2 wählen kann anstatt eines tatsächlichen Ratings.
+
+Im Übrigen: Stellt euch beim ERD einfach vor, dass die 
+Grafiken an der Tabelle MWTask überlappen. Ich weiß, 
+Standard ist das nicht, aber sonst wird das komplett
+chaotisch.
+
+Auf jeden Fall kann man in meinem ERD dann sofort sehen,
+welcher Worker an welcher Entscheidung beteiligt war und
+es ist auch möglich, mehrere Tasks für die selbe Aufgabe
+zu erstellen, falls das notwendig werden sollte. So sollte
+man schön erkennen können, welche Arbeiter anders als die
+anderen agieren und diese leicht filtern.
