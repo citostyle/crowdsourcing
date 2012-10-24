@@ -7,6 +7,7 @@ Article (ID, GUID, PublicationDate)
 MWTask (ID, TaskID)
     Primary Key: ID
     Unique: TaskID: String
+    type: String (Kürzel für Art des Tasks, z.B. "Filter companies")
 
 Company (ID, Name)
     Primary Key: ID
