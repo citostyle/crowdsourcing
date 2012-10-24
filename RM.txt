@@ -1,19 +1,30 @@
 Article (ID, GUID, PublicationDate)
     Primary Key: ID
     Unique: GUID
+	URL: String
+	Title: String
 
 MWTask (ID, TaskID)
     Primary Key: ID
-    Unique: TaskID
+    Unique: TaskID: String
 
 Company (ID, Name)
     Primary Key: ID
+	Name: String
 
 Product (ID, Name)
     Primary Key: ID
+	Name: String
 
 Worker (ID, Ignore)
     Primary Key: ID
+	workerId (aus MobileWorks, kann man bekommen nachdem ein Worker einen Task ausgefüllt hat): String
+	-----
+	eventuell (diese Infos kann man bekommen, aber nötig?? -- zumindest mal mit null-Werten auffüllen kann nicht schaden)
+	Country: String
+	City: String
+	age: Int
+	gender: m/f/unknown: (String?)
 
 Die Join-Tables für die m:n-Beziehnung hab' ich nicht 
 extra notiert, weil da steckt nichts Besonderes dahinter.
