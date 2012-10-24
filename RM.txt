@@ -8,6 +8,7 @@ MWTask (ID, TaskID)
     Primary Key: ID
     Unique: TaskID: String
     type: String (Kürzel für Art des Tasks, z.B. "Filter companies")
+    done: String (eher nicht boolean, z.B. Status: "new", "done", "invalid" oder so)
 
 Company (ID, Name)
     Primary Key: ID
