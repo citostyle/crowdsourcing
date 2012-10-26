@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +27,7 @@ public class ArticleFetcherImpl implements ArticleFetcher {
     @Autowired
     private ArticleDAO articleDAO;
 
-    private static final Logger logger = Logger
+    private static final Logger logger = LoggerFactory
             .getLogger(ArticleFetcherImpl.class);
 
     public static void main(String[] args) {
