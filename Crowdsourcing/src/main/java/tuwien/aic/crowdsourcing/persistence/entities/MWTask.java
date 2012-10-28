@@ -1,10 +1,9 @@
 package tuwien.aic.crowdsourcing.persistence.entities;
 
 import java.io.Serializable;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import java.util.HashSet;
+import java.util.Set;
+import javax.persistence.*;
 
 @Entity
 public class MWTask implements Serializable {
@@ -16,16 +15,21 @@ public class MWTask implements Serializable {
     private String type = "";
 
     private String state = "";
+    
+    private Article article = null;
 
     public MWTask() {
         
     }
     
-    public MWTask(Long id, String taskId, String type, String state) {
+    public MWTask(Article article, 
+                  Long id, String taskId, 
+                  String type, String state) {
         this.id = id;
         this.type = type;
         this.state = state;
         this.taskId = taskId;
+        this.article = article;
     }
     
     @Id
@@ -54,11 +58,20 @@ public class MWTask implements Serializable {
         this.type = type;
     }
 
-    public String getState() {
+    public String getTaskState() {
         return state;
     }
 
-    public void setState(String state) {
+    public void setTaskState(String state) {
         this.state = state;
+    }
+    
+    @ManyToOne(optional=false)
+    public Article getArticle() {
+        return article;
+    }
+
+    public void setArticle(Article article) {
+        this.article = article;
     }
 }

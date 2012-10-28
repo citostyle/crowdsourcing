@@ -1,10 +1,9 @@
 package tuwien.aic.crowdsourcing.persistence.entities;
 
 import java.io.Serializable;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import java.util.HashSet;
+import java.util.Set;
+import javax.persistence.*;
 
 @Entity
 public class Article implements Serializable {
@@ -16,9 +15,11 @@ public class Article implements Serializable {
     private String title = "";
 
     private String url = "";
+    
+    private Set<MWTask> tasks = null;
 
     public Article() {
-        
+        this.tasks = new HashSet<MWTask>();
     }
     
     public Article(Long id, String guid, String title, String url) {
@@ -26,6 +27,8 @@ public class Article implements Serializable {
         this.url = url;
         this.guid = guid;
         this.title = title;
+        
+        this.tasks = new HashSet<MWTask>();
     }
     
     @Id
@@ -60,6 +63,20 @@ public class Article implements Serializable {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+    
+    @OneToMany(mappedBy = "article")
+    public Set<MWTask> getTasks() {
+        return tasks;
+    }
+
+    public void setMemberships(Set<MWTask> tasks) {
+        if (tasks != null) {
+            this.tasks = tasks;
+        }
+        else {
+            this.tasks = new HashSet<MWTask>();
+        }
     }
     
 }
