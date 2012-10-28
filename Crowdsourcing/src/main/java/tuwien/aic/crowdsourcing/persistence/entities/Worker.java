@@ -1,27 +1,52 @@
 package tuwien.aic.crowdsourcing.persistence.entities;
 
+import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class Worker {
+public class Worker implements Serializable {
 
+    private Long id = -1L;
+
+    private String workerId = "";
+    
+    private String country = "";
+    
+    private String city = "";
+    
+    private char gender = 'u';
+    
+    private int age = -1;
+
+    public Worker() {
+        
+    }
+    
+    public Worker(Long id, String workerId) {
+        this.id = id;
+        
+        this.workerId = workerId;
+    }
+    
+    public Worker(Long id, String workerId, 
+                  String country, 
+                  String city,
+                  char gender, 
+                  int age) {
+        
+        this.id = id;
+        this.age = age;
+        this.city = city;
+        this.gender = gender;
+        this.country = country;
+        this.workerId = workerId;
+    }
+    
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-
-    private String workerId;
-    
-    private String country;
-    
-    private String city;
-    
-    private char gender;
-    
-    private int age;
-
     public Long getId() {
         return id;
     }

@@ -1,25 +1,35 @@
 package tuwien.aic.crowdsourcing.persistence.entities;
 
+import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class Article {
+public class Article implements Serializable {
 
+    private Long id = -1L;
+    
+    private String guid = "";
+
+    private String title = "";
+
+    private String url = "";
+
+    public Article() {
+        
+    }
+    
+    public Article(Long id, String guid, String title, String url) {
+        this.id = id;
+        this.url = url;
+        this.guid = guid;
+        this.title = title;
+    }
+    
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-
-    private String url;
-
-    private String title;
-
-    private String type;
-
-    private String state;
-
     public Long getId() {
         return id;
     }
@@ -28,12 +38,12 @@ public class Article {
         this.id = id;
     }
 
-    public String getUrl() {
-        return url;
+    public String getGuid() {
+        return guid;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setGuid(String guid) {
+        this.guid = guid;
     }
 
     public String getTitle() {
@@ -44,19 +54,12 @@ public class Article {
         this.title = title;
     }
 
-    public String getType() {
-        return type;
+    public String getUrl() {
+        return url;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setUrl(String url) {
+        this.url = url;
     }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
-    }
+    
 }

@@ -8,8 +8,10 @@ public interface ArticleDAO extends JpaRepository<Article, Long> {
 
     Article findById(int id);
     
-    Article findByUrl(String url);
+    Article findByGuid(String guid);
     
     Article findByTitle(String title);
+    
+    Article findByUrl(String url);
 
 }
