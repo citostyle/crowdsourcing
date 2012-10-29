@@ -5,13 +5,6 @@ import java.util.Date;
 import javax.persistence.*;
 
 @Entity
-@AssociationOverrides({
-    @AssociationOverride(name = "primaryKey.task", 
-            joinColumns = @JoinColumn(name = "TASK_ID")),
-    @AssociationOverride(name = "primaryKey.worker", 
-            joinColumns = @JoinColumn(name = "WORKER_ID")),
-    @AssociationOverride(name = "primaryKey.company", 
-            joinColumns = @JoinColumn(name = "COMPANY_ID")) })
 public class CompanyRating implements Serializable {
     
     private static final long serialVersionUID = 2596270620759191152L;
@@ -84,7 +77,7 @@ public class CompanyRating implements Serializable {
     }
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "task_id", referencedColumnName = "id")
+    @JoinColumn(name = "task", referencedColumnName = "id")
     public MWTask getTask() {
         return task;
     }
@@ -94,7 +87,7 @@ public class CompanyRating implements Serializable {
     }
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "worker_id", referencedColumnName = "id")
+    @JoinColumn(name = "worker", referencedColumnName = "id")
     public Worker getWorker() {
         return worker;
     }
@@ -104,7 +97,7 @@ public class CompanyRating implements Serializable {
     }
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "company_id", referencedColumnName = "id")
+    @JoinColumn(name = "company", referencedColumnName = "id")
     public Company getCompany() {
         return company;
     }
