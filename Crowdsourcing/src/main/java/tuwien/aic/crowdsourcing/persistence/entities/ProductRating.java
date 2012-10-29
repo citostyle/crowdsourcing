@@ -18,6 +18,12 @@ public class ProductRating implements Serializable {
     
     private ProductRatingID primaryKey = null;
     
+    private MWTask task = null;
+    
+    private Worker worker = null;
+    
+    private Product product = null;
+    
     private Date lastModified = null;
     
     private Integer ratingValue = null;
@@ -35,9 +41,13 @@ public class ProductRating implements Serializable {
                          Integer ratingValue) {
         
         this.primaryKey = 
-            new ProductRatingID(task,
-                                worker,
-                                product);
+            new ProductRatingID(task.getId(),
+                                worker.getId(),
+                                product.getId());
+        
+        this.task = task;
+        this.worker = worker;
+        this.product = product;
         
         this.ratingValue = ratingValue;
         
@@ -51,9 +61,13 @@ public class ProductRating implements Serializable {
                          Integer ratingValue) {
         
         this.primaryKey = 
-            new ProductRatingID(task,
-                                worker,
-                                product);
+            new ProductRatingID(task.getId(),
+                                worker.getId(),
+                                product.getId());
+        
+        this.task = task;
+        this.worker = worker;
+        this.product = product;
         
         this.ratingValue = ratingValue;
         
@@ -69,31 +83,34 @@ public class ProductRating implements Serializable {
         this.primaryKey = primaryKey;
     }
 
-    @Transient
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "task_id", referencedColumnName = "id")
     public MWTask getTask() {
-        return primaryKey.getTask();
+        return task;
     }
 
     public void setTask(MWTask task) {
-        primaryKey.setTask(task);
+        this.task = task;
     }
 
-    @Transient
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "worker_id", referencedColumnName = "id")
     public Worker getWorker() {
-        return primaryKey.getWorker();
+        return worker;
     }
 
     public void setWorker(Worker worker) {
-        primaryKey.setWorker(worker);
+        this.worker = worker;
     }
 
-    @Transient
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "product_id", referencedColumnName = "id")
     public Product getProduct() {
-        return primaryKey.getProduct();
+        return product;
     }
 
     public void setProduct(Product product) {
-        primaryKey.setProduct(product);
+        this.product = product;
     }
 
     @Column(nullable=false)

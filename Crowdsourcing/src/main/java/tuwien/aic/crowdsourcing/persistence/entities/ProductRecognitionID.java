@@ -1,55 +1,55 @@
 package tuwien.aic.crowdsourcing.persistence.entities;
 
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.ManyToOne;
 
 @Embeddable
 public class ProductRecognitionID implements Serializable {
     
     private static final long serialVersionUID = 3947878984382514207L;
     
-    private MWTask task = null;
-    private Worker worker = null;
-    private Product product = null;
+    private long taskId = -1;
+    private long workerId = -1;
+    private long productId = -1;
     
     public ProductRecognitionID() {
         
     }
     
-    public ProductRecognitionID(MWTask task, 
-                                Worker worker, 
-                                Product product) {
+    public ProductRecognitionID(long taskId, 
+                                long workerId, 
+                                long productId) {
         
-        this.task = task;
-        this.worker = worker;
-        this.product = product;
+        this.taskId = taskId;
+        this.workerId = workerId;
+        this.productId = productId;
     }
 
-    @ManyToOne(optional=false)
-    public MWTask getTask() {
-        return task;
+    @Column(name = "task_id")
+    public long getTaskId() {
+        return taskId;
     }
 
-    public void setTask(MWTask task) {
-        this.task = task;
+    public void setTaskId(long taskId) {
+        this.taskId = taskId;
     }
 
-    @ManyToOne(optional=false)
-    public Worker getWorker() {
-        return worker;
+    @Column(name = "worker_id")
+    public long getWorkerId() {
+        return workerId;
     }
 
-    public void setWorker(Worker worker) {
-        this.worker = worker;
+    public void setWorkerId(long workerId) {
+        this.workerId = workerId;
     }
 
-    @ManyToOne(optional=false)
-    public Product getProduct() {
-        return product;
+    @Column(name = "product_id")
+    public long getProductId() {
+        return productId;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public void setProductId(long productId) {
+        this.productId = productId;
     }
 }

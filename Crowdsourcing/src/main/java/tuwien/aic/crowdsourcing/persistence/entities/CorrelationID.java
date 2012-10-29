@@ -29,7 +29,7 @@ public class CorrelationID implements Serializable {
         this.productId = productId;
     }
 
-    @Column(name = "worker_id")
+    @Column(name = "task_id")
     public long getTaskId() {
         return taskId;
     }
