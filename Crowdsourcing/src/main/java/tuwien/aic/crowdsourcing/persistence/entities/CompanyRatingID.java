@@ -1,55 +1,55 @@
 package tuwien.aic.crowdsourcing.persistence.entities;
 
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.ManyToOne;
 
 @Embeddable
 public class CompanyRatingID implements Serializable {
     
     private static final long serialVersionUID = 5351268870227073825L;
     
-    private MWTask task = null;
-    private Worker worker = null;
-    private Company company = null;
+    private long taskId = -1;
+    private long workerId = -1;
+    private long companyId = -1;
     
     public CompanyRatingID() {
         
     }
     
-    public CompanyRatingID(MWTask task, 
-                           Worker worker, 
-                           Company company) {
+    public CompanyRatingID(long taskId, 
+                           long workerId, 
+                           long companyId) {
         
-        this.task = task;
-        this.worker = worker;
-        this.company = company;
+        this.taskId = taskId;
+        this.workerId = workerId;
+        this.companyId = companyId;
     }
 
-    @ManyToOne(optional=false)
-    public MWTask getTask() {
-        return task;
+    @Column(name = "task_id")
+    public long getTaskId() {
+        return taskId;
     }
 
-    public void setTask(MWTask task) {
-        this.task = task;
+    public void setTaskId(long taskId) {
+        this.taskId = taskId;
     }
     
-    @ManyToOne(optional=false)
-    public Worker getWorker() {
-        return worker;
+    @Column(name = "worker_id")
+    public long getWorkerId() {
+        return workerId;
     }
 
-    public void setWorker(Worker worker) {
-        this.worker = worker;
+    public void setWorkerId(long workerId) {
+        this.workerId = workerId;
     }
     
-    @ManyToOne(optional=false)
-    public Company getCompany() {
-        return company;
+    @Column(name = "company_id")
+    public long getCompanyId() {
+        return companyId;
     }
 
-    public void setCompany(Company company) {
-        this.company = company;
+    public void setCompanyId(long companyId) {
+        this.companyId = companyId;
     }
 }

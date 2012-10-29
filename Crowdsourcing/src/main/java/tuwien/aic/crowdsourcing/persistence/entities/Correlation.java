@@ -20,6 +20,14 @@ public class Correlation implements Serializable {
     
     private CorrelationID primaryKey = null;
     
+    private MWTask task = null;
+    
+    private Worker worker = null;
+    
+    private Company company = null;
+    
+    private Product product = null;
+    
     private Date lastModified = null;
     
     public Correlation() {
@@ -35,10 +43,15 @@ public class Correlation implements Serializable {
                        Product product) {
         
         this.primaryKey = 
-            new CorrelationID(task,
-                              worker,
-                              company,
-                              product);
+            new CorrelationID(task.getId(),
+                              worker.getId(),
+                              company.getId(),
+                              product.getId());
+        
+        this.task = task;
+        this.worker = worker;
+        this.company = company;
+        this.product = product;
         
         this.lastModified = new Date();
     }
@@ -50,10 +63,15 @@ public class Correlation implements Serializable {
                        Date lastModified) {
         
         this.primaryKey = 
-            new CorrelationID(task,
-                              worker,
-                              company,
-                              product);
+            new CorrelationID(task.getId(),
+                              worker.getId(),
+                              company.getId(),
+                              product.getId());
+        
+        this.task = task;
+        this.worker = worker;
+        this.company = company;
+        this.product = product;
         
         this.lastModified = lastModified;
     }
@@ -67,40 +85,44 @@ public class Correlation implements Serializable {
         this.primaryKey = primaryKey;
     }
 
-    @Transient
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "task_id", referencedColumnName = "id")
     public MWTask getTask() {
-        return primaryKey.getTask();
+        return task;
     }
 
     public void setTask(MWTask task) {
-        primaryKey.setTask(task);
+        this.task = task;
     }
 
-    @Transient
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "worker_id", referencedColumnName = "id")
     public Worker getWorker() {
-        return primaryKey.getWorker();
+        return worker;
     }
 
     public void setWorker(Worker worker) {
-        primaryKey.setWorker(worker);
+        this.worker = worker;
     }
 
-    @Transient
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "company_id", referencedColumnName = "id")
     public Company getCompany() {
-        return primaryKey.getCompany();
+        return company;
     }
 
     public void setCompany(Company company) {
-        primaryKey.setCompany(company);
+        this.company = company;
     }
 
-    @Transient
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "product_id", referencedColumnName = "id")
     public Product getProduct() {
-        return primaryKey.getProduct();
+        return product;
     }
 
     public void setProduct(Product product) {
-        primaryKey.setProduct(product);
+        this.product = product;
     }
 
     @Column(nullable=false)
