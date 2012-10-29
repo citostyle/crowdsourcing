@@ -8,13 +8,13 @@ import javax.persistence.*;
 @Entity
 public class Article implements Serializable {
 
-    private Long id = -1L;
+    private long id = -1L;
     
     private String guid = "";
 
     private String title = "";
 
-    private String url = "";
+    private String address = "";
     
     private Set<MWTask> tasks = null;
 
@@ -22,11 +22,10 @@ public class Article implements Serializable {
         this.tasks = new HashSet<MWTask>();
     }
     
-    public Article(Long id, String guid, String title, String url) {
-        this.id = id;
-        this.url = url;
+    public Article(String guid, String title, String address) {
         this.guid = guid;
         this.title = title;
+        this.address = address;
         
         this.tasks = new HashSet<MWTask>();
     }
@@ -41,6 +40,7 @@ public class Article implements Serializable {
         this.id = id;
     }
 
+    @Column(unique=true, nullable=false)
     public String getGuid() {
         return guid;
     }
@@ -49,6 +49,7 @@ public class Article implements Serializable {
         this.guid = guid;
     }
 
+    @Column(nullable=false)
     public String getTitle() {
         return title;
     }
@@ -57,12 +58,13 @@ public class Article implements Serializable {
         this.title = title;
     }
 
-    public String getUrl() {
-        return url;
+    @Column(unique=true, nullable=false)
+    public String getAddress() {
+        return address;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setAddress(String address) {
+        this.address = address;
     }
     
     @OneToMany(mappedBy = "article")
@@ -77,6 +79,5 @@ public class Article implements Serializable {
         else {
             this.tasks = new HashSet<MWTask>();
         }
-    }
-    
+    }    
 }

@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Entity
 @AssociationOverrides({
-    @AssociationOverride(name = "primaryKey.mwTask", 
+    @AssociationOverride(name = "primaryKey.task", 
             joinColumns = @JoinColumn(name = "TASK_ID")),
     @AssociationOverride(name = "primaryKey.worker", 
             joinColumns = @JoinColumn(name = "WORKER_ID")),
@@ -25,25 +25,25 @@ public class CompanyRecognition implements Serializable {
         this.lastModified = new Date();
     }
     
-    public CompanyRecognition(MWTask mwTask, 
+    public CompanyRecognition(MWTask task, 
                               Worker worker, 
                               Company company) {
         
         this.primaryKey = 
-            new CompanyRecognitionID(mwTask,
+            new CompanyRecognitionID(task,
                                      worker,
                                      company);
         
         this.lastModified = new Date();
     }
     
-    public CompanyRecognition(MWTask mwTask, 
+    public CompanyRecognition(MWTask task, 
                               Worker worker, 
                               Company company,
                               Date lastModified) {
         
         this.primaryKey = 
-            new CompanyRecognitionID(mwTask,
+            new CompanyRecognitionID(task,
                                      worker,
                                      company);
         
@@ -59,15 +59,17 @@ public class CompanyRecognition implements Serializable {
         this.primaryKey = primaryKey;
     }
 
+    @Column(nullable=false)
     @Transient
-    public MWTask getMWTask() {
-        return primaryKey.getMWTask();
+    public MWTask getTask() {
+        return primaryKey.getTask();
     }
 
-    public void setMWTask(MWTask mwTask) {
-        primaryKey.setMWTask(mwTask);
+    public void setTask(MWTask task) {
+        primaryKey.setTask(task);
     }
 
+    @Column(nullable=false)
     @Transient
     public Worker getWorker() {
         return primaryKey.getWorker();
@@ -77,13 +79,14 @@ public class CompanyRecognition implements Serializable {
         primaryKey.setWorker(worker);
     }
 
+    @Column(nullable=false)
     @Transient
-    public Company getCompany() {
+    public Company getProduct() {
         return primaryKey.getCompany();
     }
 
-    public void setCompany(Company company) {
-        primaryKey.setProduct(company);
+    public void setProduct(Company company) {
+        primaryKey.setCompany(company);
     }
 
     @Column(nullable=false)
@@ -95,5 +98,4 @@ public class CompanyRecognition implements Serializable {
     public void setLastModified(Date lastModified) {
         this.lastModified = lastModified;
     }
-    
 }

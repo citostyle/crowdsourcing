@@ -6,7 +6,7 @@ import javax.persistence.ManyToOne;
 
 @Embeddable
 public class CorrelationID implements Serializable {
-    private MWTask mwTask = null;
+    private MWTask task = null;
     private Worker worker = null;
     private Company company = null;
     private Product product = null;
@@ -15,24 +15,24 @@ public class CorrelationID implements Serializable {
         
     }
     
-    public CorrelationID(MWTask mwTask, 
+    public CorrelationID(MWTask task, 
                          Worker worker, 
                          Company company,
                          Product product) {
         
-        this.mwTask = mwTask;
+        this.task = task;
         this.worker = worker;
         this.company = company;
         this.product = product;
     }
 
     @ManyToOne(optional=false)
-    public MWTask getMWTask() {
-        return mwTask;
+    public MWTask getTask() {
+        return task;
     }
 
-    public void setMWTask(MWTask mwTask) {
-        this.mwTask = mwTask;
+    public void setTask(MWTask task) {
+        this.task = task;
     }
 
     @ManyToOne(optional=false)
@@ -61,5 +61,4 @@ public class CorrelationID implements Serializable {
     public void setProduct(Product product) {
         this.product = product;
     }
-
 }

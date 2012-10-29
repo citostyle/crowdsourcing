@@ -1,15 +1,12 @@
 package tuwien.aic.crowdsourcing.persistence.entities;
 
 import java.io.Serializable;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class Worker implements Serializable {
 
-    private Long id = -1L;
+    private long id = -1L;
 
     private String workerId = "";
     
@@ -17,7 +14,7 @@ public class Worker implements Serializable {
     
     private String city = "";
     
-    private char gender = 'u';
+    private Gender gender = Gender.UNKNOWN;
     
     private int age = -1;
 
@@ -25,19 +22,16 @@ public class Worker implements Serializable {
         
     }
     
-    public Worker(Long id, String workerId) {
-        this.id = id;
-        
+    public Worker(String workerId) {
         this.workerId = workerId;
     }
     
-    public Worker(Long id, String workerId, 
+    public Worker(String workerId, 
                   String country, 
                   String city,
-                  char gender, 
+                  Gender gender, 
                   int age) {
         
-        this.id = id;
         this.age = age;
         this.city = city;
         this.gender = gender;
@@ -55,6 +49,7 @@ public class Worker implements Serializable {
         this.id = id;
     }
 
+    @Column(unique=true, nullable=false)
     public String getWorkerId() {
         return workerId;
     }
@@ -63,6 +58,7 @@ public class Worker implements Serializable {
         this.workerId = workerId;
     }
 
+    @Column(nullable=true)
     public String getCountry() {
         return country;
     }
@@ -71,6 +67,7 @@ public class Worker implements Serializable {
         this.country = country;
     }
 
+    @Column(nullable=true)
     public String getCity() {
         return city;
     }
@@ -79,14 +76,16 @@ public class Worker implements Serializable {
         this.city = city;
     }
 
-    public char getGender() {
+    @Column(nullable=true)
+    public Gender getGender() {
         return gender;
     }
 
-    public void setGender(char gender) {
+    public void setGender(Gender gender) {
         this.gender = gender;
     }
 
+    @Column(nullable=true)
     public int getAge() {
         return age;
     }

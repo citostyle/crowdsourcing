@@ -6,7 +6,7 @@ import javax.persistence.ManyToOne;
 
 @Embeddable
 public class ProductRecognitionID implements Serializable {
-    private MWTask mwTask = null;
+    private MWTask task = null;
     private Worker worker = null;
     private Product product = null;
     
@@ -14,22 +14,22 @@ public class ProductRecognitionID implements Serializable {
         
     }
     
-    public ProductRecognitionID(MWTask mwTask, 
+    public ProductRecognitionID(MWTask task, 
                                 Worker worker, 
                                 Product product) {
         
-        this.mwTask = mwTask;
+        this.task = task;
         this.worker = worker;
         this.product = product;
     }
 
     @ManyToOne(optional=false)
-    public MWTask getMWTask() {
-        return mwTask;
+    public MWTask getTask() {
+        return task;
     }
 
-    public void setMWTask(MWTask mwTask) {
-        this.mwTask = mwTask;
+    public void setTask(MWTask task) {
+        this.task = task;
     }
 
     @ManyToOne(optional=false)
@@ -49,5 +49,4 @@ public class ProductRecognitionID implements Serializable {
     public void setProduct(Product product) {
         this.product = product;
     }
-
 }

@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Entity
 @AssociationOverrides({
-    @AssociationOverride(name = "primaryKey.mwTask", 
+    @AssociationOverride(name = "primaryKey.task", 
             joinColumns = @JoinColumn(name = "TASK_ID")),
     @AssociationOverride(name = "primaryKey.worker", 
             joinColumns = @JoinColumn(name = "WORKER_ID")),
@@ -27,13 +27,13 @@ public class ProductRating implements Serializable {
         this.lastModified = new Date();
     }
     
-    public ProductRating(MWTask mwTask, 
+    public ProductRating(MWTask task, 
                          Worker worker, 
                          Product product,
                          Integer ratingValue) {
         
         this.primaryKey = 
-            new ProductRatingID(mwTask,
+            new ProductRatingID(task,
                                 worker,
                                 product);
         
@@ -42,14 +42,14 @@ public class ProductRating implements Serializable {
         this.lastModified = new Date();
     }
     
-    public ProductRating(MWTask mwTask, 
+    public ProductRating(MWTask task, 
                          Worker worker, 
                          Product product,
                          Date lastModified,
                          Integer ratingValue) {
         
         this.primaryKey = 
-            new ProductRatingID(mwTask,
+            new ProductRatingID(task,
                                 worker,
                                 product);
         
@@ -67,15 +67,17 @@ public class ProductRating implements Serializable {
         this.primaryKey = primaryKey;
     }
 
+    @Column(nullable=false)
     @Transient
-    public MWTask getMWTask() {
-        return primaryKey.getMWTask();
+    public MWTask getTask() {
+        return primaryKey.getTask();
     }
 
-    public void setMWTask(MWTask mwTask) {
-        primaryKey.setMWTask(mwTask);
+    public void setTask(MWTask task) {
+        primaryKey.setTask(task);
     }
 
+    @Column(nullable=false)
     @Transient
     public Worker getWorker() {
         return primaryKey.getWorker();
@@ -85,6 +87,7 @@ public class ProductRating implements Serializable {
         primaryKey.setWorker(worker);
     }
 
+    @Column(nullable=false)
     @Transient
     public Product getProduct() {
         return primaryKey.getProduct();
@@ -112,5 +115,4 @@ public class ProductRating implements Serializable {
     public void setRatingValue(Integer ratingValue) {
         this.ratingValue = ratingValue;
     }
-    
 }

@@ -6,7 +6,7 @@ import javax.persistence.ManyToOne;
 
 @Embeddable
 public class CompanyRatingID implements Serializable {
-    private MWTask mwTask = null;
+    private MWTask task = null;
     private Worker worker = null;
     private Company company = null;
     
@@ -14,22 +14,22 @@ public class CompanyRatingID implements Serializable {
         
     }
     
-    public CompanyRatingID(MWTask mwTask, 
+    public CompanyRatingID(MWTask task, 
                            Worker worker, 
                            Company company) {
         
-        this.mwTask = mwTask;
+        this.task = task;
         this.worker = worker;
         this.company = company;
     }
 
     @ManyToOne(optional=false)
-    public MWTask getMWTask() {
-        return mwTask;
+    public MWTask getTask() {
+        return task;
     }
 
-    public void setMWTask(MWTask mwTask) {
-        this.mwTask = mwTask;
+    public void setTask(MWTask task) {
+        this.task = task;
     }
 
     @ManyToOne(optional=false)
@@ -49,5 +49,4 @@ public class CompanyRatingID implements Serializable {
     public void setProduct(Company company) {
         this.company = company;
     }
-    
 }

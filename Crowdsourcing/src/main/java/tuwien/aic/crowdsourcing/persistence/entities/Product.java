@@ -1,15 +1,12 @@
 package tuwien.aic.crowdsourcing.persistence.entities;
 
 import java.io.Serializable;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class Product implements Serializable {
 
-    private Long id = -1L;
+    private long id = -1L;
 
     private String name = "";
 
@@ -17,8 +14,7 @@ public class Product implements Serializable {
         
     }
     
-    public Product(Long id, String name) {
-        this.id = id;
+    public Product(String name) {
         this.name = name;
     }
     
@@ -32,6 +28,7 @@ public class Product implements Serializable {
         this.id = id;
     }
 
+    @Column(unique=true, nullable=false)
     public String getName() {
         return name;
     }

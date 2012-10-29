@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Entity
 @AssociationOverrides({
-    @AssociationOverride(name = "primaryKey.mwTask", 
+    @AssociationOverride(name = "primaryKey.task", 
             joinColumns = @JoinColumn(name = "TASK_ID")),
     @AssociationOverride(name = "primaryKey.worker", 
             joinColumns = @JoinColumn(name = "WORKER_ID")),
@@ -25,25 +25,25 @@ public class ProductRecognition implements Serializable {
         this.lastModified = new Date();
     }
     
-    public ProductRecognition(MWTask mwTask, 
+    public ProductRecognition(MWTask task, 
                               Worker worker, 
                               Product product) {
         
         this.primaryKey = 
-            new ProductRecognitionID(mwTask,
+            new ProductRecognitionID(task,
                                      worker,
                                      product);
         
         this.lastModified = new Date();
     }
     
-    public ProductRecognition(MWTask mwTask, 
+    public ProductRecognition(MWTask task, 
                               Worker worker, 
                               Product product,
                               Date lastModified) {
         
         this.primaryKey = 
-            new ProductRecognitionID(mwTask,
+            new ProductRecognitionID(task,
                                      worker,
                                      product);
         
@@ -59,15 +59,17 @@ public class ProductRecognition implements Serializable {
         this.primaryKey = primaryKey;
     }
 
+    @Column(nullable=false)
     @Transient
-    public MWTask getMWTask() {
-        return primaryKey.getMWTask();
+    public MWTask getTask() {
+        return primaryKey.getTask();
     }
 
-    public void setMWTask(MWTask mwTask) {
-        primaryKey.setMWTask(mwTask);
+    public void setTask(MWTask task) {
+        primaryKey.setTask(task);
     }
 
+    @Column(nullable=false)
     @Transient
     public Worker getWorker() {
         return primaryKey.getWorker();
@@ -77,6 +79,7 @@ public class ProductRecognition implements Serializable {
         primaryKey.setWorker(worker);
     }
 
+    @Column(nullable=false)
     @Transient
     public Product getProduct() {
         return primaryKey.getProduct();
@@ -95,5 +98,4 @@ public class ProductRecognition implements Serializable {
     public void setLastModified(Date lastModified) {
         this.lastModified = lastModified;
     }
-    
 }
