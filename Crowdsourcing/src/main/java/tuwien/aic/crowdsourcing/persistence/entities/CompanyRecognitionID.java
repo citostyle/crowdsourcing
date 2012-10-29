@@ -1,32 +1,32 @@
 package tuwien.aic.crowdsourcing.persistence.entities;
 
 import java.io.Serializable;
-
 import javax.persistence.Embeddable;
 import javax.persistence.ManyToOne;
 
 @Embeddable
 public class CompanyRecognitionID implements Serializable {
-    /**
-     * 
-     */
+    
     private static final long serialVersionUID = -3789675089492370190L;
+    
     private MWTask task = null;
     private Worker worker = null;
     private Company company = null;
-
+    
     public CompanyRecognitionID() {
-
+        
     }
-
-    public CompanyRecognitionID(MWTask task, Worker worker, Company company) {
-
+    
+    public CompanyRecognitionID(MWTask task, 
+                                Worker worker, 
+                                Company company) {
+        
         this.task = task;
         this.worker = worker;
         this.company = company;
     }
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional=false)
     public MWTask getTask() {
         return task;
     }
@@ -35,7 +35,7 @@ public class CompanyRecognitionID implements Serializable {
         this.task = task;
     }
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional=false)
     public Worker getWorker() {
         return worker;
     }
@@ -44,7 +44,7 @@ public class CompanyRecognitionID implements Serializable {
         this.worker = worker;
     }
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional=false)
     public Company getCompany() {
         return company;
     }

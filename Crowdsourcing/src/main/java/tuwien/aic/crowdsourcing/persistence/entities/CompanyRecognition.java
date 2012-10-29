@@ -2,50 +2,53 @@ package tuwien.aic.crowdsourcing.persistence.entities;
 
 import java.io.Serializable;
 import java.util.Date;
-
-import javax.persistence.AssociationOverride;
-import javax.persistence.AssociationOverrides;
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 @Entity
 @AssociationOverrides({
-        @AssociationOverride(name = "primaryKey.task", joinColumns = @JoinColumn(name = "TASK_ID")),
-        @AssociationOverride(name = "primaryKey.worker", joinColumns = @JoinColumn(name = "WORKER_ID")),
-        @AssociationOverride(name = "primaryKey.company", joinColumns = @JoinColumn(name = "COMPANY_ID")) })
+    @AssociationOverride(name = "primaryKey.task", 
+            joinColumns = @JoinColumn(name = "TASK_ID")),
+    @AssociationOverride(name = "primaryKey.worker", 
+            joinColumns = @JoinColumn(name = "WORKER_ID")),
+    @AssociationOverride(name = "primaryKey.company", 
+            joinColumns = @JoinColumn(name = "COMPANY_ID")) })
 public class CompanyRecognition implements Serializable {
-
-    /**
-     * 
-     */
+    
     private static final long serialVersionUID = -6794212226005929652L;
-
+    
     private CompanyRecognitionID primaryKey = null;
-
+    
     private Date lastModified = null;
-
+    
     public CompanyRecognition() {
-        this.primaryKey = new CompanyRecognitionID();
-
+        this.primaryKey = 
+            new CompanyRecognitionID();
+        
         this.lastModified = new Date();
     }
-
-    public CompanyRecognition(MWTask task, Worker worker, Company company) {
-
-        this.primaryKey = new CompanyRecognitionID(task, worker, company);
-
+    
+    public CompanyRecognition(MWTask task, 
+                              Worker worker, 
+                              Company company) {
+        
+        this.primaryKey = 
+            new CompanyRecognitionID(task,
+                                     worker,
+                                     company);
+        
         this.lastModified = new Date();
     }
-
-    public CompanyRecognition(MWTask task, Worker worker, Company company,
-            Date lastModified) {
-
-        this.primaryKey = new CompanyRecognitionID(task, worker, company);
-
+    
+    public CompanyRecognition(MWTask task, 
+                              Worker worker, 
+                              Company company,
+                              Date lastModified) {
+        
+        this.primaryKey = 
+            new CompanyRecognitionID(task,
+                                     worker,
+                                     company);
+        
         this.lastModified = lastModified;
     }
 
@@ -58,7 +61,6 @@ public class CompanyRecognition implements Serializable {
         this.primaryKey = primaryKey;
     }
 
-    @Column(nullable = false)
     @Transient
     public MWTask getTask() {
         return primaryKey.getTask();
@@ -68,7 +70,6 @@ public class CompanyRecognition implements Serializable {
         primaryKey.setTask(task);
     }
 
-    @Column(nullable = false)
     @Transient
     public Worker getWorker() {
         return primaryKey.getWorker();
@@ -78,7 +79,6 @@ public class CompanyRecognition implements Serializable {
         primaryKey.setWorker(worker);
     }
 
-    @Column(nullable = false)
     @Transient
     public Company getProduct() {
         return primaryKey.getCompany();
@@ -88,7 +88,7 @@ public class CompanyRecognition implements Serializable {
         primaryKey.setCompany(company);
     }
 
-    @Column(nullable = false)
+    @Column(nullable=false)
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     public Date getLastModified() {
         return lastModified;

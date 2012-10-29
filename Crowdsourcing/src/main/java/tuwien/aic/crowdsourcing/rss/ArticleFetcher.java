@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +16,8 @@ import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component
 public class ArticleFetcher {
@@ -26,7 +27,7 @@ public class ArticleFetcher {
     @Autowired
     private ArticleManager articleManager;
 
-    private static final Logger logger = Logger.getLogger(ArticleFetcher.class);
+    private static final Logger logger = LoggerFactory.getLogger(ArticleFetcher.class);
 
     public static void main(String[] args) {
 

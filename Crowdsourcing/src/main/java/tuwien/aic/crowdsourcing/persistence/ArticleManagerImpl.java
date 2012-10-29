@@ -51,11 +51,14 @@ public class ArticleManagerImpl implements ArticleManager {
 
         if (article == null) {
             article = new Article(title, address);
+            
             entityManager.persist(article);
+            
+            //TODO
             article = getArticleByAddress(address);
             System.out.println("Article: " + article);
-            // TODO do we need this?
-            // ! entityManager.refresh(article);
+            
+            entityManager.refresh(article);
         }
 
         return article;

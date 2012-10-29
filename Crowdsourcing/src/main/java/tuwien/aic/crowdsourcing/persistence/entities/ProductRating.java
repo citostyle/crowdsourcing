@@ -2,57 +2,61 @@ package tuwien.aic.crowdsourcing.persistence.entities;
 
 import java.io.Serializable;
 import java.util.Date;
-
-import javax.persistence.AssociationOverride;
-import javax.persistence.AssociationOverrides;
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.Temporal;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 @Entity
 @AssociationOverrides({
-        @AssociationOverride(name = "primaryKey.task", joinColumns = @JoinColumn(name = "TASK_ID")),
-        @AssociationOverride(name = "primaryKey.worker", joinColumns = @JoinColumn(name = "WORKER_ID")),
-        @AssociationOverride(name = "primaryKey.product", joinColumns = @JoinColumn(name = "PRODUCT_ID")) })
+    @AssociationOverride(name = "primaryKey.task", 
+            joinColumns = @JoinColumn(name = "TASK_ID")),
+    @AssociationOverride(name = "primaryKey.worker", 
+            joinColumns = @JoinColumn(name = "WORKER_ID")),
+    @AssociationOverride(name = "primaryKey.product", 
+            joinColumns = @JoinColumn(name = "PRODUCT_ID")) })
 public class ProductRating implements Serializable {
-
-    /**
-     * 
-     */
+    
     private static final long serialVersionUID = -8768336940282518893L;
-
+    
     private ProductRatingID primaryKey = null;
-
+    
     private Date lastModified = null;
-
+    
     private Integer ratingValue = null;
-
+    
     public ProductRating() {
-        this.primaryKey = new ProductRatingID();
-
+        this.primaryKey = 
+            new ProductRatingID();
+        
         this.lastModified = new Date();
     }
-
-    public ProductRating(MWTask task, Worker worker, Product product,
-            Integer ratingValue) {
-
-        this.primaryKey = new ProductRatingID(task, worker, product);
-
+    
+    public ProductRating(MWTask task, 
+                         Worker worker, 
+                         Product product,
+                         Integer ratingValue) {
+        
+        this.primaryKey = 
+            new ProductRatingID(task,
+                                worker,
+                                product);
+        
         this.ratingValue = ratingValue;
-
+        
         this.lastModified = new Date();
     }
-
-    public ProductRating(MWTask task, Worker worker, Product product,
-            Date lastModified, Integer ratingValue) {
-
-        this.primaryKey = new ProductRatingID(task, worker, product);
-
+    
+    public ProductRating(MWTask task, 
+                         Worker worker, 
+                         Product product,
+                         Date lastModified,
+                         Integer ratingValue) {
+        
+        this.primaryKey = 
+            new ProductRatingID(task,
+                                worker,
+                                product);
+        
         this.ratingValue = ratingValue;
-
+        
         this.lastModified = lastModified;
     }
 
@@ -65,7 +69,6 @@ public class ProductRating implements Serializable {
         this.primaryKey = primaryKey;
     }
 
-    @Column(nullable = false)
     @Transient
     public MWTask getTask() {
         return primaryKey.getTask();
@@ -75,7 +78,6 @@ public class ProductRating implements Serializable {
         primaryKey.setTask(task);
     }
 
-    @Column(nullable = false)
     @Transient
     public Worker getWorker() {
         return primaryKey.getWorker();
@@ -85,7 +87,6 @@ public class ProductRating implements Serializable {
         primaryKey.setWorker(worker);
     }
 
-    @Column(nullable = false)
     @Transient
     public Product getProduct() {
         return primaryKey.getProduct();
@@ -95,7 +96,7 @@ public class ProductRating implements Serializable {
         primaryKey.setProduct(product);
     }
 
-    @Column(nullable = false)
+    @Column(nullable=false)
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     public Date getLastModified() {
         return lastModified;
@@ -105,7 +106,7 @@ public class ProductRating implements Serializable {
         this.lastModified = lastModified;
     }
 
-    @Column(nullable = true)
+    @Column(nullable=true)
     public Integer getRatingValue() {
         return ratingValue;
     }
