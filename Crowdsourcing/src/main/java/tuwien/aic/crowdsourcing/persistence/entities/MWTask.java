@@ -1,10 +1,21 @@
 package tuwien.aic.crowdsourcing.persistence.entities;
 
 import java.io.Serializable;
-import javax.persistence.*;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class MWTask implements Serializable {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 626524682741823847L;
 
     private long id = -1L;
 
@@ -13,21 +24,20 @@ public class MWTask implements Serializable {
     private String type = "";
 
     private TaskState state = TaskState.ACTIVE;
-    
+
     private Article article = null;
 
     public MWTask() {
-        
+
     }
-    
-    public MWTask(Article article, String taskId, 
-                  String type, TaskState state) {
+
+    public MWTask(Article article, String taskId, String type, TaskState state) {
         this.type = type;
         this.state = state;
         this.taskId = taskId;
         this.article = article;
     }
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public Long getId() {
@@ -38,7 +48,7 @@ public class MWTask implements Serializable {
         this.id = id;
     }
 
-    @Column(unique=true, nullable=false)
+    @Column(unique = true, nullable = false)
     public String getTaskId() {
         return taskId;
     }
@@ -47,7 +57,7 @@ public class MWTask implements Serializable {
         this.taskId = taskId;
     }
 
-    @Column(nullable=false)
+    @Column(nullable = false)
     public String getType() {
         return type;
     }
@@ -56,7 +66,7 @@ public class MWTask implements Serializable {
         this.type = type;
     }
 
-    @Column(nullable=false)
+    @Column(nullable = false)
     public TaskState getTaskState() {
         return state;
     }
@@ -64,8 +74,8 @@ public class MWTask implements Serializable {
     public void setTaskState(TaskState state) {
         this.state = state;
     }
-    
-    @ManyToOne(optional=false)
+
+    @ManyToOne(optional = false)
     public Article getArticle() {
         return article;
     }

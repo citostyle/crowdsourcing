@@ -2,51 +2,50 @@ package tuwien.aic.crowdsourcing.persistence.entities;
 
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.*;
+
+import javax.persistence.AssociationOverride;
+import javax.persistence.AssociationOverrides;
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.Temporal;
+import javax.persistence.Transient;
 
 @Entity
 @AssociationOverrides({
-    @AssociationOverride(name = "primaryKey.task", 
-            joinColumns = @JoinColumn(name = "TASK_ID")),
-    @AssociationOverride(name = "primaryKey.worker", 
-            joinColumns = @JoinColumn(name = "WORKER_ID")),
-    @AssociationOverride(name = "primaryKey.product", 
-            joinColumns = @JoinColumn(name = "PRODUCT_ID")) })
+        @AssociationOverride(name = "primaryKey.task", joinColumns = @JoinColumn(name = "TASK_ID")),
+        @AssociationOverride(name = "primaryKey.worker", joinColumns = @JoinColumn(name = "WORKER_ID")),
+        @AssociationOverride(name = "primaryKey.product", joinColumns = @JoinColumn(name = "PRODUCT_ID")) })
 public class ProductRecognition implements Serializable {
-    
+
+    /**
+     *  
+     */
+    private static final long serialVersionUID = -4609094723687381904L;
+
     private ProductRecognitionID primaryKey = null;
-    
+
     private Date lastModified = null;
-    
+
     public ProductRecognition() {
-        this.primaryKey = 
-            new ProductRecognitionID();
-        
+        this.primaryKey = new ProductRecognitionID();
+
         this.lastModified = new Date();
     }
-    
-    public ProductRecognition(MWTask task, 
-                              Worker worker, 
-                              Product product) {
-        
-        this.primaryKey = 
-            new ProductRecognitionID(task,
-                                     worker,
-                                     product);
-        
+
+    public ProductRecognition(MWTask task, Worker worker, Product product) {
+
+        this.primaryKey = new ProductRecognitionID(task, worker, product);
+
         this.lastModified = new Date();
     }
-    
-    public ProductRecognition(MWTask task, 
-                              Worker worker, 
-                              Product product,
-                              Date lastModified) {
-        
-        this.primaryKey = 
-            new ProductRecognitionID(task,
-                                     worker,
-                                     product);
-        
+
+    public ProductRecognition(MWTask task, Worker worker, Product product,
+            Date lastModified) {
+
+        this.primaryKey = new ProductRecognitionID(task, worker, product);
+
         this.lastModified = lastModified;
     }
 
@@ -59,7 +58,7 @@ public class ProductRecognition implements Serializable {
         this.primaryKey = primaryKey;
     }
 
-    @Column(nullable=false)
+    @Column(nullable = false)
     @Transient
     public MWTask getTask() {
         return primaryKey.getTask();
@@ -69,7 +68,7 @@ public class ProductRecognition implements Serializable {
         primaryKey.setTask(task);
     }
 
-    @Column(nullable=false)
+    @Column(nullable = false)
     @Transient
     public Worker getWorker() {
         return primaryKey.getWorker();
@@ -79,7 +78,7 @@ public class ProductRecognition implements Serializable {
         primaryKey.setWorker(worker);
     }
 
-    @Column(nullable=false)
+    @Column(nullable = false)
     @Transient
     public Product getProduct() {
         return primaryKey.getProduct();
@@ -89,7 +88,7 @@ public class ProductRecognition implements Serializable {
         primaryKey.setProduct(product);
     }
 
-    @Column(nullable=false)
+    @Column(nullable = false)
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     public Date getLastModified() {
         return lastModified;

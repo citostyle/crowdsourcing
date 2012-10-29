@@ -16,27 +16,27 @@ import tuwien.aic.crowdsourcing.persistence.entities.TestEntity;
 @Controller
 public class JSONController {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(JSONController.class);
+    private static final Logger logger = LoggerFactory
+            .getLogger(JSONController.class);
 
-	/**
-	 * Simply selects the home view to render by returning its name.
-	 */
-	@RequestMapping(value = "/json/{id}", method = RequestMethod.GET)
-	@ResponseBody
-	public TestEntity get(@PathVariable String id) {
-		
-		logger.info("Generating JSON response for id " + id);
-		
-		TestEntity testEntity = new TestEntity();
+    /**
+     * Simply selects the home view to render by returning its name.
+     */
+    @RequestMapping(value = "/json/{id}", method = RequestMethod.GET)
+    @ResponseBody
+    public TestEntity get(@PathVariable String id) {
 
-		testEntity.setName(id);
-		try {
-			testEntity.setId(Long.valueOf(id));
-		} catch (NumberFormatException e) {
-		}
+        logger.info("Generating JSON response for id " + id);
 
-		return testEntity;
-	}
+        TestEntity testEntity = new TestEntity();
+
+        testEntity.setName(id);
+        try {
+            testEntity.setId(Long.valueOf(id));
+        } catch (NumberFormatException e) {
+        }
+
+        return testEntity;
+    }
 
 }

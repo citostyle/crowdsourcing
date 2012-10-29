@@ -7,11 +7,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ScheduleTest {
-	
-	private static final Logger logger = LoggerFactory.getLogger(ScheduleTest.class);
 
-	@Scheduled(fixedRate = 5000)
-	public void doWork() {
-		logger.info("Arbeit, Arbeit...");
-	}
+    private static final Logger logger = LoggerFactory
+            .getLogger(ScheduleTest.class);
+
+    @Scheduled(fixedRate = 5000)
+    public void doWork() {
+        logger.info("Arbeit, Arbeit...");
+    }
 }

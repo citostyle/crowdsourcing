@@ -1,43 +1,33 @@
 package tuwien.aic.crowdsourcing.rss;
 
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+import javax.annotation.PostConstruct;
 
-public class PeriodicArticleService implements ServletContextListener {
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
-    private Timer timer;
+import tuwien.aic.crowdsourcing.persistence.ArticleManager;
+
+@Component
+public class PeriodicArticleService {
+
+    @Autowired
     private ArticleFetcher articleFetcher;
 
-    private class RSSLookupTask extends TimerTask {
-        @Override
-        public void run() {
-            Map<String, String> newArticles = articleFetcher.getNewArticles();
-            // TODO add new articles to DB
-            System.out.println(newArticles);
-        }
-    }
+    @Autowired
+    private ArticleManager articleManager;
 
-    @Override
-    public synchronized void contextDestroyed(ServletContextEvent event) {
-        if (timer != null) {
-            timer.cancel(); // Terminate the timer thread
-        }
-    }
-
-    // This method is invoked when the Web Application
-    // is ready to service requests
-
-    @Override
-    public synchronized void contextInitialized(ServletContextEvent event) {
-        timer = new Timer();
-        articleFetcher = new ArticleFetcherImpl();
+    @PostConstruct
+    public void postConstruct() {
         articleFetcher.addFeed("http://finance.yahoo.com/rss/usmarkets");
-        // TODO enable next line again for RSS
-        // timer.schedule(new RSSLookupTask(), 5000, 5000);
     }
 
+    @Scheduled(fixedRate = 5000)
+    public void fetchArticles() {
+        Map<String, String> newArticles = articleFetcher.getNewArticles();
+        // TODO add new articles to DB
+        System.out.println(newArticles);
+    }
 }
