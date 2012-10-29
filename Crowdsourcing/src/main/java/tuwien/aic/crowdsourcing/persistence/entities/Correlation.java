@@ -77,7 +77,7 @@ public class Correlation implements Serializable {
     }
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "task", referencedColumnName = "id")
+    @MapsId("taskId")
     public MWTask getTask() {
         return task;
     }
@@ -87,7 +87,7 @@ public class Correlation implements Serializable {
     }
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "worker", referencedColumnName = "id")
+    @MapsId("workerId")
     public Worker getWorker() {
         return worker;
     }
@@ -97,7 +97,7 @@ public class Correlation implements Serializable {
     }
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "company", referencedColumnName = "id")
+    @MapsId("companyId")
     public Company getCompany() {
         return company;
     }
@@ -107,7 +107,7 @@ public class Correlation implements Serializable {
     }
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "product", referencedColumnName = "id")
+    @MapsId("productId")
     public Product getProduct() {
         return product;
     }
