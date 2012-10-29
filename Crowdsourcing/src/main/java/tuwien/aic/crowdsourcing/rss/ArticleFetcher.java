@@ -46,6 +46,8 @@ public class ArticleFetcher {
                 @SuppressWarnings("unchecked")
                 List<SyndEntry> entries = feed.getEntries();
                 for (SyndEntry entry : entries) {
+                    System.out.println(articleManager.getArticleByAddress(entry
+                            .getUri()));
                     if (articleManager.getArticleByAddress(entry.getUri()) == null) {
                         ret.put(entry.getUri(), entry.getTitle());
                     }

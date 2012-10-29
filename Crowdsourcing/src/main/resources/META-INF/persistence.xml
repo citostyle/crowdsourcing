@@ -3,17 +3,5 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
 	version="1.0">
-	<persistence-unit name="crowdsourcing">
-		<properties>
-			<property name="hibernate.show_sql" value="true" />
-			<property name="hibernate.hbm2ddl.auto" value="create-drop" />
-			<property name="jpa.showSql" value="true" />
-			<property name="hibernate.connection.driver_class" value="org.postgresql.Driver" />
-			<property name="hibernate.connection.url" value="jdbc:postgresql://localhost:5432/crowdsourcing" />
-			<property name="hibernate.connection.username" value="crowdsourcing" />
-			<property name="hibernate.connection.password" value="crowdsourcing" />
-			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />
-			<property name="jpa.database" value="POSTGRESQL" />
-		</properties>
-	</persistence-unit>
+	<persistence-unit name="crowdsourcing" />
 </persistence>

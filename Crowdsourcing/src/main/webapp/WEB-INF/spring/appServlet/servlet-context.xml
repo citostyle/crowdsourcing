@@ -42,7 +42,7 @@
 	<context:annotation-config />
 
 	<!-- JPA -->
-	<jpa:repositories base-package="tuwien.aic.crowdsourcing.persistence.dao" />
+	<jpa:repositories base-package="tuwien.aic.crowdsourcing.persistence" />
 
 	<beans:bean id="entityManagerFactory"
 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
@@ -53,7 +53,7 @@
 	<beans:bean id="jpaVendorAdapter"
 		class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
 		<beans:property name="database" value="POSTGRESQL" />
-		<beans:property name="showSql" value="true" />
+		<beans:property name="showSql" value="false" />
 		<beans:property name="generateDdl" value="true" />
 		<beans:property name="databasePlatform"
 			value="org.hibernate.dialect.PostgreSQLDialect" />

@@ -21,8 +21,6 @@ public class Article implements Serializable {
 
     private long id = -1L;
 
-    private String guid = "";
-
     private String title = "";
 
     private String address = "";
@@ -37,8 +35,8 @@ public class Article implements Serializable {
         this.tasks = new HashSet<MWTask>();
     }
 
-    public Article(String guid, String title, String address) {
-        this.guid = guid;
+    public Article(String title, String address) {
+        // this.guid = guid;
         this.title = title;
         this.address = address;
 
@@ -53,15 +51,6 @@ public class Article implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    @Column(unique = true, nullable = false)
-    public String getGuid() {
-        return guid;
-    }
-
-    public void setGuid(String guid) {
-        this.guid = guid;
     }
 
     @Column(nullable = false)

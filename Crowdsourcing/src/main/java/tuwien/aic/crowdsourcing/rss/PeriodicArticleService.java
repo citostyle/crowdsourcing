@@ -1,6 +1,7 @@
 package tuwien.aic.crowdsourcing.rss;
 
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.annotation.PostConstruct;
 
@@ -27,6 +28,9 @@ public class PeriodicArticleService {
     @Scheduled(fixedRate = 5000)
     public void fetchArticles() {
         Map<String, String> newArticles = articleFetcher.getNewArticles();
+        for (Entry<String, String> art : newArticles.entrySet()) {
+            articleManager.createArticle(art.getValue(), art.getKey());
+        }
         // TODO add new articles to DB
         System.out.println(newArticles);
     }

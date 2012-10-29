@@ -5,13 +5,15 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import tuwien.aic.crowdsourcing.persistence.entities.Article;
 import tuwien.aic.crowdsourcing.persistence.entities.MWTask;
 import tuwien.aic.crowdsourcing.persistence.entities.TaskState;
 
-@Service
+@Repository
+@Transactional
 public class ArticleManagerImpl implements ArticleManager {
     @PersistenceContext
     private EntityManager entityManager = null;
@@ -23,22 +25,6 @@ public class ArticleManagerImpl implements ArticleManager {
     @Override
     public Article getArticleById(long id) {
         return entityManager.find(Article.class, id);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public Article getArticleByGuid(String guid) {
-        Article ret = null;
-
-        List<Article> articles = entityManager
-                .createQuery("SELECT a FROM Article a WHERE a.guid = :guid")
-                .setParameter("guid", guid).getResultList();
-
-        if (!articles.isEmpty()) {
-            ret = articles.get(0);
-        }
-
-        return ret;
     }
 
     @Override
@@ -59,15 +45,17 @@ public class ArticleManagerImpl implements ArticleManager {
     }
 
     @Override
-    public Article createArticle(String guid, String title, String address) {
-        Article article = getArticleByGuid(guid);
+    @Transactional
+    public Article createArticle(String title, String address) {
+        Article article = getArticleByAddress(address);
 
         if (article == null) {
-            article = new Article(guid, title, address);
-
+            article = new Article(title, address);
             entityManager.persist(article);
-
-            entityManager.refresh(article);
+            article = getArticleByAddress(address);
+            System.out.println("Article: " + article);
+            // TODO do we need this?
+            // ! entityManager.refresh(article);
         }
 
         return article;
