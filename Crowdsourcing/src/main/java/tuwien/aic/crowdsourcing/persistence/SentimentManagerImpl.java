@@ -167,9 +167,9 @@ public class SentimentManagerImpl implements SentimentManager {
 
     @Override
     @SuppressWarnings("unchecked")
-    public Double getCompanySentiment(String companyName) {
+    public double getCompanySentiment(String companyName) {
 
-        Double ret = null;
+        double ret = 0;
 
         long count = 0;
         long errors = 0;
@@ -200,9 +200,9 @@ public class SentimentManagerImpl implements SentimentManager {
 
     @Override
     @SuppressWarnings("unchecked")
-    public Double getProductSentiment(String productName) {
+    public double getProductSentiment(String productName) {
 
-        Double ret = null;
+        double ret = 0;
 
         long count = 0;
         long errors = 0;
@@ -229,17 +229,6 @@ public class SentimentManagerImpl implements SentimentManager {
         }
 
         return ret;
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public List<MWTask> getActiveTasks() {
-
-        List<MWTask> tasks = entityManager.createQuery(
-                "SELECT t FROM mwTask t WHERE "
-                        + "t.taskState = TaskState.ACTIVE").getResultList();
-
-        return tasks;
     }
 
     @Override

@@ -28,6 +28,17 @@ public class TaskManagerImpl implements TaskManager {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
+    public List<MWTask> getActiveTasks() {
+
+        List<MWTask> tasks = entityManager.createQuery(
+                "SELECT t FROM mwTask t WHERE "
+                        + "t.taskState = TaskState.ACTIVE").getResultList();
+
+        return tasks;
+    }
+
+    @Override
     public int getResponseCount(String taskId) {
         int ret = 0;
 

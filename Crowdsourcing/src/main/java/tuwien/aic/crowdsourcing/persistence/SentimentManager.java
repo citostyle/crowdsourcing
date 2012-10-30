@@ -2,8 +2,6 @@ package tuwien.aic.crowdsourcing.persistence;
 
 import java.util.List;
 
-import tuwien.aic.crowdsourcing.persistence.entities.MWTask;
-
 public interface SentimentManager {
 
     void addCompanySentiment(String taskId, String workerId,
@@ -15,11 +13,9 @@ public interface SentimentManager {
     void addCorrelation(String taskId, String workerId, String companyName,
             String productName);
 
-    Double getCompanySentiment(String companyName);
+    double getCompanySentiment(String companyName);
 
-    Double getProductSentiment(String productName);
-
-    List<MWTask> getActiveTasks();
+    double getProductSentiment(String productName);
 
     List<String> getProductNames(String companyName);
 }

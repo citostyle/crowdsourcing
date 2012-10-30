@@ -15,6 +15,7 @@ import tuwien.aic.crowdsourcing.persistence.entities.TaskState;
 @Repository
 @Transactional
 public class ArticleManagerImpl implements ArticleManager {
+    
     @PersistenceContext
     private EntityManager entityManager = null;
 
@@ -45,7 +46,6 @@ public class ArticleManagerImpl implements ArticleManager {
     }
 
     @Override
-    @Transactional
     public Article createArticle(String title, String address) {
         Article article = getArticleByAddress(address);
 
@@ -53,10 +53,6 @@ public class ArticleManagerImpl implements ArticleManager {
             article = new Article(title, address);
             
             entityManager.persist(article);
-            
-            //TODO
-            article = getArticleByAddress(address);
-            System.out.println("Article: " + article);
             
             entityManager.refresh(article);
         }
