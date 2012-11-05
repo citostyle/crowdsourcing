@@ -4,16 +4,7 @@ import tuwien.aic.crowdsourcing.persistence.*;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import org.junit.*;
 import org.springframework.transaction.annotation.Transactional;
-import tuwien.aic.crowdsourcing.persistence.ArticleManager;
-import tuwien.aic.crowdsourcing.persistence.ArticleManagerImpl;
-import tuwien.aic.crowdsourcing.persistence.ProductManager;
-import tuwien.aic.crowdsourcing.persistence.ProductManagerImpl;
-import tuwien.aic.crowdsourcing.persistence.SentimentManager;
-import tuwien.aic.crowdsourcing.persistence.SentimentManagerImpl;
-import tuwien.aic.crowdsourcing.persistence.TaskManager;
-import tuwien.aic.crowdsourcing.persistence.TaskManagerImpl;
 import tuwien.aic.crowdsourcing.persistence.entities.Article;
 import tuwien.aic.crowdsourcing.persistence.entities.MWTask;
 import tuwien.aic.crowdsourcing.persistence.entities.TaskState;
@@ -26,25 +17,11 @@ public class DBTest {
     public DBTest() {
         
     }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-        
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-        
-    }
     
-    @Before
-    public void setUp() {
-        
-    }
-    
-    @After
     @Transactional
     public void tearDown() {
+        entityManager.createQuery("DELETE FROM Correlation").executeUpdate();
+        
         entityManager.createQuery("DELETE FROM CompanyRating").executeUpdate();
         entityManager.createQuery("DELETE FROM ProductRating").executeUpdate();
         
@@ -73,35 +50,62 @@ public class DBTest {
         Article article3 = 
             articleManager.getArticleByAddress(article1.getAddress());
         
-        Assert.assertNotNull(article1);
-        Assert.assertNotNull(article2);
-        Assert.assertNotNull(article3);
+        if (article1 != null) { System.err.println("ERROR!"); return; }
+        if (article2 != null) { System.err.println("ERROR!"); return; }
+        if (article3 != null) { System.err.println("ERROR!"); return; }
         
-        Assert.assertEquals(article1.getId(), article2.getId());
-        Assert.assertEquals(article1.getTitle(), article2.getTitle());
-        Assert.assertEquals(article1.getAddress(), article2.getAddress());
+        if (article1.getId() != article2.getId()) {
+            System.err.println("ERROR!");
+            return;
+        }
+        if (!article1.getTitle().equals(article2.getTitle())) {
+            System.err.println("ERROR!");
+            return;
+        }
+        if (!article1.getAddress().equals(article2.getAddress())) {
+            System.err.println("ERROR!");
+            return;
+        }
         
-        Assert.assertEquals(article1.getId(), article3.getId());
-        Assert.assertEquals(article1.getTitle(), article3.getTitle());
-        Assert.assertEquals(article1.getAddress(), article3.getAddress());
+        if (article1.getId() != article3.getId()) {
+            System.err.println("ERROR!");
+            return;
+        }
+        if (!article1.getTitle().equals(article3.getTitle())) {
+            System.err.println("ERROR!");
+            return;
+        }
+        if (!article1.getAddress().equals(article3.getAddress())) {
+            System.err.println("ERROR!");
+            return;
+        }
         
         MWTask task1 = articleManager.addTask(article3, "taskId3XYZ", "Test");
         
-        Assert.assertNotNull(task1);
-        Assert.assertNotNull(task1.getArticle());
+        if (task1 != null) { System.err.println("ERROR!"); return; }
         
-        Assert.assertEquals(article3.getId(), 
-                            task1.getArticle().getId());
+        if (task1.getArticle() != null) { 
+            System.err.println("ERROR!"); 
+            return;
+        }
         
-        Assert.assertEquals(article3.getTitle(), 
-                            task1.getArticle().getTitle());
+        if (article3.getId() != task1.getArticle().getId()) {
+            System.err.println("ERROR!");
+            return;
+        }
+        if (!article3.getTitle().equals(task1.getArticle().getTitle())) {
+            System.err.println("ERROR!");
+            return;
+        }
+        if (!article3.getAddress().equals(task1.getArticle().getAddress())) {
+            System.err.println("ERROR!");
+            return;
+        }
         
-        Assert.assertEquals(article3.getAddress(), 
-                            task1.getArticle().getAddress());
-        
-        Assert.assertEquals(article3.getId(), task1.getArticle().getId());
-        
-        Assert.assertEquals(0, taskManager.getResponseCount(task1.getTaskId()));
+        if (taskManager.getResponseCount(task1.getTaskId()) != 0) {
+            System.err.println("ERROR!");
+            return;
+        }
         
         List<MWTask> tasks = taskManager.getActiveTasks();
         
@@ -116,7 +120,10 @@ public class DBTest {
             }
         }
         
-        Assert.assertTrue(found);
+        if (!found) {
+            System.err.println("ERROR!");
+            return;
+        }
         
         found = false;
         
@@ -131,7 +138,10 @@ public class DBTest {
             }
         }
         
-        Assert.assertFalse(found);
+        if (found) {
+            System.err.println("ERROR!");
+            return;
+        }
         
         found = false;
         
@@ -146,14 +156,21 @@ public class DBTest {
             }
         }
         
-        Assert.assertTrue(found);
+        if (!found) {
+            System.err.println("ERROR!");
+            return;
+        }
         
-        Assert.assertEquals
-            (0.0, sentimentManager.getCompanySentiment("TestCompany"), 0.001);
+        if (sentimentManager.getCompanySentiment("TestCompany") != 0.0) {
+            System.err.println("ERROR!");
+            return;
+        }
         
-        Assert.assertEquals 
-            (0.0, sentimentManager.getProductSentiment("TestCompany",
-                                                       "TestProduct"), 0.001);
+        if (sentimentManager.getProductSentiment("TestCompany", 
+                                                 "TestProduct") != 0.0) {
+            System.err.println("ERROR!");
+            return;
+        }
         
         sentimentManager.addCompanySentiment(task1.getTaskId(), 
                                              "TestWorker1XYZ", 
@@ -166,14 +183,21 @@ public class DBTest {
                                              "TestProduct", 
                                              -5);
         
-        Assert.assertEquals
-            (5.0, sentimentManager.getCompanySentiment("TestCompany"), 0.001);
+        if (sentimentManager.getCompanySentiment("TestCompany") != 5.0) {
+            System.err.println("ERROR!");
+            return;
+        }
         
-        Assert.assertEquals 
-            (-5.0, sentimentManager.getProductSentiment("TestCompany",
-                                                        "TestProduct"), 0.001);
+        if (sentimentManager.getProductSentiment("TestCompany", 
+                                                 "TestProduct") != -5.0) {
+            System.err.println("ERROR!");
+            return;
+        }
         
-        Assert.assertEquals(1, productManager.getProductNames("TestCompany").size());
+        if (productManager.getProductNames("TestCompany").size() != 1) {
+            System.err.println("ERROR!");
+            return;
+        }
         
         productManager.addProduct("TestCompany",
                                   "TestProduct");
@@ -181,9 +205,15 @@ public class DBTest {
         List<String> products = 
             productManager.getProductNames("TestCompany");
         
-        Assert.assertEquals(1, products.size());
+        if (products.size() != 1) {
+            System.err.println("ERROR!");
+            return;
+        }
         
-        Assert.assertEquals("TestProduct", products.get(0));
+        if (!products.get(0).equals("TestProduct")) {
+            System.err.println("ERROR!");
+            return;
+        }
         
         productManager.addProduct("TestCompany",
                                   "TestProduct");
@@ -191,8 +221,16 @@ public class DBTest {
         List<String> products2 = 
             productManager.getProductNames("TestCompany");
         
-        Assert.assertEquals(1, products2.size());
+        if (products2.size() != 1) {
+            System.err.println("ERROR!");
+            return;
+        }
         
-        Assert.assertEquals("TestProduct", products2.get(0));
+        if (!products2.get(0).equals("TestProduct")) {
+            System.err.println("ERROR!");
+            return;
+        }
+        
+        System.out.println("SUCCESS!");
     }
 }

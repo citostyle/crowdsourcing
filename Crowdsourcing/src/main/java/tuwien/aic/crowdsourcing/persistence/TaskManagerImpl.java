@@ -22,9 +22,11 @@ public class TaskManagerImpl implements TaskManager {
     @SuppressWarnings("unchecked")
     public List<MWTask> getActiveTasks() {
 
-        List<MWTask> tasks = entityManager.createQuery(
+        List<MWTask> tasks = 
+            entityManager.createQuery(
                 "SELECT t FROM mwTask t WHERE " +
-                "t.taskState = TaskState.ACTIVE").getResultList();
+                "t.taskState = TaskState.ACTIVE")
+            .getResultList();
 
         return tasks;
     }
@@ -63,8 +65,9 @@ public class TaskManagerImpl implements TaskManager {
         MWTask ret = null;
 
         List<MWTask> tasks = entityManager
-                .createQuery("SELECT t FROM MWTask t " +
-                             "WHERE t.taskId = :taskId")
+                .createQuery(
+                        "SELECT t FROM MWTask t " +
+                        "WHERE t.taskId = :taskId")
                 .setParameter("taskId", taskId)
                 .getResultList();
 

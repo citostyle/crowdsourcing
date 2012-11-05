@@ -58,6 +58,7 @@ public class Product implements Serializable {
         this.company = company;
     }
 
+    @ElementCollection
     public Set<String> getSynonyms() {
         return synonyms;
     }

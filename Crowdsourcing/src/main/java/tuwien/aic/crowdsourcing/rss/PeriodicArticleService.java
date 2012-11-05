@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import tuwien.aic.crowdsourcing.persistence.ArticleManager;
+import tuwien.aic.crowdsourcing.persistence.DBTest;
 
 @Component
 public class PeriodicArticleService {
@@ -33,5 +34,11 @@ public class PeriodicArticleService {
         }
         // TODO add new articles to DB
         System.out.println(newArticles);
+        
+        DBTest test = new DBTest();
+        
+        test.testManagerMethods();
+        
+        test.tearDown();
     }
 }

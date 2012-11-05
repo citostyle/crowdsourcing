@@ -3,8 +3,12 @@ package tuwien.aic.crowdsourcing.persistence;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import tuwien.aic.crowdsourcing.persistence.entities.Company;
 
+@Repository
+@Transactional
 public class CompanyManagerImpl implements CompanyManager {
 
     @PersistenceContext

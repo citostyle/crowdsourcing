@@ -58,7 +58,8 @@ public class Company implements Serializable {
     public void setProducts(List<Product> products) {
         this.products = products;
     }
-
+    
+    @ElementCollection
     public Set<String> getSynonyms() {
         return synonyms;
     }

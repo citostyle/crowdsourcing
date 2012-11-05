@@ -35,7 +35,8 @@ public class ArticleManagerImpl implements ArticleManager {
 
         List<Article> articles = entityManager
                 .createQuery(
-                        "SELECT a FROM Article a WHERE a.address = :address")
+                        "SELECT a FROM Article a " +
+                        "WHERE a.address = :address")
                 .setParameter("address", address)
                 .getResultList();
 
