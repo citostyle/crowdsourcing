@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import tuwien.aic.crowdsourcing.persistence.CompanyManager;
 import tuwien.aic.crowdsourcing.persistence.ProductManager;
@@ -20,6 +21,7 @@ public class ProductService {
     @Autowired
     private ProductManager productManager;
 
+    @Transactional
     public void addProductSynonym(String companyName, String productName,
             String synonym) {
         Company company = companyManager.findByName(companyName);
@@ -39,6 +41,7 @@ public class ProductService {
         productManager.save(product);
     }
 
+    @Transactional
     public List<String> getProductNames(String companyName) {
         Company company = companyManager.findByName(companyName);
         if (company == null) {

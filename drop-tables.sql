@@ -1,0 +1,13 @@
+drop table if exists "testentity" cascade;
+drop table if exists "companyrating" cascade;
+drop table if exists "companyrecognition" cascade;
+drop table if exists "correlation" cascade;
+drop table if exists "article" cascade;
+drop table if exists "mwtask" cascade;
+drop table if exists "product" cascade;
+drop table if exists "worker" cascade;
+drop table if exists "productrating" cascade;
+drop table if exists "productrecognition" cascade;
+drop table if exists "company" cascade;
+drop table if exists "product_synonyms" cascade;
+drop table if exists "company_synonyms" cascade;

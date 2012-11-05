@@ -21,16 +21,16 @@ public class Product implements Serializable {
 
     private String name = "";
     private Company company = null;
-    private Set<String> synonyms = null;
+    private Set<String> synonyms = new HashSet<String>();
 
     public Product() {
-        this.synonyms = new HashSet<String>();
+
     }
 
     public Product(Company company, String name) {
         this.name = name;
-
         this.synonyms = new HashSet<String>();
+        this.company = company;
     }
 
     @Id

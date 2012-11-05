@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import tuwien.aic.crowdsourcing.persistence.CompanyManager;
 import tuwien.aic.crowdsourcing.persistence.CompanyRatingManager;
@@ -31,6 +32,7 @@ public class CompanyRatingService {
     @Autowired
     private CompanyRatingManager companyRatingManager;
 
+    @Transactional
     public void addCompanySentiment(String taskId, String workerId,
             String companyName, Integer result) {
         MWTask task = taskManager.findByTaskId(taskId);
@@ -64,6 +66,7 @@ public class CompanyRatingService {
         }
     }
 
+    @Transactional
     public double getCompanySentiment(String companyName) {
         long count = 0;
         long totalSum = 0;

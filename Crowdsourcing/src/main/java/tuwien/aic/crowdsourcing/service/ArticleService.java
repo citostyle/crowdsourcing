@@ -2,6 +2,7 @@ package tuwien.aic.crowdsourcing.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import tuwien.aic.crowdsourcing.persistence.ArticleManager;
 import tuwien.aic.crowdsourcing.persistence.TaskManager;
@@ -18,6 +19,7 @@ public class ArticleService {
     @Autowired
     private TaskManager taskManager;
 
+    @Transactional
     public Article createArticle(String title, String address) {
         Article article = articleManager.findByAddress(address);
         if (article == null) {
@@ -27,6 +29,7 @@ public class ArticleService {
         return article;
     }
 
+    @Transactional
     public MWTask addTask(Article article, String taskId, String type) {
         if (article == null) {
             throw new IllegalArgumentException(
