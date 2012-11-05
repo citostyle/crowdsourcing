@@ -1,19 +1,17 @@
 package tuwien.aic.crowdsourcing.persistence;
 
 import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import tuwien.aic.crowdsourcing.persistence.entities.Company;
 import tuwien.aic.crowdsourcing.persistence.entities.Product;
 
-public interface ProductManager {
+public interface ProductManager extends JpaRepository<Product, Long> {
 
-    Product addProduct(String companyName,
-                       String productName);
-    
-    void addProductSynonym(String companyName,
-                           String productName,
-                           String synonym);
-    
-    Product getProductByName(String companyName,
-                             String productName);
-    
-    List<String> getProductNames(String companyName);
+    Product findByName(String name);
+
+    Product findByCompanyAndName(Company company, String productName);
+
+    List<Product> findByCompany(Company company);
 }

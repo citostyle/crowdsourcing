@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,8 +18,6 @@ import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Component
 public class ArticleFetcher {
@@ -27,7 +27,8 @@ public class ArticleFetcher {
     @Autowired
     private ArticleManager articleManager;
 
-    private static final Logger logger = LoggerFactory.getLogger(ArticleFetcher.class);
+    private static final Logger logger = LoggerFactory
+            .getLogger(ArticleFetcher.class);
 
     public static void main(String[] args) {
 
@@ -47,9 +48,9 @@ public class ArticleFetcher {
                 @SuppressWarnings("unchecked")
                 List<SyndEntry> entries = feed.getEntries();
                 for (SyndEntry entry : entries) {
-                    System.out.println(articleManager.getArticleByAddress(entry
+                    System.out.println(articleManager.findByAddress(entry
                             .getUri()));
-                    if (articleManager.getArticleByAddress(entry.getUri()) == null) {
+                    if (articleManager.findByAddress(entry.getUri()) == null) {
                         ret.put(entry.getUri(), entry.getTitle());
                     }
                 }

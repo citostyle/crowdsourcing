@@ -5,7 +5,7 @@
 	version="1.0">
 	<persistence-unit name="crowdsourcing" transaction-type="RESOURCE_LOCAL">
             <!-- ??? --> <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
-            <validation-mode>AUTO</validation-mode>
+            <!-- validation-mode>AUTO</validation-mode -->
             <properties>
                 <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
                 <property name="hibernate.connection.driver_class" value="org.postgresql.Driver"/>

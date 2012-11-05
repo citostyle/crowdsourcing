@@ -1,46 +1,43 @@
 package tuwien.aic.crowdsourcing.persistence.entities;
 
 import java.io.Serializable;
-import javax.persistence.*;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 @Entity
 public class Worker implements Serializable {
 
     private static final long serialVersionUID = -2356181318350122835L;
-    
-    private long id = -1L;
 
+    private long id = -1L;
     private String workerId = "";
-    
     private String country = "";
-    
     private String city = "";
-    
     private Gender gender = Gender.UNKNOWN;
-    
     private int age = -1;
 
     public Worker() {
-        
+
     }
-    
+
     public Worker(String workerId) {
         this.workerId = workerId;
     }
-    
-    public Worker(String workerId, 
-                  String country, 
-                  String city,
-                  Gender gender, 
-                  int age) {
-        
+
+    public Worker(String workerId, String country, String city, Gender gender,
+            int age) {
+
         this.age = age;
         this.city = city;
         this.gender = gender;
         this.country = country;
         this.workerId = workerId;
     }
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public long getId() {
@@ -51,7 +48,7 @@ public class Worker implements Serializable {
         this.id = id;
     }
 
-    @Column(unique=true, nullable=false)
+    @Column(unique = true, nullable = false)
     public String getWorkerId() {
         return workerId;
     }
@@ -60,7 +57,7 @@ public class Worker implements Serializable {
         this.workerId = workerId;
     }
 
-    @Column(nullable=true)
+    @Column(nullable = true)
     public String getCountry() {
         return country;
     }
@@ -69,7 +66,7 @@ public class Worker implements Serializable {
         this.country = country;
     }
 
-    @Column(nullable=true)
+    @Column(nullable = true)
     public String getCity() {
         return city;
     }
@@ -78,7 +75,7 @@ public class Worker implements Serializable {
         this.city = city;
     }
 
-    @Column(nullable=true)
+    @Column(nullable = true)
     public Gender getGender() {
         return gender;
     }
@@ -87,7 +84,7 @@ public class Worker implements Serializable {
         this.gender = gender;
     }
 
-    @Column(nullable=true)
+    @Column(nullable = true)
     public int getAge() {
         return age;
     }

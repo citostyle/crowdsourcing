@@ -1,16 +1,15 @@
 package tuwien.aic.crowdsourcing.persistence;
 
 import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
 import tuwien.aic.crowdsourcing.persistence.entities.MWTask;
 import tuwien.aic.crowdsourcing.persistence.entities.TaskState;
 
-public interface TaskManager {
+public interface TaskManager extends JpaRepository<MWTask, Long> {
 
-    List<MWTask> getActiveTasks();
-    
-    public int getResponseCount(String taskId);
+    List<MWTask> findByTaskState(TaskState state);
 
-    public void setTaskState(String taskId, TaskState state);
-    
-    MWTask getTaskByTaskId(String taskId);
+    MWTask findByTaskId(String taskId);
 }

@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import tuwien.aic.crowdsourcing.persistence.ArticleManager;
+import tuwien.aic.crowdsourcing.service.ArticleService;
 
 @Component
 public class PeriodicArticleService {
@@ -18,8 +19,11 @@ public class PeriodicArticleService {
     private ArticleFetcher articleFetcher;
 
     @Autowired
+    private ArticleService articleService;
+
+    @Autowired
     private ArticleManager articleManager;
-    
+
     @PostConstruct
     public void postConstruct() {
         articleFetcher.addFeed("http://finance.yahoo.com/rss/usmarkets");
@@ -29,19 +33,8 @@ public class PeriodicArticleService {
     public void fetchArticles() {
         Map<String, String> newArticles = articleFetcher.getNewArticles();
         for (Entry<String, String> art : newArticles.entrySet()) {
-            articleManager.createArticle(art.getValue(), art.getKey());
+            articleService.createArticle(art.getValue(), art.getKey());
         }
-        // TODO add new articles to DB
-        System.out.println(newArticles);
-        
-        try {
-            articleManager.testManagerMethods();
-
-            articleManager.resetDatabase();
-        }
-        catch (Exception ex) {
-            System.err.println("ERROR:");
-            ex.printStackTrace();
-        }
+        System.out.println(articleManager.findAll());
     }
 }

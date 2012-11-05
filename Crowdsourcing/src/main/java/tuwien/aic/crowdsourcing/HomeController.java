@@ -12,7 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import tuwien.aic.crowdsourcing.persistence.dao.TestEntityDAO;
+import tuwien.aic.crowdsourcing.persistence.ArticleManager;
 
 /**
  * Handles requests for the application home page.
@@ -24,7 +24,7 @@ public class HomeController {
             .getLogger(HomeController.class);
 
     @Autowired
-    private TestEntityDAO testEntityDAO;
+    private ArticleManager articleManager;
 
     /**
      * Simply selects the home view to render by returning its name.
@@ -38,8 +38,6 @@ public class HomeController {
                 DateFormat.LONG, locale);
 
         String formattedDate = dateFormat.format(date);
-
-        testEntityDAO.findAll();
 
         model.addAttribute("serverTime", formattedDate);
 
