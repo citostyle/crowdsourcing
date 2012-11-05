@@ -55,6 +55,7 @@ public class DBTest {
     public void testManagerMethods() {
         TaskManager taskManager = new TaskManagerImpl();
         ArticleManager articleManager = new ArticleManagerImpl();
+        ProductManager productManager = new ProductManagerImpl();
         SentimentManager sentimentManager = new SentimentManagerImpl();
         
         Article article1 = 
@@ -145,7 +146,8 @@ public class DBTest {
             (0.0, sentimentManager.getCompanySentiment("TestCompany"), 0.001);
         
         Assert.assertEquals 
-            (0.0, sentimentManager.getProductSentiment("TestProduct"), 0.001);
+            (0.0, sentimentManager.getProductSentiment("TestCompany",
+                                                       "TestProduct"), 0.001);
         
         sentimentManager.addCompanySentiment(task1.getTaskId(), 
                                              "TestWorker1XYZ", 
@@ -154,6 +156,7 @@ public class DBTest {
         
         sentimentManager.addProductSentiment(task1.getTaskId(), 
                                              "TestWorker1XYZ", 
+                                             "TestCompany",
                                              "TestProduct", 
                                              -5);
         
@@ -161,32 +164,31 @@ public class DBTest {
             (5.0, sentimentManager.getCompanySentiment("TestCompany"), 0.001);
         
         Assert.assertEquals 
-            (-5.0, sentimentManager.getProductSentiment("TestProduct"), 0.001);
+            (-5.0, sentimentManager.getProductSentiment("TestCompany",
+                                                        "TestProduct"), 0.001);
         
-        Assert.assertEquals(0, sentimentManager.getProductNames("TestCompany").size());
+        Assert.assertEquals(0, productManager.getProductNames("TestCompany").size());
         
-        sentimentManager.addCorrelation(task1.getTaskId(), 
-                                        "TestWorker1XYZ", 
-                                        "TestCompany",
-                                        "TestProduct");
+        productManager.addProduct("TestCompany",
+                                  "TestProduct");
         
         List<String> products = 
-            sentimentManager.getProductNames("TestCompany");
+            productManager.getProductNames("TestCompany");
         
         Assert.assertEquals(1, products.size());
         
         Assert.assertEquals("TestProduct", products.get(0));
         
-        sentimentManager.addCorrelation(task1.getTaskId(), 
-                                        "TestWorker1XYZ", 
-                                        "TestCompany",
-                                        "TestProduct");
+        productManager.addProduct("TestCompany",
+                                  "TestProduct");
         
         List<String> products2 = 
-            sentimentManager.getProductNames("TestCompany");
+            productManager.getProductNames("TestCompany");
         
-        Assert.assertEquals(1, products2.size());
+        Assert.assertEquals(1, products.size());
         
-        Assert.assertEquals("TestProduct", products2.get(0));
+        Assert.assertEquals("TestProduct", products.get(0));
+        
+        
     }
 }

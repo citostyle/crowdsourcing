@@ -1,6 +1,9 @@
 package tuwien.aic.crowdsourcing.persistence.entities;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import javax.persistence.*;
 
 @Entity
@@ -11,13 +14,21 @@ public class Company implements Serializable {
     private long id = -1L;
 
     private String name = "";
+    
+    private Set<String> synonyms = null;
+    
+    private List<Product> products = null;
 
     public Company() {
-        
+        this.synonyms = 
+            new HashSet<String>();
     }
     
     public Company(String name) {
         this.name = name;
+        
+        this.synonyms = 
+            new HashSet<String>();
     }
     
     @Id
@@ -37,5 +48,28 @@ public class Company implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @OneToMany(mappedBy = "company")
+    public List<Product> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<Product> products) {
+        this.products = products;
+    }
+
+    public Set<String> getSynonyms() {
+        return synonyms;
+    }
+
+    public void setSynonyms(Set<String> synonyms) {
+        if (synonyms != null) {
+            this.synonyms = synonyms;
+        }
+        else {
+            this.synonyms = 
+                new HashSet<String>();
+        }
     }
 }

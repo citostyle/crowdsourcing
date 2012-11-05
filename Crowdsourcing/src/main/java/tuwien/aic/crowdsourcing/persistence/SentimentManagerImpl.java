@@ -1,20 +1,11 @@
 package tuwien.aic.crowdsourcing.persistence;
 
 import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
-import tuwien.aic.crowdsourcing.persistence.entities.Company;
-import tuwien.aic.crowdsourcing.persistence.entities.CompanyRating;
-import tuwien.aic.crowdsourcing.persistence.entities.Correlation;
-import tuwien.aic.crowdsourcing.persistence.entities.MWTask;
-import tuwien.aic.crowdsourcing.persistence.entities.Product;
-import tuwien.aic.crowdsourcing.persistence.entities.ProductRating;
-import tuwien.aic.crowdsourcing.persistence.entities.Worker;
+import tuwien.aic.crowdsourcing.persistence.entities.*;
 
 @Repository
 @Transactional
@@ -29,17 +20,25 @@ public class SentimentManagerImpl implements SentimentManager {
 
     @Override
     public void addCompanySentiment(String taskId, String workerId,
-            String companyName, Integer result) {
+                                    String companyName, Integer result) {
 
-        MWTask task = getTaskByTaskId(taskId);
+        TaskManager taskManager = 
+            new TaskManagerImpl();
+        
+        CompanyManager companyManager = 
+            new CompanyManagerImpl();
+        
+        MWTask task = 
+            taskManager.getTaskByTaskId(taskId);
 
         Worker worker = getWorkerByWorkerId(workerId);
 
-        Company company = getCompanyByName(companyName);
+        Company company = 
+            companyManager.getCompanyByName(companyName);
 
         if (task == null) {
-            throw new IllegalArgumentException(
-                    "The provided task does not exist!");
+            throw new IllegalArgumentException
+                ("The provided task does not exist!");
         }
 
         if (worker == null) {
@@ -72,60 +71,31 @@ public class SentimentManagerImpl implements SentimentManager {
     }
 
     @Override
-    public void addProductSentiment(String taskId, String workerId,
-            String productName, Integer result) {
+    public void addProductSentiment(String taskId, 
+                                    String workerId,
+                                    String companyName, 
+                                    String productName, Integer result) {
 
-        MWTask task = getTaskByTaskId(taskId);
-
-        Worker worker = getWorkerByWorkerId(workerId);
-
-        Product product = getProductByName(productName);
-
-        if (task == null) {
-            throw new IllegalArgumentException(
-                    "The provided task does not exist!");
-        }
-
-        if (worker == null) {
-            worker = new Worker(workerId);
-
-            entityManager.persist(worker);
-
-            entityManager.refresh(worker);
-        }
-
-        if (product == null) {
-            product = new Product(productName);
-
-            entityManager.persist(product);
-
-            entityManager.refresh(product);
-        }
-
-        ProductRating rating = getProductRating(task, worker, product);
-
-        if (rating == null) {
-            rating = new ProductRating(task, worker, product, result);
-
-            entityManager.persist(rating);
-        } else {
-            rating.setRatingValue(result);
-
-            entityManager.merge(rating);
-        }
-    }
-
-    @Override
-    public void addCorrelation(String taskId, String workerId,
-            String companyName, String productName) {
-
-        MWTask task = getTaskByTaskId(taskId);
+        TaskManager taskManager = 
+            new TaskManagerImpl();
+        
+        CompanyManager companyManager = 
+            new CompanyManagerImpl();
+        
+        ProductManager productManager = 
+            new ProductManagerImpl();
+        
+        MWTask task = 
+            taskManager.getTaskByTaskId(taskId);
 
         Worker worker = getWorkerByWorkerId(workerId);
 
-        Company company = getCompanyByName(companyName);
+        Company company = 
+            companyManager.getCompanyByName(companyName);
 
-        Product product = getProductByName(productName);
+        Product product = 
+            productManager.getProductByName(companyName,
+                                            productName);
 
         if (task == null) {
             throw new IllegalArgumentException(
@@ -149,19 +119,25 @@ public class SentimentManagerImpl implements SentimentManager {
         }
 
         if (product == null) {
-            product = new Product(productName);
+            product = new Product(company,
+                                  productName);
 
             entityManager.persist(product);
 
             entityManager.refresh(product);
         }
 
-        Correlation correlation = getCorrelation(task, worker, company, product);
+        ProductRating rating = getProductRating(task, worker, product);
 
-        if (correlation == null) {
-            correlation = new Correlation(task, worker, company, product);
+        if (rating == null) {
+            rating = new ProductRating(task, worker, product, result);
 
-            entityManager.persist(correlation);
+            entityManager.persist(rating);
+        } 
+        else {
+            rating.setRatingValue(result);
+
+            entityManager.merge(rating);
         }
     }
 
@@ -177,14 +153,16 @@ public class SentimentManagerImpl implements SentimentManager {
 
         List<CompanyRating> ratings = entityManager
                 .createQuery(
-                        "SELECT r FROM CompanyRating r "
-                                + "WHERE r.company.name = :companyName")
-                .setParameter("companyName", companyName).getResultList();
+                        "SELECT r FROM CompanyRating r " +
+                        "WHERE r.company.name = :companyName")
+                .setParameter("companyName", companyName)
+                .getResultList();
 
         for (CompanyRating rating : ratings) {
             if (rating.getRatingValue() != null) {
                 totalSum += rating.getRatingValue();
-            } else {
+            } 
+            else {
                 errors++;
             }
 
@@ -200,7 +178,8 @@ public class SentimentManagerImpl implements SentimentManager {
 
     @Override
     @SuppressWarnings("unchecked")
-    public double getProductSentiment(String productName) {
+    public double getProductSentiment(String companyName,
+                                      String productName) {
 
         double ret = 0;
 
@@ -210,14 +189,18 @@ public class SentimentManagerImpl implements SentimentManager {
 
         List<ProductRating> ratings = entityManager
                 .createQuery(
-                        "SELECT r FROM ProductRating r "
-                                + "WHERE r.product.name = :productName")
-                .setParameter("productName", productName).getResultList();
+                        "SELECT r FROM ProductRating r " +
+                        "WHERE r.product.name = :productName AND " +
+                        "      r.product.company.name = :companyName")
+                .setParameter("companyName", companyName)
+                .setParameter("productName", productName)
+                .getResultList();
 
         for (ProductRating rating : ratings) {
             if (rating.getRatingValue() != null) {
                 totalSum += rating.getRatingValue();
-            } else {
+            }
+            else {
                 errors++;
             }
 
@@ -226,36 +209,6 @@ public class SentimentManagerImpl implements SentimentManager {
 
         if ((count - errors) > 0) {
             ret = (double) totalSum / (double) (count - errors);
-        }
-
-        return ret;
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public List<String> getProductNames(String companyName) {
-
-        List<String> ret = entityManager
-                .createQuery(
-                        "SELECT DISTINCT p.name FROM Product p "
-                                + "JOIN Correlation c JOIN Company c2 "
-                                + "WHERE c2.name = :companyName "
-                                + "ORDER BY p.name")
-                .setParameter("companyName", companyName).getResultList();
-
-        return ret;
-    }
-
-    @SuppressWarnings("unchecked")
-    private MWTask getTaskByTaskId(String taskId) {
-        MWTask ret = null;
-
-        List<MWTask> tasks = entityManager
-                .createQuery("SELECT t FROM MWTask t WHERE t.taskId = :taskId")
-                .setParameter("taskId", taskId).getResultList();
-
-        if (!tasks.isEmpty()) {
-            ret = tasks.get(0);
         }
 
         return ret;
@@ -278,40 +231,9 @@ public class SentimentManagerImpl implements SentimentManager {
     }
 
     @SuppressWarnings("unchecked")
-    private Company getCompanyByName(String companyName) {
-        Company ret = null;
-
-        List<Company> companies = entityManager
-                .createQuery(
-                        "SELECT c FROM Company c WHERE c.name = :companyName")
-                .setParameter("companyName", companyName).getResultList();
-
-        if (!companies.isEmpty()) {
-            ret = companies.get(0);
-        }
-
-        return ret;
-    }
-
-    @SuppressWarnings("unchecked")
-    private Product getProductByName(String productName) {
-        Product ret = null;
-
-        List<Product> products = entityManager
-                .createQuery(
-                        "SELECT p FROM Product p WHERE p.name = :productName")
-                .setParameter("productName", productName).getResultList();
-
-        if (!products.isEmpty()) {
-            ret = products.get(0);
-        }
-
-        return ret;
-    }
-
-    @SuppressWarnings("unchecked")
-    private CompanyRating getCompanyRating(MWTask task, Worker worker,
-            Company company) {
+    private CompanyRating getCompanyRating(MWTask task, 
+                                           Worker worker,
+                                           Company company) {
 
         CompanyRating ret = null;
 
@@ -323,7 +245,8 @@ public class SentimentManagerImpl implements SentimentManager {
                                 + "r.company.id = :companyId")
                 .setParameter("taskId", task.getId())
                 .setParameter("workerId", worker.getId())
-                .setParameter("companyId", company.getId()).getResultList();
+                .setParameter("companyId", company.getId())
+                .getResultList();
 
         if (!ratings.isEmpty()) {
             ret = ratings.get(0);
@@ -333,8 +256,9 @@ public class SentimentManagerImpl implements SentimentManager {
     }
 
     @SuppressWarnings("unchecked")
-    private ProductRating getProductRating(MWTask task, Worker worker,
-            Product product) {
+    private ProductRating getProductRating(MWTask task, 
+                                           Worker worker,
+                                           Product product) {
 
         ProductRating ret = null;
 
@@ -346,35 +270,11 @@ public class SentimentManagerImpl implements SentimentManager {
                                 + "r.product.id = :productId")
                 .setParameter("taskId", task.getId())
                 .setParameter("workerId", worker.getId())
-                .setParameter("productId", product.getId()).getResultList();
+                .setParameter("productId", product.getId())
+                .getResultList();
 
         if (!ratings.isEmpty()) {
             ret = ratings.get(0);
-        }
-
-        return ret;
-    }
-
-    @SuppressWarnings("unchecked")
-    private Correlation getCorrelation(MWTask task, Worker worker,
-            Company company, Product product) {
-
-        Correlation ret = null;
-
-        List<Correlation> correlations = entityManager
-                .createQuery(
-                        "SELECT c FROM Correlation c WHERE "
-                                + "c.mwTask.id = :taskId AND "
-                                + "c.worker.id = :workerId AND "
-                                + "c.company.id = :companyId AND "
-                                + "c.product.id = :productId")
-                .setParameter("taskId", task.getId())
-                .setParameter("workerId", worker.getId())
-                .setParameter("companyId", company.getId())
-                .setParameter("productId", product.getId()).getResultList();
-
-        if (!correlations.isEmpty()) {
-            ret = correlations.get(0);
         }
 
         return ret;

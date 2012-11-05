@@ -36,7 +36,8 @@ public class ArticleManagerImpl implements ArticleManager {
         List<Article> articles = entityManager
                 .createQuery(
                         "SELECT a FROM Article a WHERE a.address = :address")
-                .setParameter("address", address).getResultList();
+                .setParameter("address", address)
+                .getResultList();
 
         if (!articles.isEmpty()) {
             ret = articles.get(0);
@@ -64,8 +65,8 @@ public class ArticleManagerImpl implements ArticleManager {
     public MWTask addTask(Article article, String taskId, String type) {
 
         if (article == null) {
-            throw new IllegalArgumentException(
-                    "The argument 'article' is not allowed to be NULL!");
+            throw new IllegalArgumentException
+                ("The argument 'article' is not allowed to be NULL!");
         }
 
         MWTask ret = new MWTask(article, taskId, type, TaskState.ACTIVE);
