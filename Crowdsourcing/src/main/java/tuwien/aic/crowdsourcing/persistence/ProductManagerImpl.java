@@ -13,7 +13,7 @@ import tuwien.aic.crowdsourcing.persistence.entities.Product;
 public class ProductManagerImpl implements ProductManager {
 
     @PersistenceContext
-    private EntityManager entityManager = null;
+    private EntityManager entityManager;
 
     @Override
     public Product addProduct(String companyName, String productName) {

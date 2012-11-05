@@ -12,7 +12,7 @@ import tuwien.aic.crowdsourcing.persistence.entities.*;
 public class SentimentManagerImpl implements SentimentManager {
 
     @PersistenceContext
-    private EntityManager entityManager = null;
+    private EntityManager entityManager;
 
     public SentimentManagerImpl() {
 

@@ -12,7 +12,7 @@ import tuwien.aic.crowdsourcing.persistence.entities.*;
 public class TaskManagerImpl implements TaskManager {
 
     @PersistenceContext
-    private EntityManager entityManager = null;
+    private EntityManager entityManager;
 
     public TaskManagerImpl() {
 

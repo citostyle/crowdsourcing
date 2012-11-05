@@ -12,7 +12,7 @@ import tuwien.aic.crowdsourcing.persistence.entities.Company;
 public class CompanyManagerImpl implements CompanyManager {
 
     @PersistenceContext
-    private EntityManager entityManager = null;
+    private EntityManager entityManager;
 
     @Override
     public void addCompanySynonym(String companyName, String synonym) {

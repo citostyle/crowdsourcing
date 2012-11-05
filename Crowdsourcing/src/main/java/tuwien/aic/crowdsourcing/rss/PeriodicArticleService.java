@@ -10,7 +10,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import tuwien.aic.crowdsourcing.persistence.ArticleManager;
-import tuwien.aic.crowdsourcing.persistence.DBTest;
 
 @Component
 public class PeriodicArticleService {
@@ -20,7 +19,7 @@ public class PeriodicArticleService {
 
     @Autowired
     private ArticleManager articleManager;
-
+    
     @PostConstruct
     public void postConstruct() {
         articleFetcher.addFeed("http://finance.yahoo.com/rss/usmarkets");
@@ -35,10 +34,14 @@ public class PeriodicArticleService {
         // TODO add new articles to DB
         System.out.println(newArticles);
         
-        DBTest test = new DBTest();
-        
-        test.testManagerMethods();
-        
-        test.tearDown();
+        try {
+            articleManager.testManagerMethods();
+
+            articleManager.resetDatabase();
+        }
+        catch (Exception ex) {
+            System.err.println("ERROR:");
+            ex.printStackTrace();
+        }
     }
 }

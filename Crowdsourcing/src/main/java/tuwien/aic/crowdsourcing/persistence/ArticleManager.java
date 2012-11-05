@@ -15,4 +15,10 @@ public interface ArticleManager {
     public MWTask addTask(Article article, 
                           String taskId, 
                           String type);
+    
+    // TODO Remove
+    void resetDatabase();
+    
+    // TODO Remove
+    void testManagerMethods();
 }

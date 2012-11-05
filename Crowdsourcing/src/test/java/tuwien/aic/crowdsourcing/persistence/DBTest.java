@@ -1,19 +1,10 @@
 package tuwien.aic.crowdsourcing.persistence;
 
-import tuwien.aic.crowdsourcing.persistence.*;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.junit.*;
 import org.springframework.transaction.annotation.Transactional;
-import tuwien.aic.crowdsourcing.persistence.ArticleManager;
-import tuwien.aic.crowdsourcing.persistence.ArticleManagerImpl;
-import tuwien.aic.crowdsourcing.persistence.ProductManager;
-import tuwien.aic.crowdsourcing.persistence.ProductManagerImpl;
-import tuwien.aic.crowdsourcing.persistence.SentimentManager;
-import tuwien.aic.crowdsourcing.persistence.SentimentManagerImpl;
-import tuwien.aic.crowdsourcing.persistence.TaskManager;
-import tuwien.aic.crowdsourcing.persistence.TaskManagerImpl;
 import tuwien.aic.crowdsourcing.persistence.entities.Article;
 import tuwien.aic.crowdsourcing.persistence.entities.MWTask;
 import tuwien.aic.crowdsourcing.persistence.entities.TaskState;
@@ -21,7 +12,7 @@ import tuwien.aic.crowdsourcing.persistence.entities.TaskState;
 public class DBTest {
     
     @PersistenceContext
-    private EntityManager entityManager = null;
+    private EntityManager entityManager;
 
     public DBTest() {
         
@@ -57,6 +48,7 @@ public class DBTest {
         entityManager.createQuery("DELETE FROM Product").executeUpdate();
     }
     
+    //@Test
     @Transactional
     public void testManagerMethods() {
         TaskManager taskManager = new TaskManagerImpl();
