@@ -78,11 +78,19 @@ public class ProductRatingService {
     }
 
     @Transactional
-    public double getProductSentiment(String productName) {
+    public double getProductSentiment(String companyName, String productName) {
         long count = 0;
         long totalSum = 0;
 
-        Product product = productManager.findByName(productName);
+        Company company = companyManager.findByName(companyName);
+
+        if (company == null) {
+            company = new Company(companyName);
+            company = companyManager.save(company);
+        }
+
+        Product product = productManager.findByCompanyAndName(company,
+                productName);
         if (product == null) {
             throw new IllegalArgumentException("No such product: "
                     + productName);

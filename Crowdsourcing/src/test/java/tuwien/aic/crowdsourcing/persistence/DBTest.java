@@ -10,16 +10,52 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import tuwien.aic.crowdsourcing.persistence.entities.Article;
+import tuwien.aic.crowdsourcing.persistence.entities.Company;
 import tuwien.aic.crowdsourcing.persistence.entities.MWTask;
+import tuwien.aic.crowdsourcing.persistence.entities.Product;
 import tuwien.aic.crowdsourcing.persistence.entities.TaskState;
+import tuwien.aic.crowdsourcing.service.ArticleService;
+import tuwien.aic.crowdsourcing.service.CompanyRatingService;
+import tuwien.aic.crowdsourcing.service.ProductRatingService;
+import tuwien.aic.crowdsourcing.service.ProductService;
 
+@Component
 public class DBTest {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Autowired
+    private ArticleManager articleManager;
+
+    @Autowired
+    private ArticleService articleService;
+
+    @Autowired
+    private TaskManager taskManager;
+
+    @Autowired
+    private CompanyRatingManager companyRatingManager;
+
+    @Autowired
+    private CompanyManager companyManager;
+
+    @Autowired
+    private ProductService productService;
+
+    @Autowired
+    private CompanyRatingService companyRatingService;
+
+    @Autowired
+    private ProductManager productManager;
+
+    @Autowired
+    private ProductRatingService productRatingService;
 
     public DBTest() {
 
@@ -60,18 +96,10 @@ public class DBTest {
     // @Test
     @Transactional
     public void testManagerMethods() {
-        TaskManager taskManager = new TaskManagerImpl();
-        ArticleManager articleManager = new ArticleManagerImpl();
-        ProductManager productManager = new ProductManagerImpl();
-        SentimentManager sentimentManager = new SentimentManagerImpl();
-
-        Article article1 = articleManager.createArticle("Test1",
+        Article article1 = articleService.createArticle("Test1",
                 "http://test.test");
-
-        Article article2 = articleManager.getArticleById(article1.getId());
-
-        Article article3 = articleManager.getArticleByAddress(article1
-                .getAddress());
+        Article article2 = articleManager.findOne(article1.getId());
+        Article article3 = articleManager.findByAddress(article1.getAddress());
 
         Assert.assertNotNull(article1);
         Assert.assertNotNull(article2);
@@ -85,7 +113,7 @@ public class DBTest {
         Assert.assertEquals(article1.getTitle(), article3.getTitle());
         Assert.assertEquals(article1.getAddress(), article3.getAddress());
 
-        MWTask task1 = articleManager.addTask(article3, "taskId3XYZ", "Test");
+        MWTask task1 = articleService.addTask(article3, "taskId3XYZ", "Test");
 
         Assert.assertNotNull(task1);
         Assert.assertNotNull(task1.getArticle());
@@ -99,9 +127,7 @@ public class DBTest {
 
         Assert.assertEquals(article3.getId(), task1.getArticle().getId());
 
-        Assert.assertEquals(0, taskManager.getResponseCount(task1.getTaskId()));
-
-        List<MWTask> tasks = taskManager.getActiveTasks();
+        List<MWTask> tasks = taskManager.findByTaskState(TaskState.ACTIVE);
 
         boolean found = false;
 
@@ -118,7 +144,7 @@ public class DBTest {
 
         found = false;
 
-        taskManager.setTaskState(task1.getTaskId(), TaskState.FINISHED);
+        task1.setTaskState(TaskState.FINISHED);
 
         for (MWTask task : tasks) {
             if ((task.getId() == task1.getId())
@@ -133,7 +159,7 @@ public class DBTest {
 
         found = false;
 
-        taskManager.setTaskState(task1.getTaskId(), TaskState.ACTIVE);
+        task1.setTaskState(TaskState.ACTIVE);
 
         for (MWTask task : tasks) {
             if ((task.getId() == task1.getId())
@@ -146,38 +172,41 @@ public class DBTest {
 
         Assert.assertTrue(found);
 
-        Assert.assertEquals(0.0,
-                sentimentManager.getCompanySentiment("TestCompany"), 0.001);
+        Company company = new Company("TestCompany");
+        company = companyManager.save(company);
+        Product product = productService.addProduct("TestProduct",
+                "TestCompany");
 
-        Assert.assertEquals(0.0, sentimentManager.getProductSentiment(
+        Assert.assertEquals(0.0,
+                companyRatingService.getCompanySentiment("TestCompany"), 0.001);
+
+        Assert.assertEquals(0.0, productRatingService.getProductSentiment(
                 "TestCompany", "TestProduct"), 0.001);
 
-        sentimentManager.addCompanySentiment(task1.getTaskId(),
+        companyRatingService.addCompanySentiment(task1.getTaskId(),
                 "TestWorker1XYZ", "TestCompany", 5);
 
-        sentimentManager.addProductSentiment(task1.getTaskId(),
+        productRatingService.addProductSentiment(task1.getTaskId(),
                 "TestWorker1XYZ", "TestCompany", "TestProduct", -5);
 
         Assert.assertEquals(5.0,
-                sentimentManager.getCompanySentiment("TestCompany"), 0.001);
+                companyRatingService.getCompanySentiment("TestCompany"), 0.001);
 
-        Assert.assertEquals(-5.0, sentimentManager.getProductSentiment(
+        Assert.assertEquals(-5.0, productRatingService.getProductSentiment(
                 "TestCompany", "TestProduct"), 0.001);
 
-        Assert.assertEquals(1, productManager.getProductNames("TestCompany")
+        Assert.assertEquals(1, productService.getProductNames("TestCompany")
                 .size());
 
-        productManager.addProduct("TestCompany", "TestProduct");
-
-        List<String> products = productManager.getProductNames("TestCompany");
+        List<String> products = productService.getProductNames("TestCompany");
 
         Assert.assertEquals(1, products.size());
 
         Assert.assertEquals("TestProduct", products.get(0));
 
-        productManager.addProduct("TestCompany", "TestProduct");
+        productService.addProduct("TestCompany", "TestProduct");
 
-        List<String> products2 = productManager.getProductNames("TestCompany");
+        List<String> products2 = productService.getProductNames("TestCompany");
 
         Assert.assertEquals(1, products2.size());
 

@@ -57,4 +57,21 @@ public class ProductService {
         return ret;
     }
 
+    @Transactional
+    public Product addProduct(String productName, String companyName) {
+        Company company = companyManager.findByName(companyName);
+        if (company == null) {
+            company = new Company(companyName);
+            company = companyManager.save(company);
+        }
+
+        Product p = new Product(company, productName);
+        p = productManager.save(p);
+
+        company.getProducts().add(p);
+        companyManager.save(company);
+
+        return p;
+    }
+
 }

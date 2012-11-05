@@ -17,6 +17,8 @@ public class SetupService {
 
     @Autowired
     private ProductManager productManager;
+    @Autowired
+    private ProductService productService;
 
     @Transactional
     public void setupTestObjects() {
@@ -33,12 +35,10 @@ public class SetupService {
         Product product1 = productManager.findByName("Office");
         Product product2 = productManager.findByName("Mac");
         if (product1 == null) {
-            product1 = new Product(company1, "Office");
-            product1 = productManager.save(product1);
+            product1 = productService.addProduct("MSFT", "Office");
         }
         if (product2 == null) {
-            product2 = new Product(company2, "Mac");
-            product2 = productManager.save(product2);
+            product1 = productService.addProduct("AAPL", "Mac");
         }
         company1.getProducts().add(product1);
         company2.getProducts().add(product2);
