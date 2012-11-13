@@ -65,8 +65,8 @@
 			value="jdbc:postgresql://localhost:5432/crowdsourcing" />
 		<beans:property name="username" value="crowdsourcing" />
 		<beans:property name="password" value="crowdsourcing" />
-		<beans:property name="initialSize" value="5" />
-		<beans:property name="maxActive" value="10" />
+		<beans:property name="initialSize" value="3" />
+		<beans:property name="maxActive" value="5" />
 	</beans:bean>
 
 	<beans:bean id="transactionManager"
