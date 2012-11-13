@@ -2,10 +2,9 @@ package tuwien.aic.crowdsourcing.rss;
 
 import java.net.URL;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +21,8 @@ import com.sun.syndication.io.XmlReader;
 @Component
 public class ArticleFetcher {
 
-    private Set<String> urls = new HashSet<String>();
+    private Map<String, List<String>> urls =
+            new HashMap<String, List<String>>();
 
     @Autowired
     private ArticleManager articleManager;
@@ -34,24 +34,25 @@ public class ArticleFetcher {
 
     }
 
-    public void addFeed(String url) {
-        urls.add(url);
+    public void addFeed(String url, List<String> toIgnore) {
+        urls.put(url, toIgnore);
     }
 
     public Map<String, String> getNewArticles() {
         Map<String, String> ret = new HashMap<String, String>();
-        for (String url : urls) {
+        for (Entry<String, List<String>> entry : urls.entrySet()) {
             try {
+                String url = entry.getKey();
                 URL feedSource = new URL(url);
                 SyndFeedInput input = new SyndFeedInput();
                 SyndFeed feed = input.build(new XmlReader(feedSource));
                 @SuppressWarnings("unchecked")
                 List<SyndEntry> entries = feed.getEntries();
-                for (SyndEntry entry : entries) {
-                    System.out.println(articleManager.findByAddress(entry
+                for (SyndEntry synd : entries) {
+                    System.out.println(articleManager.findByAddress(synd
                             .getUri()));
-                    if (articleManager.findByAddress(entry.getUri()) == null) {
-                        ret.put(entry.getUri(), entry.getTitle());
+                    if (articleManager.findByAddress(synd.getUri()) == null) {
+                        ret.put(synd.getUri(), synd.getTitle());
                     }
                 }
             } catch (Exception e) {
@@ -63,18 +64,19 @@ public class ArticleFetcher {
 
     public Map<String, String> getOldArticles() {
         Map<String, String> ret = new HashMap<String, String>();
-        for (String url : urls) {
+        for (Entry<String, List<String>> entry : urls.entrySet()) {
             try {
+                String url = entry.getKey();
                 URL feedSource = new URL(url);
                 SyndFeedInput input = new SyndFeedInput();
                 SyndFeed feed = input.build(new XmlReader(feedSource));
                 @SuppressWarnings("unchecked")
                 List<SyndEntry> entries = feed.getEntries();
-                for (SyndEntry entry : entries) {
-                    System.out.println(articleManager.findByAddress(entry
+                for (SyndEntry synd : entries) {
+                    System.out.println(articleManager.findByAddress(synd
                             .getUri()));
-                    if (articleManager.findByAddress(entry.getUri()) != null) {
-                        ret.put(entry.getUri(), entry.getTitle());
+                    if (articleManager.findByAddress(synd.getUri()) != null) {
+                        ret.put(synd.getUri(), synd.getTitle());
                     }
                 }
             } catch (Exception e) {

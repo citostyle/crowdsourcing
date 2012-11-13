@@ -1,5 +1,6 @@
 package tuwien.aic.crowdsourcing.rss;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
@@ -37,7 +38,8 @@ public class PeriodicArticleService {
 
     @PostConstruct
     public void postConstruct() {
-        articleFetcher.addFeed("http://finance.yahoo.com/rss/usmarkets");
+        articleFetcher.addFeed("http://finance.yahoo.com/rss/usmarkets",
+                Arrays.asList("yahoo"));
     }
 
     private int counter = 0;
@@ -53,8 +55,8 @@ public class PeriodicArticleService {
         }
         Map<String, String> newArticles = articleFetcher.getNewArticles();
         for (Entry<String, String> art : newArticles.entrySet()) {
-            Article art2 = articleService.createArticle(art.getValue(),
-                    art.getKey());
+            Article art2 =
+                    articleService.createArticle(art.getValue(), art.getKey());
             counter = new Random().nextInt();
             articleService.addTask(art2, "id" + counter, "questions");
             companyRatingService.addCompanySentiment("id" + counter, "worker1",
@@ -62,8 +64,8 @@ public class PeriodicArticleService {
         }
         Map<String, String> oldArticles = articleFetcher.getOldArticles();
         for (Entry<String, String> art : oldArticles.entrySet()) {
-            Article art2 = articleService.createArticle(art.getValue(),
-                    art.getKey());
+            Article art2 =
+                    articleService.createArticle(art.getValue(), art.getKey());
             counter = new Random().nextInt();
             articleService.addTask(art2, "id" + counter, "questions");
             companyRatingService.addCompanySentiment("id" + counter, "worker1",
