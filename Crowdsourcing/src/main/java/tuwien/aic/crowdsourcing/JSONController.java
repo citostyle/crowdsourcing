@@ -1,17 +1,26 @@
 package tuwien.aic.crowdsourcing;
 
+import java.util.LinkedList;
+import java.util.List;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import tuwien.aic.crowdsourcing.persistence.CompanyManager;
+import tuwien.aic.crowdsourcing.persistence.ProductManager;
 import tuwien.aic.crowdsourcing.persistence.entities.Company;
+import tuwien.aic.crowdsourcing.persistence.entities.Product;
 import tuwien.aic.crowdsourcing.persistence.entities.TestEntity;
 import tuwien.aic.crowdsourcing.web.JsonCompany;
 import tuwien.aic.crowdsourcing.web.JsonList;
+import tuwien.aic.crowdsourcing.web.JsonProduct;
 
 /**
  * Handles requests for the application home page.
@@ -21,7 +30,13 @@ public class JSONController {
 
     private static final Logger logger = LoggerFactory
             .getLogger(JSONController.class);
-
+	
+	@Autowired
+	private CompanyManager companyManager;
+	
+	@Autowired
+	private ProductManager productManager;
+    
     /**
      * Simply selects the home view to render by returning its name.
      */
@@ -52,8 +67,14 @@ public class JSONController {
 
         logger.info("Generating JSON response: List of all companies");
 
+		List<JsonCompany> list = new LinkedList<JsonCompany>();
+		
+		for(Company company : companyManager.findAll())
+		{
+			list.add(new JsonCompany(company));
+		}
         
-        return new JsonList(true, false);
+        return new JsonList(list, null);
     }
     
     /**
@@ -65,8 +86,12 @@ public class JSONController {
 
         logger.info("Generating JSON response: List of all products");
 
-        
-        return new JsonList(false, true);
+		List<JsonProduct> list = new LinkedList<JsonProduct>();
+		
+		for(Product product : productManager.findAll())
+			list.add(new JsonProduct(product));
+
+        return new JsonList(null, list);
     }
     
     /**
@@ -78,7 +103,15 @@ public class JSONController {
 
         logger.info("Generating JSON response: List of all companies and products");
 
+		List<JsonCompany> listC = new LinkedList<JsonCompany>();
+		List<JsonProduct> listP = new LinkedList<JsonProduct>();
+		
+		for(Company company : companyManager.findAll())
+			listC.add(new JsonCompany(company));
+		
+		for(Product product : productManager.findAll())
+			listP.add(new JsonProduct(product));
         
-        return new JsonList(true, true);
+        return new JsonList(listC, listP);
     }
 }
