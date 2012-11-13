@@ -1,18 +1,13 @@
 package tuwien.aic.crowdsourcing;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 import java.util.LinkedList;
 import java.util.List;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -42,6 +37,9 @@ public class JSONController {
 	
 	@Autowired
 	private ProductManager productManager;
+	
+	@Autowired
+	private ApiService apiService;
     
     /**
      * Simply selects the home view to render by returning its name.
