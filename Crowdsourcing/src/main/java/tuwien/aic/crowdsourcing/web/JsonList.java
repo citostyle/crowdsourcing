@@ -16,89 +16,20 @@ import tuwien.aic.crowdsourcing.persistence.entities.Company;
 import tuwien.aic.crowdsourcing.persistence.entities.Product;
 
 @JsonSerialize(include=Inclusion.NON_NULL)
-public class JsonList {
-	@JsonIgnore
-	private static final Logger logger = LoggerFactory.getLogger(JsonList.class);
+public class JsonList {	
+	private final List<JsonCompany> companies;
+	private final List<JsonProduct> products;
 	
-	@Autowired
-	@JsonIgnore
-	private CompanyManager companyManager;
-	
-	@Autowired
-	@JsonIgnore
-	private ProductManager productManager;
-	
-	@JsonIgnore
-	private final boolean showCompanies;
-	@JsonIgnore
-	private final boolean showProducts;
-	
-	public JsonList(boolean showCompanies, boolean showProducts) {
-		this.showCompanies = showCompanies;
-		this.showProducts = showProducts;
+	public JsonList(List<JsonCompany> companies, List<JsonProduct> products) {
+		this.companies = companies;
+		this.products = products;
 	}
 	
-	/**
-	 * Returns a list of all Companies as json-wrapper-objects, if showCompanies is true 
-	 */
 	public List<JsonCompany> getCompanies() {
-		if(!showCompanies)
-			return null;
-		
-		List<JsonCompany> list = new LinkedList<JsonCompany>();
-		
-		for(Company company : companyManager.findAll())
-		{
-			list.add(new JsonCompany(company));
-		}
-		
-		return list;
-		/*
-        Company company = new Company();
-        company.setName("Foobar");
-        company.setId(25L);
-        company.getSynonyms().add("foo");
-        company.getSynonyms().add("bar");
-        company.getSynonyms().add("baz");
-        
-        JsonCompany c = new JsonCompany(company);
-        List<JsonCompany> l = new LinkedList<JsonCompany>();
-        l.add(c);
-        return l;*/
+		return companies;
 	}
-	
-	/**
-	 * Returns a list of all Products as json-wrapper-objects, if showProducts is true 
-	 */
+
 	public List<JsonProduct> getProducts() {
-		if(!showProducts)
-			return null;
-		
-		List<JsonProduct> list = new LinkedList<JsonProduct>();
-		
-		for(Product product : productManager.findAll())
-			list.add(new JsonProduct(product));
-		
-		return list;
-		/*
-        Company company = new Company();
-        company.setName("Foobar");
-        company.setId(25L);
-        company.getSynonyms().add("foo");
-        company.getSynonyms().add("bar");
-        company.getSynonyms().add("baz");
-        
-        Product product = new Product();
-		product.setId(5);
-		product.setName("Fenster");
-		product.getSynonyms().add("Windoze");
-		product.setCompany(company);
-        
-		JsonProduct p = new JsonProduct(product);
-		
-        List<JsonProduct> l = new LinkedList<JsonProduct>();
-        l.add(p);
-        return l;
-        */
+		return products;
 	}
 }
