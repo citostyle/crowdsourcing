@@ -8,7 +8,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import tuwien.aic.crowdsourcing.persistence.entities.Company;
 import tuwien.aic.crowdsourcing.persistence.entities.TestEntity;
+import tuwien.aic.crowdsourcing.web.JsonCompany;
+import tuwien.aic.crowdsourcing.web.JsonList;
 
 /**
  * Handles requests for the application home page.
@@ -38,5 +41,44 @@ public class JSONController {
 
         return testEntity;
     }
+    
+    
+    /**
+     * Returns a list of all companies
+     */
+    @RequestMapping(value = "/company", method = RequestMethod.GET)
+    @ResponseBody
+    public JsonList getCompanyList() {
 
+        logger.info("Generating JSON response: List of all companies");
+
+        
+        return new JsonList(true, false);
+    }
+    
+    /**
+     * Returns a list of all products
+     */
+    @RequestMapping(value = "/product", method = RequestMethod.GET)
+    @ResponseBody
+    public JsonList getProductList() {
+
+        logger.info("Generating JSON response: List of all products");
+
+        
+        return new JsonList(false, true);
+    }
+    
+    /**
+     * Returns a list of all companies and products
+     */
+    @RequestMapping(value = "/all", method = RequestMethod.GET)
+    @ResponseBody
+    public JsonList getCompleteList() {
+
+        logger.info("Generating JSON response: List of all companies and products");
+
+        
+        return new JsonList(true, true);
+    }
 }
