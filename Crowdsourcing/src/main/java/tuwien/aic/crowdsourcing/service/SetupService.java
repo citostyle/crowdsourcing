@@ -32,8 +32,10 @@ public class SetupService {
             company2 = new Company("AAPL");
             company2 = companyManager.save(company2);
         }
-        Product product1 = productManager.findByName("Office");
-        Product product2 = productManager.findByName("Mac");
+        Product product1 = productManager.findByCompanyAndName(company1,
+                                                               "Office");
+        Product product2 = productManager.findByCompanyAndName(company2,
+                                                               "Mac");
         if (product1 == null) {
             product1 = productService.addProduct("MSFT", "Office");
         }

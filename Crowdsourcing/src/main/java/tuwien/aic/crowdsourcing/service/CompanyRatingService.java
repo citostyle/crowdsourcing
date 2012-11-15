@@ -2,6 +2,7 @@ package tuwien.aic.crowdsourcing.service;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,16 +69,58 @@ public class CompanyRatingService {
 
     @Transactional
     public double getCompanySentiment(String companyName) {
-        long count = 0;
-        long totalSum = 0;
-
         Company company = companyManager.findByName(companyName);
+        
         if (company == null) {
             throw new IllegalArgumentException("No such company: "
                     + companyName);
         }
+        
         List<CompanyRating> ratings = companyRatingManager
                 .findByCompany(company);
+        
+        return getCompanySentiment(ratings);
+    }
+
+    @Transactional
+    public double getCompanySentiment(String companyName, Date start) {
+        Company company = companyManager.findByName(companyName);
+        
+        if (company == null) {
+            throw new IllegalArgumentException("No such company: "
+                    + companyName);
+        }
+        
+        List<CompanyRating> ratings = companyRatingManager
+                .findByCompany(company, start);
+        
+        return getCompanySentiment(ratings);
+    }
+
+    @Transactional
+    public double getCompanySentiment(String companyName, Date start, Date limit) {
+        Company company = companyManager.findByName(companyName);
+        
+        if (company == null) {
+            throw new IllegalArgumentException("No such company: "
+                    + companyName);
+        }
+        
+        List<CompanyRating> ratings = companyRatingManager
+                .findByCompany(company, start, limit);
+        
+        return getCompanySentiment(ratings);
+    }
+    
+    @Transactional
+    private double getCompanySentiment(List<CompanyRating> ratings) {
+        long count = 0;
+        long totalSum = 0;
+        
+        if (ratings == null || ratings.isEmpty()) {
+            return 0;
+        }
+        
         Collections.sort(ratings, new Comparator<CompanyRating>() {
             @Override
             public int compare(CompanyRating o1, CompanyRating o2) {
@@ -91,6 +134,7 @@ public class CompanyRatingService {
             }
 
         });
+        
         int lower = (int) Math.floor(((double) ratings.size()) / 4);
         int upper = (int) Math.ceil((3.0 * ratings.size()) / 4);
 
@@ -101,9 +145,11 @@ public class CompanyRatingService {
                 totalSum += rating.getRatingValue();
             }
         }
+        
         if (count > 0) {
             return ((double) totalSum) / count;
         }
+        
         return 0;
     }
 }
