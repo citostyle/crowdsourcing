@@ -50,14 +50,12 @@ public class MobileWorks {
 	private static final String LINK_RESOURCE_TYPE = "l";
 	
 	private Environment environment;
-	private WorkflowType workflowType;
 	private String username;
 	private String password;
 	
 	@PostConstruct
     public void init() {
 		environment = new SandboxEnvironment();
-		workflowType = WorkflowType.PARALELL;
     }
 	
 	private Map<String, String> getHeaders() {
@@ -89,7 +87,7 @@ public class MobileWorks {
 	}
 	
 	// returns whether the post was successful or not
-	public boolean postTask(MWTask task, String instructions, String fieldName, List<String> choices) throws IllegalArgumentException {
+	public boolean postTask(MWTask task, String instructions, String fieldName, List<String> choices, WorkflowType workflowType) throws IllegalArgumentException {
 		// validations
 		validateMWTask(task);
 		if(instructions == null) {
@@ -287,13 +285,5 @@ public class MobileWorks {
 	public void setEnvironment(Environment environment) {
 		this.environment = environment;
 		LOGGER.debug("Environmont changed to: " + environment.toString());
-	}
-
-	public WorkflowType getWorkflowType() {
-		return workflowType;
-	}
-
-	public void setWorkflowType(WorkflowType workflowType) {
-		this.workflowType = workflowType;
 	}
 }
