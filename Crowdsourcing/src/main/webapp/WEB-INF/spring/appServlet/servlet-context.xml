@@ -3,17 +3,31 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:beans="http://www.springframework.org/schema/beans"
 	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
 	xmlns:jpa="http://www.springframework.org/schema/data/jpa" xmlns:task="http://www.springframework.org/schema/task"
-	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
 		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa-1.2.xsd
-		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.1.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
 
 	<!-- DispatcherServlet Context: defines this servlet's request-processing 
 		infrastructure -->
 
 	<!-- Enables the Spring MVC @Controller programming model -->
-	<annotation-driven />
+	<annotation-driven>
+		<message-converters>
+			<!-- Jackson powered JSON Integration -->
+			<beans:bean id="jacksonMessageConverter"
+				class="tuwien.aic.crowdsourcing.util.MappingJackson2HttpMessageConverter">
+				<beans:property name="prefixJson" value="false" />
+				<beans:property name="supportedMediaTypes" value="application/json" />
+				<beans:property name="objectMapper">
+					<beans:bean
+						class="tuwien.aic.crowdsourcing.util.HibernateAwareObjectMapper" />
+				</beans:property>
+			</beans:bean>
+		</message-converters>
+	</annotation-driven>
 	<context:component-scan base-package="tuwien.aic" />
 
 	<beans:bean
@@ -72,23 +86,6 @@
 	<beans:bean id="transactionManager"
 		class="org.springframework.orm.jpa.JpaTransactionManager">
 		<beans:property name="entityManagerFactory" ref="entityManagerFactory" />
-	</beans:bean>
-
-	<!-- Jackson powered JSON Integration -->
-	<beans:bean id="jacksonMessageConverter"
-		class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
-		<beans:property name="prefixJson" value="false" />
-		<beans:property name="supportedMediaTypes" value="application/json" />
-	</beans:bean>
-
-	<beans:bean
-		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
-		<beans:property name="messageConverters">
-			<beans:list>
-				<beans:ref bean="jacksonMessageConverter" />
-
-			</beans:list>
-		</beans:property>
 	</beans:bean>
 
 	<!-- Enable @Scheduled -->
