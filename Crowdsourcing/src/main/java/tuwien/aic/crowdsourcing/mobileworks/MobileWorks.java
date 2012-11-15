@@ -54,34 +54,6 @@ public class MobileWorks {
 	private String username;
 	private String password;
 	
-	public static void main(String[] args) {
-		MobileWorks mw = new MobileWorks();
-		mw.setCredentials("chrstphlbr", "12061988");
-		mw.setEnvironment(new SandboxEnvironment());
-		mw.setWorkflowType(WorkflowType.PARALELL);
-		
-		MWTask t = new MWTask();
-		t.setTaskId("task1");
-		t.setArticle(new Article("cooler artikel", "http://www.google.at/"));
-		
-		List<String> choices = new ArrayList<String>();
-		choices.add("1");
-		choices.add("2");
-		choices.add("3");
-		choices.add("4");
-		choices.add("5");
-		String resp;
-		List<TaskResult> tr = mw.getResultsForTask(t);
-		System.out.println(tr);
-//		try {
-//			resp = mw.postTask(t, "ist diese seite cool?", "Rating", choices);
-//			System.out.println(resp);
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-	}
-	
 	@PostConstruct
     public void init() {
 		environment = new SandboxEnvironment();
