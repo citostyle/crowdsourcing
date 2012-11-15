@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -67,6 +68,7 @@ public class JSONController {
      */
     @RequestMapping(value = "/company", method = RequestMethod.GET)
     @ResponseBody
+    @Transactional
     public JsonList getCompanyList() {
 
         logger.info("Generating JSON response: List of all companies");
@@ -86,6 +88,7 @@ public class JSONController {
      */
     @RequestMapping(value = "/product", method = RequestMethod.GET)
     @ResponseBody
+    @Transactional
     public JsonList getProductList() {
 
         logger.info("Generating JSON response: List of all products");
@@ -103,6 +106,7 @@ public class JSONController {
      */
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     @ResponseBody
+    @Transactional
     public JsonList getCompleteList() {
 
         logger.info("Generating JSON response: List of all companies and products");
@@ -124,6 +128,7 @@ public class JSONController {
 	 */
 	@RequestMapping(value = "/search/{expr}", method = RequestMethod.GET)
 	@ResponseBody
+	@Transactional
 	public List<JsonCompany> searchCompanies(@PathVariable String expr) {
 		
 		logger.info("Searching for: " + expr);

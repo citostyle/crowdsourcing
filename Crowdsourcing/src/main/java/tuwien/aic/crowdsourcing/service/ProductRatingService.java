@@ -2,6 +2,7 @@ package tuwien.aic.crowdsourcing.service;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,6 @@ public class ProductRatingService {
             String productName, String companyName, Integer result) {
         MWTask task = taskManager.findByTaskId(taskId);
         Worker worker = workerManager.findByWorkerId(workerId);
-        Product product = productManager.findByName(productName);
         Company company = companyManager.findByName(companyName);
 
         if (task == null) {
@@ -59,6 +59,9 @@ public class ProductRatingService {
             company = new Company(companyName);
             company = companyManager.save(company);
         }
+        
+        Product product = productManager.findByCompanyAndName(company,
+                                                              productName);
 
         if (product == null) {
             product = new Product(company, productName);
@@ -78,10 +81,8 @@ public class ProductRatingService {
     }
 
     @Transactional
-    public double getProductSentiment(String companyName, String productName) {
-        long count = 0;
-        long totalSum = 0;
-
+    public double getProductSentiment(String companyName, 
+                                      String productName) {
         Company company = companyManager.findByName(companyName);
 
         if (company == null) {
@@ -91,12 +92,77 @@ public class ProductRatingService {
 
         Product product = productManager.findByCompanyAndName(company,
                 productName);
+        
         if (product == null) {
-            throw new IllegalArgumentException("No such product: "
-                    + productName);
+            product = new Product(company, productName);
+            product = productManager.save(product);
         }
+        
         List<ProductRating> ratings = productRatingManager
                 .findByProduct(product);
+        
+        return getProductSentiment(ratings);
+    }
+
+    @Transactional
+    public double getProductSentiment(String companyName, 
+                                      String productName, 
+                                      Date start) {
+        Company company = companyManager.findByName(companyName);
+
+        if (company == null) {
+            company = new Company(companyName);
+            company = companyManager.save(company);
+        }
+
+        Product product = productManager.findByCompanyAndName(company,
+                productName);
+        
+        if (product == null) {
+            product = new Product(company, productName);
+            product = productManager.save(product);
+        }
+        
+        List<ProductRating> ratings = productRatingManager
+                .findByProduct(product, start);
+        
+        return getProductSentiment(ratings);
+    }
+
+    @Transactional
+    public double getProductSentiment(String companyName, 
+                                      String productName, 
+                                      Date start, Date limit) {
+        Company company = companyManager.findByName(companyName);
+
+        if (company == null) {
+            company = new Company(companyName);
+            company = companyManager.save(company);
+        }
+
+        Product product = productManager.findByCompanyAndName(company,
+                productName);
+        
+        if (product == null) {
+            product = new Product(company, productName);
+            product = productManager.save(product);
+        }
+        
+        List<ProductRating> ratings = productRatingManager
+                .findByProduct(product, start, limit);
+        
+        return getProductSentiment(ratings);
+    }
+
+    @Transactional
+    private double getProductSentiment(List<ProductRating> ratings) {
+        long count = 0;
+        long totalSum = 0;
+        
+        if (ratings == null || ratings.isEmpty()) {
+            return 0;
+        }
+
         Collections.sort(ratings, new Comparator<ProductRating>() {
             @Override
             public int compare(ProductRating o1, ProductRating o2) {
@@ -110,6 +176,7 @@ public class ProductRatingService {
             }
 
         });
+        
         int lower = (int) Math.floor(((double) ratings.size()) / 4);
         int upper = (int) Math.ceil((3.0 * ratings.size()) / 4);
 
@@ -120,9 +187,11 @@ public class ProductRatingService {
                 totalSum += rating.getRatingValue();
             }
         }
+        
         if (count > 0) {
             return ((double) totalSum) / count;
         }
+        
         return 0;
     }
 

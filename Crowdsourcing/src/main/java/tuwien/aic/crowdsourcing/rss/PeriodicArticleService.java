@@ -1,9 +1,7 @@
 package tuwien.aic.crowdsourcing.rss;
 
-import java.util.Arrays;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Random;
 
 import javax.annotation.PostConstruct;
 
@@ -16,6 +14,7 @@ import tuwien.aic.crowdsourcing.persistence.ArticleManager;
 import tuwien.aic.crowdsourcing.persistence.entities.Article;
 import tuwien.aic.crowdsourcing.service.ArticleService;
 import tuwien.aic.crowdsourcing.service.CompanyRatingService;
+import tuwien.aic.crowdsourcing.service.ProductRatingService;
 import tuwien.aic.crowdsourcing.service.SetupService;
 
 @Component
@@ -30,6 +29,9 @@ public class PeriodicArticleService {
     @Autowired
     private ArticleManager articleManager;
 
+    @Autowired
+    private ProductRatingService productRatingService;
+    
     @Autowired
     private CompanyRatingService companyRatingService;
 
@@ -61,6 +63,9 @@ public class PeriodicArticleService {
             articleService.addTask(art2, "id" + counter, "questions");
             companyRatingService.addCompanySentiment("id" + counter, "worker1",
                     "MSFT", 3);
+            
+            productRatingService.addProductSentiment("id" + counter, "worker1", 
+                                                     "MSFT", "XYZ", 1);
         }
         Map<String, String> oldArticles = articleFetcher.getOldArticles();
         for (Entry<String, String> art : oldArticles.entrySet()) {
@@ -70,8 +75,35 @@ public class PeriodicArticleService {
             articleService.addTask(art2, "id" + counter, "questions");
             companyRatingService.addCompanySentiment("id" + counter, "worker1",
                     "MSFT", new Random().nextInt(5));
+            
+            productRatingService.addProductSentiment("id" + counter, "worker1", 
+                                                     "MSFT", "XYZ", 1);
         }
+        
         System.out.println(articleManager.findAll());
+        
+        Calendar calendar = 
+            Calendar.getInstance();
+        
+        calendar.setTime(new Date());
+        
+        calendar.add(Calendar.DATE, -1);
+        
         System.out.println(companyRatingService.getCompanySentiment("MSFT"));
+        
+        System.out.println(companyRatingService.getCompanySentiment("MSFT", 
+                                                                    calendar.getTime()));
+        
+        System.out.println(companyRatingService.getCompanySentiment("MSFT", 
+                                                                    calendar.getTime(), new Date()));
+        
+        System.out.println(productRatingService.getProductSentiment("MSFT", "Office"));
+        
+        System.out.println(productRatingService.getProductSentiment("MSFT", "Office",
+                                                                    calendar.getTime()));
+        
+        System.out.println(productRatingService.getProductSentiment("MSFT", "Office",
+                                                                    calendar.getTime(), new Date()));
+        
     }
 }

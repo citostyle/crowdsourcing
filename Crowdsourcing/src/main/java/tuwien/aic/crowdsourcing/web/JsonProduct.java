@@ -2,10 +2,13 @@ package tuwien.aic.crowdsourcing.web;
 
 import java.util.Set;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-
 import tuwien.aic.crowdsourcing.persistence.entities.Product;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+@JsonInclude(Include.NON_NULL)
 public class JsonProduct {
 	@JsonIgnore
 	private final Product product;
