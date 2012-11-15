@@ -1,6 +1,6 @@
 .project
 .metadata
-bin/**
+*/bin/**
 tmp/**
 tmp/**/*
 *.tmp
@@ -18,3 +18,5 @@ local.properties
 
 Crowdsourcing/target
 Servers
+
+*.DS_Store
