@@ -1,9 +1,19 @@
 package tuwien.aic.crowdsourcing.mobileworks.task;
 
+import java.util.List;
+import java.util.Map;
+
+import tuwien.aic.crowdsourcing.mobileworks.json.deserializer.AnswerDeserializer;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 public class TaskResult {
 	
 	private Integer id;
-	private String answer;
+	
+	@JsonDeserialize(using=AnswerDeserializer.class)
+	private List<Map<String, ?>> answer;
+	
 	private String status;
 	private String instructions;
 	private Integer redundancy;
@@ -24,11 +34,11 @@ public class TaskResult {
 		this.id = id;
 	}
 
-	public String getAnswer() {
+	public List<Map<String, ?>> getAnswer() {
 		return answer;
 	}
 	
-	public void setAnswer(String answer) {
+	public void setAnswer(List<Map<String, ?>> answer) {
 		this.answer = answer;
 	}
 	

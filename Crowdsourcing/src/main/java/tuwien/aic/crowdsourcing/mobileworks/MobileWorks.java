@@ -1,12 +1,8 @@
 package tuwien.aic.crowdsourcing.mobileworks;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,32 +11,36 @@ import javax.annotation.PostConstruct;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.StringUtils;
-import org.apache.log4j.Logger;
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonGenerator;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import tuwien.aic.crowdsourcing.mobileworks.environment.Environment;
 import tuwien.aic.crowdsourcing.mobileworks.environment.SandboxEnvironment;
+import tuwien.aic.crowdsourcing.mobileworks.task.ResponseResult;
 import tuwien.aic.crowdsourcing.mobileworks.task.TaskResult;
-import tuwien.aic.crowdsourcing.mobileworks.task.WorkerResult;
 import tuwien.aic.crowdsourcing.mobileworks.task.WorkflowType;
 import tuwien.aic.crowdsourcing.persistence.entities.Article;
 import tuwien.aic.crowdsourcing.persistence.entities.MWTask;
+import tuwien.aic.crowdsourcing.rss.ArticleFetcher;
 import tuwien.aic.crowdsourcing.util.HttpUtil;
 import tuwien.aic.crowdsourcing.util.HttpUtil.HttpRequestMethod;
 import tuwien.aic.crowdsourcing.util.HttpUtil.HttpResponse;
+import tuwien.aic.crowdsourcing.util.StringUtil;
+
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service(value="mobileWorksService")
 @Scope(value="singleton")
 public class MobileWorks {
 	
-	private static final Logger LOGGER = Logger.getLogger(MobileWorks.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ArticleFetcher.class);
 	
 	private static final String API_VERSION = "api/v2/";
 	private static final String URL_TASK = "task/";
@@ -78,8 +78,30 @@ public class MobileWorks {
 		return headers;
 	}
 	
-	// returns location of the task
-	public String postTask(MWTask task, String instructions, String fieldName, List<String> choices) throws IOException {
+	private void validateMWTask(MWTask task) throws IllegalArgumentException {
+		if(task == null) {
+			throw new IllegalArgumentException("MWTask must be provided.");
+		}
+		
+		if(task.getTaskId() == null) {
+			throw new IllegalArgumentException("MWTask must have a taskId. This taskId must be application unique.");
+		}
+	}
+	
+	// returns whether the post was successful or not
+	public boolean postTask(MWTask task, String instructions, String fieldName, List<String> choices) throws IllegalArgumentException {
+		// validations
+		validateMWTask(task);
+		if(instructions == null) {
+			throw new IllegalArgumentException("instructions can not be null.");
+		}
+		if(fieldName == null) {
+			throw new IllegalArgumentException("fieldName can not be null.");
+		}
+		if(choices == null || choices.size() < 2) {
+			throw new IllegalArgumentException("choices can not be null and must have at least 2 elements.");
+		}
+		
 		// prepare url
 		StringBuilder url = new StringBuilder();
 		url.append(environment.getBaseUrl());
@@ -139,88 +161,117 @@ public class MobileWorks {
 			gen.close();
 		} catch (IOException e) {
 			LOGGER.error("could not generate JSON for posting a task (" + task.getTaskId() + ")");
-			return null;
+			return false;
 		}
-		
 		
 		HttpResponse response = HttpUtil.request(url.toString(), HttpRequestMethod.POST, getHeaders(), null, new ByteArrayInputStream(sw.toString().getBytes()), HttpUtil.DEFAULT_TIMEOUT, false);
 		
+		if(response == null) {
+			LOGGER.error("response is null");
+			return false;
+		}
+		
 		if(201 == response.getResponseCode()) {
 			// success
-			return streamToString(response.getBody());
+			try {
+				LOGGER.debug("Success: " + StringUtil.streamToString(response.getBody()));
+			} catch (IOException e) {
+				;
+			}
+			return true;
 		} else {
 			// failure
-			return streamToString(response.getBody());
+			try {
+				LOGGER.debug("Failure: " + StringUtil.streamToString(response.getBody()));
+			} catch (IOException e) {
+				;
+			}
+			return false;
 		}
 	}
 	
-	public static String streamToString(InputStream stream) throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stream));
-        StringBuilder stringBuilder = new StringBuilder();
-        String line = null;
-
-        while ((line = bufferedReader.readLine()) != null) {
-            stringBuilder.append(line + "\n");
-        }
-
-        bufferedReader.close();
-        return stringBuilder.toString();
-    }
-	
-	public void rejectTask(MWTask task, String reason) {
+	public TaskResult getResultsForTask(MWTask task) throws IllegalArgumentException {
+		validateMWTask(task);
 		
-	}
-	
-	public void acceptTask(MWTask task) {
-		
-	}
-	
-	public List<TaskResult> getResultsForTask(MWTask task) {
 		// prepare url
 		StringBuilder url = new StringBuilder();
 		url.append(environment.getBaseUrl());
 		url.append(API_VERSION);
 		url.append(URL_TASK);
+		url.append(task.getTaskId());
+		url.append("/");
 		
 		HttpResponse response = HttpUtil.request(url.toString(), HttpUtil.HttpRequestMethod.GET, getHeaders(), null, null, HttpUtil.DEFAULT_TIMEOUT, false);
 		
 		if(response == null) {
 			// some connection error occurred
-			LOGGER.error("reponse is null");
+			LOGGER.debug("response is null");
 			return null;
 		}
 		
 		if(response.getResponseCode() == 200) {
 			LOGGER.debug("Response Code 200");
 			// success
-			ObjectMapper om = new ObjectMapper();
 			try {
-				List<TaskResult> tr = om.readValue(response.getBody(), new TypeReference<List<TaskResult>>() {});
+				ObjectMapper om = new ObjectMapper();
+				TaskResult tr = om.readValue(response.getBody(), new TypeReference<TaskResult>() {});
 				return tr;
 			} catch (JsonParseException e) {
-				LOGGER.info("Error while parsing response: " + e.getMessage());
-				e.printStackTrace();
+				LOGGER.debug("Error while parsing response: " + e.getMessage());
 			} catch (JsonMappingException e) {
-				LOGGER.info("Error while mapping response: " + e.getMessage());
-				e.printStackTrace();
+				LOGGER.debug("Error while mapping response: " + e.getMessage());
 			} catch (IOException e) {
-				LOGGER.info("IOException: " + e.getMessage());
-				e.printStackTrace();
+				LOGGER.debug("IOException: " + e.getMessage());
 			}
 		} else {
-			LOGGER.info("Response Code: " + response.getResponseCode());
+			// failure
+			LOGGER.debug("Response Code: " + response.getResponseCode());
+			try {
+				LOGGER.debug("Failure: " + StringUtil.streamToString(response.getBody()));
+			} catch (IOException e) {
+				;
+			}
 		}
-		try {
-			System.out.println(streamToString(response.getBody()));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		// failure
 		return null;
 	}
 	
-	public List<WorkerResult> getWorkerResultsForTask(MWTask task) {
+	public ResponseResult getWorkerResultsForTask(MWTask task) throws IllegalArgumentException {
+		validateMWTask(task);
+		
+		// prepare url
+		StringBuilder url = new StringBuilder();
+		url.append(environment.getBaseUrl());
+		url.append(API_VERSION);
+		url.append(URL_RESPONSE);
+		url.append(task.getTaskId());
+		url.append("/");
+		
+		HttpResponse response = HttpUtil.request(url.toString(), HttpUtil.HttpRequestMethod.GET, getHeaders(), null, null, HttpUtil.DEFAULT_TIMEOUT, false);
+		
+		if(response == null) {
+			// some connection error occurred
+			LOGGER.error("response is null");
+			return null;
+		}
+		
+		if(response.getResponseCode() >= 200 && response.getResponseCode() < 300) {
+			// success
+			
+			ObjectMapper om = new ObjectMapper();
+			try {
+				ResponseResult rr = om.readValue(response.getBody(), new TypeReference<ResponseResult>() {});
+				return rr;
+			} catch (JsonParseException e) {
+				LOGGER.debug("Error while parsing response: " + e.getMessage());
+			} catch (JsonMappingException e) {
+				LOGGER.debug("Error while mapping response: " + e.getMessage());
+			} catch (IOException e) {
+				LOGGER.debug("IOException: " + e.getMessage());
+			}
+		} else {
+			// failure
+			LOGGER.error("Response Code: " + response.getResponseCode());
+		}
 		return null;
 	}
 	

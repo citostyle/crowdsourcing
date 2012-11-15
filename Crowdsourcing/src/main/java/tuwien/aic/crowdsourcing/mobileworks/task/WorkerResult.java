@@ -1,13 +1,14 @@
 package tuwien.aic.crowdsourcing.mobileworks.task;
 
 import java.util.List;
+import java.util.Map;
 
 public class WorkerResult {
 	
 	private String workerId;
 	private String timestamp;
 	private Location location;
-	private List<Answer> answers;
+	private List<Map<String, String>> answers;
 	private Integer timeTaken;
 	
 	public String getWorkerId() {
@@ -34,14 +35,14 @@ public class WorkerResult {
 		this.location = location;
 	}
 	
-	public List<Answer> getAnswers() {
+	public List<Map<String, String>> getAnswers() {
 		return answers;
 	}
-	
-	public void setAnswers(List<Answer> answers) {
+
+	public void setAnswers(List<Map<String, String>> answers) {
 		this.answers = answers;
 	}
-	
+
 	public Integer getTimeTaken() {
 		return timeTaken;
 	}
