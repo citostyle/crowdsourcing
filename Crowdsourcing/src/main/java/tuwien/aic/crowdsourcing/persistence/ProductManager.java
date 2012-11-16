@@ -9,7 +9,11 @@ import tuwien.aic.crowdsourcing.persistence.entities.Product;
 
 public interface ProductManager extends JpaRepository<Product, Long> {
 
-    Product findByCompanyAndName(Company company, String productName);
+	Product findByCompanyAndName(Company company, String productName);
 
-    List<Product> findByCompany(Company company);
+	List<Product> findByCompany(Company company);
+
+	List<Product> findByNameContainingIgnoreCase(String expression);
+
+	List<Product> findBySynonymsContainingIgnoreCase(String expression);
 }

@@ -30,119 +30,160 @@ import tuwien.aic.crowdsourcing.web.JsonProduct;
 @Controller
 public class JSONController {
 
-    private static final Logger logger = LoggerFactory
-            .getLogger(JSONController.class);
-	
+	private static final Logger logger = LoggerFactory
+			.getLogger(JSONController.class);
+
 	@Autowired
 	private CompanyManager companyManager;
-	
+
 	@Autowired
 	private ProductManager productManager;
-	
+
 	@Autowired
 	private ApiService apiService;
-    
-    /**
-     * Simply selects the home view to render by returning its name.
-     */
-    @RequestMapping(value = "/json/{id}", method = RequestMethod.GET)
-    @ResponseBody
-    public TestEntity get(@PathVariable String id) {
 
-        logger.info("Generating JSON response for id " + id);
+	/**
+	 * Simply selects the home view to render by returning its name.
+	 */
+	@RequestMapping(value = "/json/{id}", method = RequestMethod.GET)
+	@ResponseBody
+	public TestEntity get(@PathVariable String id) {
 
-        TestEntity testEntity = new TestEntity();
+		logger.info("Generating JSON response for id " + id);
 
-        testEntity.setName(id);
-        try {
-            testEntity.setId(Long.valueOf(id));
-        } catch (NumberFormatException e) {
-        }
+		TestEntity testEntity = new TestEntity();
 
-        return testEntity;
-    }
-    
-    
-    /**
-     * Returns a list of all companies
-     */
-    @RequestMapping(value = "/company", method = RequestMethod.GET)
-    @ResponseBody
-    @Transactional
-    public JsonList getCompanyList() {
+		testEntity.setName(id);
+		try {
+			testEntity.setId(Long.valueOf(id));
+		} catch (NumberFormatException e) {
+		}
 
-        logger.info("Generating JSON response: List of all companies");
+		return testEntity;
+	}
+
+	/**
+	 * Returns a list of all companies
+	 */
+	@RequestMapping(value = "/company", method = RequestMethod.GET)
+	@ResponseBody
+	@Transactional
+	public JsonList getCompanyList() {
+
+		logger.info("Generating JSON response: List of all companies");
 
 		List<JsonCompany> list = new LinkedList<JsonCompany>();
-		
-		for(Company company : companyManager.findAll())
-		{
+
+		for (Company company : companyManager.findAll()) {
 			list.add(new JsonCompany(company));
 		}
-        
-        return new JsonList(list, null);
-    }
-    
-    /**
-     * Returns a list of all products
-     */
-    @RequestMapping(value = "/product", method = RequestMethod.GET)
-    @ResponseBody
-    @Transactional
-    public JsonList getProductList() {
 
-        logger.info("Generating JSON response: List of all products");
+		return new JsonList(list, null);
+	}
+
+	/**
+	 * Returns a list of all products
+	 */
+	@RequestMapping(value = "/product", method = RequestMethod.GET)
+	@ResponseBody
+	@Transactional
+	public JsonList getProductList() {
+
+		logger.info("Generating JSON response: List of all products");
 
 		List<JsonProduct> list = new LinkedList<JsonProduct>();
-		
-		for(Product product : productManager.findAll())
+
+		for (Product product : productManager.findAll())
 			list.add(new JsonProduct(product));
 
-        return new JsonList(null, list);
-    }
-    
-    /**
-     * Returns a list of all companies and products
-     */
-    @RequestMapping(value = "/all", method = RequestMethod.GET)
-    @ResponseBody
-    @Transactional
-    public JsonList getCompleteList() {
+		return new JsonList(null, list);
+	}
 
-        logger.info("Generating JSON response: List of all companies and products");
+	/**
+	 * Returns a list of all companies and products
+	 */
+	@RequestMapping(value = "/all", method = RequestMethod.GET)
+	@ResponseBody
+	@Transactional
+	public JsonList getCompleteList() {
+
+		logger.info("Generating JSON response: List of all companies and products");
 
 		List<JsonCompany> listC = new LinkedList<JsonCompany>();
 		List<JsonProduct> listP = new LinkedList<JsonProduct>();
-		
-		for(Company company : companyManager.findAll())
+
+		for (Company company : companyManager.findAll())
 			listC.add(new JsonCompany(company));
-		
-		for(Product product : productManager.findAll())
+
+		for (Product product : productManager.findAll())
 			listP.add(new JsonProduct(product));
-        
-        return new JsonList(listC, listP);
-    }
-    
-    /**
-	 * Simply selects the home view to render by returning its name.
+
+		return new JsonList(listC, listP);
+	}
+
+	/**
+	 * Search companies/products for the given expression.
 	 */
 	@RequestMapping(value = "/search/{expr}", method = RequestMethod.GET)
 	@ResponseBody
 	@Transactional
-	public List<JsonCompany> searchCompanies(@PathVariable String expr) {
-		
-		logger.info("Searching for: " + expr);
-		
-		ArrayList<JsonCompany> result = new ArrayList<JsonCompany>();
+	public JsonList searchCompaniesAndProducts(@PathVariable String expr) {
+
+		logger.info("Searching companies/prodcuts for: " + expr);
+
+		ArrayList<JsonCompany> listC = new ArrayList<JsonCompany>();
+		ArrayList<JsonProduct> listP = new ArrayList<JsonProduct>();
 
 		List<Company> companies = apiService.searchCompany(expr);
-		
-		for(Company c : companies)
-		{
-			JsonCompany company = new JsonCompany(c);
-			result.add(company);
-		}
-		
-		return result;
+
+		for (Company c : companies)
+			listC.add(new JsonCompany(c));
+
+		List<Product> products = apiService.searchProduct(expr);
+
+		for (Product p : products)
+			listP.add(new JsonProduct(p));
+
+		return new JsonList(listC, listP);
+	}
+
+	/**
+	 * Search companies for the given expression.
+	 */
+	@RequestMapping(value = "/search/{expr}/companies", method = RequestMethod.GET)
+	@ResponseBody
+	@Transactional
+	public JsonList searchCompanies(@PathVariable String expr) {
+
+		logger.info("Searching companies for: " + expr);
+
+		ArrayList<JsonCompany> listC = new ArrayList<JsonCompany>();
+
+		List<Company> companies = apiService.searchCompany(expr);
+
+		for (Company c : companies)
+			listC.add(new JsonCompany(c));
+
+		return new JsonList(listC, null);
+	}
+
+	/**
+	 * Search products for the given expression.
+	 */
+	@RequestMapping(value = "/search/{expr}/products", method = RequestMethod.GET)
+	@ResponseBody
+	@Transactional
+	public JsonList searchProducts(@PathVariable String expr) {
+
+		logger.info("Searching products for: " + expr);
+
+		ArrayList<JsonProduct> listP = new ArrayList<JsonProduct>();
+
+		List<Product> products = apiService.searchProduct(expr);
+
+		for (Product p : products)
+			listP.add(new JsonProduct(p));
+
+		return new JsonList(null, listP);
 	}
 }
