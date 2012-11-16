@@ -20,11 +20,10 @@
 			<beans:bean id="jacksonMessageConverter"
 				class="tuwien.aic.crowdsourcing.util.MappingJackson2HttpMessageConverter">
 				<beans:property name="prefixJson" value="false" />
+				<beans:property name="prettyPrint" value="true" />
 				<beans:property name="supportedMediaTypes" value="application/json" />
-				<!-- <beans:property name="objectMapper">
-					<beans:bean
-						class="tuwien.aic.crowdsourcing.util.HibernateAwareObjectMapper" />
-				</beans:property> -->
+				<!-- <beans:property name="objectMapper"> <beans:bean class="tuwien.aic.crowdsourcing.util.HibernateAwareObjectMapper" 
+					/> </beans:property> -->
 			</beans:bean>
 		</message-converters>
 	</annotation-driven>
