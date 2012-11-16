@@ -22,9 +22,6 @@ public class Company implements Serializable {
 	private long id = -1L;
 	private String name = "";
 
-	// @OneToMany(fetch = FetchType.EAGER)
-	// @ElementCollection(fetch = FetchType.EAGER)
-	// @Fetch(FetchMode.JOIN)
 	private Set<String> synonyms = new HashSet<String>();
 
 	private List<Product> products = new ArrayList<Product>();
