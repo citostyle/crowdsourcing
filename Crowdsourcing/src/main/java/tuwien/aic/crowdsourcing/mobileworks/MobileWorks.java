@@ -87,14 +87,16 @@ public class MobileWorks {
 	}
 	
 	// returns whether the post was successful or not
-	public boolean postTask(MWTask task, String instructions, String fieldName, List<String> choices, WorkflowType workflowType) throws IllegalArgumentException {
+	// takes a list of fieldNames == questions
+	// list of choices. choices are same for each fieldName
+	public boolean postTask(MWTask task, String instructions, List<String> fieldNames, List<String> choices, WorkflowType workflowType) throws IllegalArgumentException {
 		// validations
 		validateMWTask(task);
 		if(instructions == null) {
 			throw new IllegalArgumentException("instructions can not be null.");
 		}
-		if(fieldName == null) {
-			throw new IllegalArgumentException("fieldName can not be null.");
+		if(fieldNames == null || fieldNames.isEmpty()) {
+			throw new IllegalArgumentException("fieldNames can not be null or empty.");
 		}
 		if(choices == null || choices.size() < 2) {
 			throw new IllegalArgumentException("choices can not be null and must have at least 2 elements.");
@@ -123,9 +125,7 @@ public class MobileWorks {
 			
 			// fields
 			gen.writeArrayFieldStart("fields");
-			// multiple choice field
-			gen.writeStartObject();
-			gen.writeStringField(fieldName, MULTIPLE_CHOICE_FIELD_TYPE);
+			// build choices string
 			StringBuilder choicesString = new StringBuilder();
 			boolean first = true;
 			for(String s : choices) {
@@ -136,8 +136,14 @@ public class MobileWorks {
 				}
 				choicesString.append(s);
 			}
-			gen.writeStringField("choices", choicesString.toString());
-			gen.writeEndObject();
+			
+			// multiple choice fields
+			for(String fieldName : fieldNames) {
+				gen.writeStartObject();
+				gen.writeStringField(fieldName, MULTIPLE_CHOICE_FIELD_TYPE);
+				gen.writeStringField("choices", choicesString.toString());
+				gen.writeEndObject();
+			}
 			gen.writeEndArray();
 			
 			// workflow
