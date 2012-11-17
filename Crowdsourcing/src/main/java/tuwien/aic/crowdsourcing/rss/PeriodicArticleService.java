@@ -1,7 +1,11 @@
 package tuwien.aic.crowdsourcing.rss;
 
-import java.util.*;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 
 import javax.annotation.PostConstruct;
 
@@ -10,11 +14,15 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import tuwien.aic.crowdsourcing.persistence.ArticleManager;
+import tuwien.aic.crowdsourcing.mobileworks.MobileWorks;
+import tuwien.aic.crowdsourcing.mobileworks.environment.SandboxEnvironment;
+import tuwien.aic.crowdsourcing.mobileworks.task.WorkflowType;
+import tuwien.aic.crowdsourcing.persistence.TaskManager;
 import tuwien.aic.crowdsourcing.persistence.entities.Article;
+import tuwien.aic.crowdsourcing.persistence.entities.MWTask;
+import tuwien.aic.crowdsourcing.persistence.entities.Product;
+import tuwien.aic.crowdsourcing.persistence.entities.TaskState;
 import tuwien.aic.crowdsourcing.service.ArticleService;
-import tuwien.aic.crowdsourcing.service.CompanyRatingService;
-import tuwien.aic.crowdsourcing.service.ProductRatingService;
 import tuwien.aic.crowdsourcing.service.SetupService;
 
 @Component
@@ -27,25 +35,49 @@ public class PeriodicArticleService {
     private ArticleService articleService;
 
     @Autowired
-    private ArticleManager articleManager;
+    private MobileWorks mobileWorks;
 
     @Autowired
-    private ProductRatingService productRatingService;
-    
+    private TaskManager taskManager;
+
     @Autowired
-    private CompanyRatingService companyRatingService;
+    private ArticleParser articleParser;
 
     @Autowired
     private SetupService setupService;
 
-    @PostConstruct
-    public void postConstruct() {
-        articleFetcher.addFeed("http://finance.yahoo.com/rss/usmarkets",
-                Arrays.asList("yahoo"));
+    private List<String> getDefaultChoices() {
+        return Arrays.asList("-5", "-4", "-3", "-2", "-1", "0", "1", "2", "3",
+                "4", "5");
     }
 
-    private int counter = 0;
+    public static final String PRODUCT_INSTRUCTIONS =
+            "Please read the article with"
+                    + " the given URL and then rate which "
+                    + "impression of the given product(s) "
+                    + "you got by reading the article. -5 is the worst rating, 5 ist the best."
+                    + " Please choose NOT FOUND if the product "
+                    + "does not occur in the article.";
+
+    public static final String COMPANY_INSTRUCTIONS =
+            "Please read the article with"
+                    + " the given URL and then rate which "
+                    + "impression of the given companies "
+                    + "you got by reading the article. -5 is the worst rating, 5 ist the best."
+                    + " Please choose NOT FOUND if the company "
+                    + "does not occur in the article.";
+
+    @PostConstruct
+    public void postConstruct() {
+        articleFetcher.addFeed("http://finance.yahoo.com/rss/usmarkets");
+        articleFetcher.addFeed("http://feeds.finance.yahoo.com/rss/"
+                + "2.0/category-economy-govt-and-policy?region=US&lang=en-US");
+        mobileWorks.setEnvironment(new SandboxEnvironment());
+        mobileWorks.setCredentials("aic12", "aic12aic");
+    }
+
     private boolean firstRun = true;
+    private Random rand = new Random();
 
     @Scheduled(fixedRate = 5000)
     @Transactional
@@ -57,53 +89,29 @@ public class PeriodicArticleService {
         }
         Map<String, String> newArticles = articleFetcher.getNewArticles();
         for (Entry<String, String> art : newArticles.entrySet()) {
-            Article art2 =
+            Article article =
                     articleService.createArticle(art.getValue(), art.getKey());
-            counter = new Random().nextInt();
-            articleService.addTask(art2, "id" + counter, "questions");
-            companyRatingService.addCompanySentiment("id" + counter, "worker1",
-                    "MSFT", 3);
-            
-            productRatingService.addProductSentiment("id" + counter, "worker1", 
-                                                     "MSFT", "XYZ", 1);
+            try {
+                for (Product p : articleParser.getProductsInArticle(article
+                        .getAddress())) {
+                    MWTask task = new MWTask();
+                    task.setTaskId("MWTask" + rand.nextInt());
+                    task.setType("RATE_PRODUCTS");
+                    task.setArticle(article);
+                    task.setTaskState(TaskState.ACTIVE);
+                    task = taskManager.save(task);
+                    article.getTasks().add(task);
+                    task.setTaskId(task.getTaskId() + "," + task.getId());
+
+                    mobileWorks.postTask(task, PRODUCT_INSTRUCTIONS,
+                            p.getName(), getDefaultChoices(),
+                            WorkflowType.PARALLEL);
+                }
+            } catch (IOException e) {
+                System.out.println("Could not parse article "
+                        + article.getAddress() + ":\n");
+                e.printStackTrace();
+            }
         }
-        Map<String, String> oldArticles = articleFetcher.getOldArticles();
-        for (Entry<String, String> art : oldArticles.entrySet()) {
-            Article art2 =
-                    articleService.createArticle(art.getValue(), art.getKey());
-            counter = new Random().nextInt();
-            articleService.addTask(art2, "id" + counter, "questions");
-            companyRatingService.addCompanySentiment("id" + counter, "worker1",
-                    "MSFT", new Random().nextInt(5));
-            
-            productRatingService.addProductSentiment("id" + counter, "worker1", 
-                                                     "MSFT", "XYZ", 1);
-        }
-        
-        System.out.println(articleManager.findAll());
-        
-        Calendar calendar = 
-            Calendar.getInstance();
-        
-        calendar.setTime(new Date());
-        
-        calendar.add(Calendar.DATE, -1);
-        
-        System.out.println(companyRatingService.getCompanySentiment("MSFT"));
-        
-        System.out.println(companyRatingService.getCompanySentiment("MSFT", 
-                                                                    calendar.getTime()));
-        
-        System.out.println(companyRatingService.getCompanySentiment("MSFT", 
-                                                                    calendar.getTime(), new Date()));
-        
-        System.out.println(productRatingService.getProductSentiment("MSFT", "Office"));
-        
-        System.out.println(productRatingService.getProductSentiment("MSFT", "Office",
-                                                                    calendar.getTime()));
-        
-        System.out.println(productRatingService.getProductSentiment("MSFT", "Office",
-                                                                    calendar.getTime(), new Date()));
-        
     }
 }

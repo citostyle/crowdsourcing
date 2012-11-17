@@ -1,5 +1,5 @@
 package tuwien.aic.crowdsourcing.mobileworks.task;
 
 public enum WorkflowType {
-	PARALELL, ITERATIVE, SURVEY, MANUAL
+	PARALLEL, ITERATIVE, SURVEY, MANUAL
 }

@@ -30,8 +30,8 @@ public class ProductService {
                     "The requested company does not exist!");
         }
 
-        Product product = productManager.findByCompanyAndName(company,
-                productName);
+        Product product =
+                productManager.findByCompanyAndName(company, productName);
         if (product == null) {
             throw new IllegalArgumentException(
                     "The requested product does not exist!");
@@ -72,6 +72,17 @@ public class ProductService {
         companyManager.save(company);
 
         return p;
+    }
+
+    public String getNamePlusSynonyms(Product product) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(product.getName());
+        sb.append(" (also kown as: ");
+        for (String s : product.getSynonyms()) {
+            sb.append(s + ", ");
+        }
+        sb.append(")");
+        return sb.toString();
     }
 
 }

@@ -24,6 +24,7 @@ public class SetupService {
     public void setupTestObjects() {
         Company company1 = companyManager.findByName("MSFT");
         Company company2 = companyManager.findByName("AAPL");
+        Company company3 = companyManager.findByName("NASDAQ");
         if (company1 == null) {
             company1 = new Company("MSFT");
             company1 = companyManager.save(company1);
@@ -32,15 +33,20 @@ public class SetupService {
             company2 = new Company("AAPL");
             company2 = companyManager.save(company2);
         }
-        Product product1 = productManager.findByCompanyAndName(company1,
-                                                               "Office");
-        Product product2 = productManager.findByCompanyAndName(company2,
-                                                               "Mac");
+        if (company3 == null) {
+            company3 = new Company("NASDAQ");
+            company3 = companyManager.save(company3);
+        }
+        Product product1 =
+                productManager.findByCompanyAndName(company1,
+                        "Microsoft Office");
+        Product product2 =
+                productManager.findByCompanyAndName(company2, "Macintosh");
         if (product1 == null) {
-            product1 = productService.addProduct("MSFT", "Office");
+            product1 = productService.addProduct("MSFT", "Microsoft Office");
         }
         if (product2 == null) {
-            product1 = productService.addProduct("AAPL", "Mac");
+            product1 = productService.addProduct("AAPL", "Macintosh");
         }
         company1.getProducts().add(product1);
         company2.getProducts().add(product2);

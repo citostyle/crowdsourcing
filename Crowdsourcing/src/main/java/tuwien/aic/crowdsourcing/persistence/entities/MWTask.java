@@ -15,8 +15,8 @@ public class MWTask implements Serializable {
     private static final long serialVersionUID = 626524682741823847L;
 
     private long id = -1L;
-    private String taskId = "";
-    private String type = "";
+    private String taskId = null;
+    private String type = null;
     private TaskState state = TaskState.ACTIVE;
     private Article article = null;
 

@@ -2,9 +2,10 @@ package tuwien.aic.crowdsourcing.rss;
 
 import java.net.URL;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +22,7 @@ import com.sun.syndication.io.XmlReader;
 @Component
 public class ArticleFetcher {
 
-    private Map<String, List<String>> urls =
-            new HashMap<String, List<String>>();
+    private Set<String> urls = new HashSet<String>();
 
     @Autowired
     private ArticleManager articleManager;
@@ -34,15 +34,14 @@ public class ArticleFetcher {
 
     }
 
-    public void addFeed(String url, List<String> toIgnore) {
-        urls.put(url, toIgnore);
+    public void addFeed(String url) {
+        urls.add(url);
     }
 
     public Map<String, String> getNewArticles() {
         Map<String, String> ret = new HashMap<String, String>();
-        for (Entry<String, List<String>> entry : urls.entrySet()) {
+        for (String url : urls) {
             try {
-                String url = entry.getKey();
                 URL feedSource = new URL(url);
                 SyndFeedInput input = new SyndFeedInput();
                 SyndFeed feed = input.build(new XmlReader(feedSource));
@@ -64,9 +63,8 @@ public class ArticleFetcher {
 
     public Map<String, String> getOldArticles() {
         Map<String, String> ret = new HashMap<String, String>();
-        for (Entry<String, List<String>> entry : urls.entrySet()) {
+        for (String url : urls) {
             try {
-                String url = entry.getKey();
                 URL feedSource = new URL(url);
                 SyndFeedInput input = new SyndFeedInput();
                 SyndFeed feed = input.build(new XmlReader(feedSource));

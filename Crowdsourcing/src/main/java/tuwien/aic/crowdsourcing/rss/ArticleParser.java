@@ -23,19 +23,14 @@ public class ArticleParser {
     @Autowired
     private CompanyManager companyManager;
 
-    private boolean foundProduct(String text, Product product,
-            List<String> exceptions) {
+    private boolean foundProduct(String text, Product product) {
         String lower = text.toLowerCase();
-        if (!exceptions.contains(product.getName().toLowerCase())) {
-            if (lower.contains(product.getName().toLowerCase())) {
-                return true;
-            }
+        if (lower.contains(product.getName().toLowerCase())) {
+            return true;
         }
         for (String syn : product.getSynonyms()) {
-            if (!exceptions.contains(syn.toLowerCase())) {
-                if (lower.contains(syn.toLowerCase())) {
-                    return true;
-                }
+            if (lower.contains(syn.toLowerCase())) {
+                return true;
             }
         }
         return false;
@@ -49,34 +44,28 @@ public class ArticleParser {
      * @return
      * @throws IOException
      */
-    public List<Product> getProductsInArticle(String url,
-            List<String> exceptions) throws IOException {
+    public List<Product> getProductsInArticle(String url) throws IOException {
         List<Product> allProducts = productManager.findAll();
 
         Document document = Jsoup.connect(url).get();
         List<Product> ret = new ArrayList<Product>();
         String text = document.body().text();
         for (Product p : allProducts) {
-            if (foundProduct(text, p, exceptions)) {
+            if (foundProduct(text, p)) {
                 ret.add(p);
             }
         }
         return ret;
     }
 
-    private boolean foundCompany(String text, Company company,
-            List<String> exceptions) {
+    private boolean foundCompany(String text, Company company) {
         String lower = text.toLowerCase();
-        if (!exceptions.contains(company.getName().toLowerCase())) {
-            if (lower.contains(company.getName().toLowerCase())) {
-                return true;
-            }
+        if (lower.contains(company.getName().toLowerCase())) {
+            return true;
         }
         for (String syn : company.getSynonyms()) {
-            if (!exceptions.contains(syn.toLowerCase())) {
-                if (lower.contains(syn.toLowerCase())) {
-                    return true;
-                }
+            if (lower.contains(syn.toLowerCase())) {
+                return true;
             }
         }
         return false;
@@ -90,15 +79,14 @@ public class ArticleParser {
      * @return
      * @throws IOException
      */
-    public List<Company> getCompaniesInArticle(String url,
-            List<String> exceptions) throws IOException {
+    public List<Company> getCompaniesInArticle(String url) throws IOException {
         List<Company> allProducts = companyManager.findAll();
 
         Document document = Jsoup.connect(url).get();
         List<Company> ret = new ArrayList<Company>();
         String text = document.body().text();
         for (Company p : allProducts) {
-            if (foundCompany(text, p, exceptions)) {
+            if (foundCompany(text, p)) {
                 ret.add(p);
             }
         }
