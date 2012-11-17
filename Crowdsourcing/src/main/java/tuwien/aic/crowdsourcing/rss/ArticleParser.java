@@ -17,6 +17,8 @@ import tuwien.aic.crowdsourcing.persistence.entities.Product;
 @Component
 public class ArticleParser {
 
+    private static final String YAHOO_CONTENT = "yom-mod yom-art-content";
+
     @Autowired
     private ProductManager productManager;
 
@@ -84,6 +86,7 @@ public class ArticleParser {
 
         Document document = Jsoup.connect(url).get();
         List<Company> ret = new ArrayList<Company>();
+        document.getElementsByClass(YAHOO_CONTENT);
         String text = document.body().text();
         for (Company p : allProducts) {
             if (foundCompany(text, p)) {

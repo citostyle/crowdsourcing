@@ -48,32 +48,7 @@ public class ArticleFetcher {
                 @SuppressWarnings("unchecked")
                 List<SyndEntry> entries = feed.getEntries();
                 for (SyndEntry synd : entries) {
-                    System.out.println(articleManager.findByAddress(synd
-                            .getUri()));
                     if (articleManager.findByAddress(synd.getUri()) == null) {
-                        ret.put(synd.getUri(), synd.getTitle());
-                    }
-                }
-            } catch (Exception e) {
-                logger.error("Error while trying to fetch feed", e);
-            }
-        }
-        return ret;
-    }
-
-    public Map<String, String> getOldArticles() {
-        Map<String, String> ret = new HashMap<String, String>();
-        for (String url : urls) {
-            try {
-                URL feedSource = new URL(url);
-                SyndFeedInput input = new SyndFeedInput();
-                SyndFeed feed = input.build(new XmlReader(feedSource));
-                @SuppressWarnings("unchecked")
-                List<SyndEntry> entries = feed.getEntries();
-                for (SyndEntry synd : entries) {
-                    System.out.println(articleManager.findByAddress(synd
-                            .getUri()));
-                    if (articleManager.findByAddress(synd.getUri()) != null) {
                         ret.put(synd.getUri(), synd.getTitle());
                     }
                 }

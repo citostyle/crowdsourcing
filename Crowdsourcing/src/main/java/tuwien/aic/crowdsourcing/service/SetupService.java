@@ -1,5 +1,7 @@
 package tuwien.aic.crowdsourcing.service;
 
+import java.util.HashSet;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,33 +22,40 @@ public class SetupService {
     @Autowired
     private ProductService productService;
 
-    @Transactional
-    public void setupTestObjects() {
-        Company company1 = companyManager.findByName("MSFT");
-        Company company2 = companyManager.findByName("AAPL");
-        Company company3 = companyManager.findByName("NASDAQ");
+    private Company createCompanyIfNotExists(String name) {
+        Company company1 = companyManager.findByName(name);
+
         if (company1 == null) {
-            company1 = new Company("MSFT");
+            company1 = new Company(name);
             company1 = companyManager.save(company1);
         }
-        if (company2 == null) {
-            company2 = new Company("AAPL");
-            company2 = companyManager.save(company2);
-        }
-        if (company3 == null) {
-            company3 = new Company("NASDAQ");
-            company3 = companyManager.save(company3);
-        }
+        return company1;
+    }
+
+    @Transactional
+    public void setupTestObjects() {
+        Company company1 = createCompanyIfNotExists("Microsoft");
+        Company company2 = createCompanyIfNotExists("Apple Corp.");
+        Company company3 = createCompanyIfNotExists("BullMarket.com");
+        HashSet<String> syns = new HashSet<String>();
+        syns.add("Teh GR8est");
+        company3.setSynonyms(syns);
+        createCompanyIfNotExists("Fibonacci");
+        createCompanyIfNotExists("Pandora");
+        createCompanyIfNotExists("Nuance");
+        createCompanyIfNotExists("salesforce.com");
+
         Product product1 =
                 productManager.findByCompanyAndName(company1,
                         "Microsoft Office");
         Product product2 =
                 productManager.findByCompanyAndName(company2, "Macintosh");
         if (product1 == null) {
-            product1 = productService.addProduct("MSFT", "Microsoft Office");
+            product1 =
+                    productService.addProduct("Microsoft", "Microsoft Office");
         }
         if (product2 == null) {
-            product1 = productService.addProduct("AAPL", "Macintosh");
+            product1 = productService.addProduct("Apple Corp.", "Macintosh");
         }
         company1.getProducts().add(product1);
         company2.getProducts().add(product2);
@@ -54,5 +63,4 @@ public class SetupService {
         company2 = companyManager.save(company2);
 
     }
-
 }

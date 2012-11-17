@@ -39,33 +39,27 @@ public class ArticleParserTest {
     public void testGetProductsInArticle() throws IOException {
         Product p1 = new Product(null, "Exchange");
         Product p2 = new Product(null, "Exchangeasdfasdfasdf");
-        Product p3 = new Product(null, "Yahoo");
         Mockito.when(productManager.findAll())
                 .thenReturn(Arrays.asList(p1, p2));
         List<Product> ret =
                 a.getProductsInArticle("http://finance.yah"
                         + "oo.com/news/why-couldnt-wall"
-                        + "-street-weather-054400413.html",
-                        Arrays.asList("yahoo"));
+                        + "-street-weather-054400413.html");
         assertTrue(ret.contains(p1));
         assertFalse(ret.contains(p2));
-        assertFalse(ret.contains(p3));
     }
 
     @Test
     public void testGetCompaniesInArticle() throws IOException {
         Company p1 = new Company("Exchange");
         Company p2 = new Company("Exchangeasdfasdfasdf");
-        Company p3 = new Company("Yahoo");
         Mockito.when(companyManager.findAll())
                 .thenReturn(Arrays.asList(p1, p2));
         List<Company> ret =
                 a.getCompaniesInArticle("http://finance.yah"
                         + "oo.com/news/why-couldnt-wall"
-                        + "-street-weather-054400413.html",
-                        Arrays.asList("yahoo"));
+                        + "-street-weather-054400413.html");
         assertTrue(ret.contains(p1));
         assertFalse(ret.contains(p2));
-        assertFalse(ret.contains(p3));
     }
 }

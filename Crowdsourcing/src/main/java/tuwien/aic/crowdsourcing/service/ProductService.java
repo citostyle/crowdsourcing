@@ -1,6 +1,7 @@
 package tuwien.aic.crowdsourcing.service;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,11 +78,17 @@ public class ProductService {
     public String getNamePlusSynonyms(Product product) {
         StringBuilder sb = new StringBuilder();
         sb.append(product.getName());
-        sb.append(" (also kown as: ");
-        for (String s : product.getSynonyms()) {
-            sb.append(s + ", ");
+        if (!product.getSynonyms().isEmpty()) {
+            sb.append(" (also kown as: ");
+            Iterator<String> it = product.getSynonyms().iterator();
+            while (it.hasNext()) {
+                sb.append(it.next());
+                if (it.hasNext()) {
+                    sb.append(", ");
+                }
+            }
+            sb.append(")");
         }
-        sb.append(")");
         return sb.toString();
     }
 
