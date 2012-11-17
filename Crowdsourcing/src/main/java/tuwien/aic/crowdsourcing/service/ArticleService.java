@@ -40,21 +40,4 @@ public class ArticleService {
         return ret;
     }
 
-    // public void resetDatabase() {
-    // entityManager.createQuery("DELETE FROM Correlation").executeUpdate();
-    //
-    // entityManager.createQuery("DELETE FROM CompanyRating").executeUpdate();
-    // entityManager.createQuery("DELETE FROM ProductRating").executeUpdate();
-    //
-    // entityManager.createQuery("DELETE FROM CompanyRecognition")
-    // .executeUpdate();
-    // entityManager.createQuery("DELETE FROM ProductRecognition")
-    // .executeUpdate();
-    //
-    // entityManager.createQuery("DELETE FROM Task").executeUpdate();
-    // entityManager.createQuery("DELETE FROM Article").executeUpdate();
-    // entityManager.createQuery("DELETE FROM Company").executeUpdate();
-    // entityManager.createQuery("DELETE FROM Product").executeUpdate();
-    // }
-
 }

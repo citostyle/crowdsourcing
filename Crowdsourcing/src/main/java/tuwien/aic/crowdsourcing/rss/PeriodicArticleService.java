@@ -10,7 +10,9 @@ import java.util.Random;
 
 import javax.annotation.PostConstruct;
 
+import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -89,6 +91,7 @@ public class PeriodicArticleService {
     private boolean firstRun = true;
     private Random rand = new Random();
 
+    @Transactional
     private List<String> getProductNames(List<Product> products) {
         ArrayList<String> ret = new ArrayList<String>();
         for (Product p : products) {
@@ -97,6 +100,7 @@ public class PeriodicArticleService {
         return ret;
     }
 
+    @Transactional
     private List<String> getCompanyNames(List<Company> companies) {
         ArrayList<String> ret = new ArrayList<String>();
         for (Company c : companies) {
@@ -105,57 +109,67 @@ public class PeriodicArticleService {
         return ret;
     }
 
-    private void createProductsTask(Article article) {
-
-        try {
-            List<String> names =
-                    getProductNames(articleParser.getProductsInArticle(article
-                            .getAddress()));
-            if (names.isEmpty()) {
-                return;
-            }
-            MWTask task = new MWTask();
-            task.setTaskId("MWTask" + rand.nextInt());
-            task.setType("RATE_PRODUCTS");
-            task.setArticle(article);
-            task.setTaskState(TaskState.ACTIVE);
-            task = taskManager.save(task);
-            article.getTasks().add(task);
-            task.setTaskId(task.getTaskId() + "," + task.getId());
-
-            mobileWorks.postTask(task, PRODUCT_INSTRUCTIONS, names,
-                    getDefaultChoices(), WorkflowType.PARALLEL);
-        } catch (IOException e) {
-            System.out.println("Could not parse article "
-                    + article.getAddress() + ":\n");
-            e.printStackTrace();
+    @Transactional
+    private void createProductsTask(Article article, Document doc) {
+        List<String> names =
+                getProductNames(articleParser.getProductsInArticle(doc));
+        if (names.isEmpty()) {
+            System.out.println("No products in " + article.getAddress());
+            return;
         }
+        System.out.println("Posting " + names + " for " + article.getAddress());
+        MWTask task = new MWTask();
+        task.setTaskId("MWTask" + rand.nextInt());
+        task.setType("RATE_PRODUCTS");
+        task.setArticle(article);
+        task.setTaskState(TaskState.ACTIVE);
+        task = taskManager.save(task);
+        article.getTasks().add(task);
+        task.setTaskId(task.getTaskId() + "," + task.getId());
+        System.out.println("Posting Task " + task.getTaskId()
+                + " with products " + names);
+
+        boolean res =
+                mobileWorks.postTask(task, PRODUCT_INSTRUCTIONS, names,
+                        getDefaultChoices(), WorkflowType.PARALLEL);
+        System.out.println("MobileWorks result: " + res);
     }
 
-    private void createCompaniesTask(Article article) {
+    @Transactional
+    private void createCompaniesTask(Article article, Document doc) {
+        List<String> names =
+                getCompanyNames(articleParser.getCompaniesInArticle(doc));
+        if (names.isEmpty()) {
+            System.out.println("No companies in " + article.getAddress());
+            return;
+        }
+
+        System.out.println("Posting " + names + " for " + article.getAddress());
+        MWTask task = new MWTask();
+        task.setTaskId("MWTask" + rand.nextInt());
+        task.setType("RATE_COMPANIES");
+        task.setArticle(article);
+        task.setTaskState(TaskState.ACTIVE);
+        task = taskManager.save(task);
+        article.getTasks().add(task);
+        task.setTaskId(task.getTaskId() + "," + task.getId());
+
+        boolean res =
+                mobileWorks.postTask(task, COMPANY_INSTRUCTIONS, names,
+                        getDefaultChoices(), WorkflowType.PARALLEL);
+        System.out.println("MobileWorks result: " + res);
+    }
+
+    @Async
+    private void parseArticle(Article article) {
         try {
-            List<String> names =
-                    getCompanyNames(articleParser.getCompaniesInArticle(article
-                            .getAddress()));
-            if (names.isEmpty()) {
-                return;
-            }
-
-            MWTask task = new MWTask();
-            task.setTaskId("MWTask" + rand.nextInt());
-            task.setType("RATE_COMPANIES");
-            task.setArticle(article);
-            task.setTaskState(TaskState.ACTIVE);
-            task = taskManager.save(task);
-            article.getTasks().add(task);
-            task.setTaskId(task.getTaskId() + "," + task.getId());
-
-            mobileWorks.postTask(task, COMPANY_INSTRUCTIONS, names,
-                    getDefaultChoices(), WorkflowType.PARALLEL);
+            System.out.println("Parsing article " + article.getAddress());
+            Document doc = articleParser.readArticle(article.getAddress());
+            createProductsTask(article, doc);
+            createCompaniesTask(article, doc);
         } catch (IOException e) {
             System.out.println("Could not parse article "
-                    + article.getAddress() + ":\n");
-            e.printStackTrace();
+                    + article.getAddress() + ": " + e.getMessage());
         }
     }
 
@@ -164,16 +178,14 @@ public class PeriodicArticleService {
     public void fetchArticles() {
         if (firstRun) {
             setupService.setupTestObjects();
-
             firstRun = false;
         }
-        Map<String, String> newArticles = articleFetcher.getNewArticles();
-        System.out.println("New articles: " + newArticles);
+
+        final Map<String, String> newArticles = articleFetcher.getNewArticles();
         for (Entry<String, String> art : newArticles.entrySet()) {
-            Article article =
+            final Article article =
                     articleService.createArticle(art.getValue(), art.getKey());
-            createProductsTask(article);
-            createCompaniesTask(article);
+            parseArticle(article);
         }
     }
 }

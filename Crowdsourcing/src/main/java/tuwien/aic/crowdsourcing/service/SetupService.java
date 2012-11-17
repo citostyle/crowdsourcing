@@ -26,6 +26,7 @@ public class SetupService {
         Company company1 = companyManager.findByName(name);
 
         if (company1 == null) {
+            System.out.println(name + " does not exist, creating ...");
             company1 = new Company(name);
             company1 = companyManager.save(company1);
         }
