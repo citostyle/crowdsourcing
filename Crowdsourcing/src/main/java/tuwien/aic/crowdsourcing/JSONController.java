@@ -15,12 +15,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import tuwien.aic.crowdsourcing.persistence.CompanyManager;
+import tuwien.aic.crowdsourcing.persistence.CompanyRatingManager;
 import tuwien.aic.crowdsourcing.persistence.ProductManager;
+import tuwien.aic.crowdsourcing.persistence.ProductRatingManager;
 import tuwien.aic.crowdsourcing.persistence.entities.Company;
+import tuwien.aic.crowdsourcing.persistence.entities.CompanyRating;
 import tuwien.aic.crowdsourcing.persistence.entities.Product;
+import tuwien.aic.crowdsourcing.persistence.entities.ProductRating;
 import tuwien.aic.crowdsourcing.persistence.entities.TestEntity;
 import tuwien.aic.crowdsourcing.service.ApiService;
 import tuwien.aic.crowdsourcing.web.JsonCompany;
+import tuwien.aic.crowdsourcing.web.JsonCompanyDetailed;
 import tuwien.aic.crowdsourcing.web.JsonList;
 import tuwien.aic.crowdsourcing.web.JsonProduct;
 
@@ -37,7 +42,13 @@ public class JSONController {
 	private CompanyManager companyManager;
 	
 	@Autowired
+	private CompanyRatingManager companyRatingManager;
+	
+	@Autowired
 	private ProductManager productManager;
+	
+	@Autowired
+	private ProductRatingManager productRatingManager;
 	
 	@Autowired
 	private ApiService apiService;
@@ -84,6 +95,54 @@ public class JSONController {
     }
     
     /**
+     * Returns info for the specified company
+     */
+    @RequestMapping(value = "/company/{id}", method = RequestMethod.GET)
+    @ResponseBody
+    @Transactional
+    public JsonCompanyDetailed getCompany(@PathVariable String id) {
+    	Long lid;
+    	try {
+    		lid = Long.valueOf(id);
+    	} catch(NumberFormatException e)
+    	{
+    		return null;
+    	}
+    	
+        logger.info("Generating JSON response for company with id %d", lid);
+
+        Company company;
+        Double rating = 0.0;
+        List<JsonProduct> products = new LinkedList<JsonProduct>();
+        
+        company = companyManager.findOne(lid);
+        
+        if(company == null)
+        	return null;
+        
+        // use average of all ratings as output rating
+        List<CompanyRating> ratings = companyRatingManager.findByCompany(company);
+        int c = 0;
+        for(CompanyRating r : ratings)
+        {
+        	if(r.getRatingValue() != null)
+        	{
+        		rating += r.getRatingValue();
+        		c++;
+        	}
+        }
+        
+        if(c > 0)
+        	rating = rating/c;
+        
+        // jsonproducts, yay
+        for(Product p : company.getProducts())
+        	products.add(new JsonProduct(p));
+        
+        return new JsonCompanyDetailed(company, rating, products);
+    }
+    
+    /**
      * Returns a list of all products
      */
     @RequestMapping(value = "/product", method = RequestMethod.GET)
@@ -100,6 +159,48 @@ public class JSONController {
 
         return new JsonList(null, list);
     }
+    
+    /**
+     * Returns info for the specified product
+     */
+    @RequestMapping(value = "/product/{id}", method = RequestMethod.GET)
+    @ResponseBody
+    @Transactional
+    public JsonProduct getProduct(@PathVariable String id) {
+    	Long lid;
+    	try {
+    		lid = Long.valueOf(id);
+    	} catch(NumberFormatException e)
+    	{
+    		return null;
+    	}
+    	
+        logger.info("Generating JSON response for product with id %d", lid);
+
+        Product product = productManager.findOne(lid);
+        Double rating = 0.0;
+        
+        if(product == null)
+        	return null;
+        
+        // use average of all ratings as output rating
+        List<ProductRating> ratings = productRatingManager.findByProduct(product);
+        int c = 0;
+        for(ProductRating r : ratings)
+        {
+        	if(r.getRatingValue() != null)
+        	{
+        		rating += r.getRatingValue();
+        		c++;
+        	}
+        }
+        
+        if(c > 0)
+        	rating = rating/c;
+        
+        return new JsonProduct(product, rating);
+    }
+    
     
     /**
      * Returns a list of all companies and products
