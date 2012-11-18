@@ -54,26 +54,6 @@ public class JSONController {
 	private ApiService apiService;
 
 	/**
-	 * Simply selects the home view to render by returning its name.
-	 */
-	@RequestMapping(value = "/json/{id}", method = RequestMethod.GET)
-	@ResponseBody
-	public TestEntity get(@PathVariable String id) {
-
-		logger.info("Generating JSON response for id " + id);
-
-		TestEntity testEntity = new TestEntity();
-
-		testEntity.setName(id);
-		try {
-			testEntity.setId(Long.valueOf(id));
-		} catch (NumberFormatException e) {
-		}
-
-		return testEntity;
-	}
-
-	/**
 	 * Returns a list of all companies
 	 */
 	@RequestMapping(value = "/company", method = RequestMethod.GET)
