@@ -1,3 +1,4 @@
+
 package tuwien.aic.crowdsourcing.service;
 
 import java.util.HashSet;
@@ -53,10 +54,10 @@ public class SetupService {
                 productManager.findByCompanyAndName(company2, "Macintosh");
         if (product1 == null) {
             product1 =
-                    productService.addProduct("Microsoft", "Microsoft Office");
+                    productService.addProduct("Microsoft Office", "Microsoft");
         }
         if (product2 == null) {
-            product1 = productService.addProduct("Apple Corp.", "Macintosh");
+            product1 = productService.addProduct("Macintosh", "Apple Corp.");
         }
         company1.getProducts().add(product1);
         company2.getProducts().add(product2);

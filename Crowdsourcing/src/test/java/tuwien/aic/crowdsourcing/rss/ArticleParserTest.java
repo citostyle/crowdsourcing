@@ -1,3 +1,4 @@
+
 package tuwien.aic.crowdsourcing.rss;
 
 import static org.junit.Assert.assertFalse;
@@ -42,9 +43,9 @@ public class ArticleParserTest {
         Mockito.when(productManager.findAll())
                 .thenReturn(Arrays.asList(p1, p2));
         List<Product> ret =
-                a.getProductsInArticle("http://finance.yah"
+                a.getProductsInArticle(a.readArticle("http://finance.yah"
                         + "oo.com/news/why-couldnt-wall"
-                        + "-street-weather-054400413.html");
+                        + "-street-weather-054400413.html"));
         assertTrue(ret.contains(p1));
         assertFalse(ret.contains(p2));
     }
@@ -56,9 +57,9 @@ public class ArticleParserTest {
         Mockito.when(companyManager.findAll())
                 .thenReturn(Arrays.asList(p1, p2));
         List<Company> ret =
-                a.getCompaniesInArticle("http://finance.yah"
+                a.getCompaniesInArticle(a.readArticle("http://finance.yah"
                         + "oo.com/news/why-couldnt-wall"
-                        + "-street-weather-054400413.html");
+                        + "-street-weather-054400413.html"));
         assertTrue(ret.contains(p1));
         assertFalse(ret.contains(p2));
     }
