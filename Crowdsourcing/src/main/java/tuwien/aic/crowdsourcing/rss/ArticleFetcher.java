@@ -1,3 +1,4 @@
+
 package tuwien.aic.crowdsourcing.rss;
 
 import java.net.URL;
@@ -48,8 +49,8 @@ public class ArticleFetcher {
                 @SuppressWarnings("unchecked")
                 List<SyndEntry> entries = feed.getEntries();
                 for (SyndEntry synd : entries) {
-                    if (articleManager.findByAddress(synd.getUri()) == null) {
-                        ret.put(synd.getUri(), synd.getTitle());
+                    if (articleManager.findByAddress(synd.getLink()) == null) {
+                        ret.put(synd.getLink(), synd.getTitle());
                     }
                 }
             } catch (Exception e) {

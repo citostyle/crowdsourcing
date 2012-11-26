@@ -1,3 +1,4 @@
+
 package tuwien.aic.crowdsourcing.rss;
 
 import java.io.IOException;
@@ -84,6 +85,7 @@ public class PeriodicArticleService {
         articleFetcher.addFeed("http://finance.yahoo.com/rss/usmarkets");
         articleFetcher.addFeed("http://feeds.finance.yahoo.com/rss/"
                 + "2.0/category-economy-govt-and-policy?region=US&lang=en-US");
+        articleFetcher.addFeed("http://localhost:8080/crowdsourcing/resources/yahoofeed.rss");
         mobileWorks.setEnvironment(new SandboxEnvironment());
         mobileWorks.setCredentials("aic12", "aic12aic");
     }

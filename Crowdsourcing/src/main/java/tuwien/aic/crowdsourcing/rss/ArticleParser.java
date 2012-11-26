@@ -1,3 +1,4 @@
+
 package tuwien.aic.crowdsourcing.rss;
 
 import java.io.IOException;
@@ -6,6 +7,8 @@ import java.util.List;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +21,7 @@ import tuwien.aic.crowdsourcing.persistence.entities.Product;
 @Service
 public class ArticleParser {
 
-    private static final String YAHOO_CONTENT = "yom-mod yom-art-content";
+    private static final String YAHOO_CONTENT = "yom-art-content";
 
     @Autowired
     private ProductManager productManager;
@@ -41,10 +44,8 @@ public class ArticleParser {
     }
 
     /**
-     * 
      * @param url
-     * @param exceptions
-     *            Must be lowercase. Won't be reported.
+     * @param exceptions Must be lowercase. Won't be reported.
      * @return
      * @throws IOException
      */
@@ -54,7 +55,12 @@ public class ArticleParser {
         List<Product> allProducts = productManager.findAll();
 
         List<Product> ret = new ArrayList<Product>();
-        String text = document.body().text();
+        String text = "";
+        Elements es = document.getElementsByClass(YAHOO_CONTENT);
+        for (int i = 0; i < es.size(); i++) {
+            Element e = es.get(i);
+            text += e.text();
+        }
         for (Product p : allProducts) {
             if (foundProduct(text, p)) {
                 ret.add(p);
@@ -78,10 +84,8 @@ public class ArticleParser {
     }
 
     /**
-     * 
      * @param url
-     * @param exceptions
-     *            Must be lowercase.
+     * @param exceptions Must be lowercase.
      * @return
      * @throws IOException
      */
@@ -91,8 +95,12 @@ public class ArticleParser {
         List<Company> allProducts = companyManager.findAll();
 
         List<Company> ret = new ArrayList<Company>();
-        document.getElementsByClass(YAHOO_CONTENT);
-        String text = document.body().text();
+        String text = "";
+        Elements es = document.getElementsByClass(YAHOO_CONTENT);
+        for (int i = 0; i < es.size(); i++) {
+            Element e = es.get(i);
+            text += e.text();
+        }
         for (Company p : allProducts) {
             if (foundCompany(text, p)) {
                 ret.add(p);
@@ -102,6 +110,10 @@ public class ArticleParser {
     }
 
     public Document readArticle(String url) throws IOException {
-        return Jsoup.connect(url).timeout(10 * 1000).get();
+        try {
+            return Jsoup.connect(url).timeout(10 * 1000).get();
+        } catch (Exception ex) {
+            throw new IOException(ex);
+        }
     }
 }
