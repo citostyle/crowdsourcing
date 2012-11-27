@@ -1,3 +1,4 @@
+
 package tuwien.aic.crowdsourcing.persistence.entities;
 
 import java.io.Serializable;
@@ -16,15 +17,18 @@ import javax.persistence.ManyToOne;
 public class Product implements Serializable {
 
     private static final long serialVersionUID = -9106325467524175657L;
-
     private long id = -1L;
-
     private String name = "";
     private Company company = null;
     private Set<String> synonyms = new HashSet<String>();
 
     public Product() {
 
+    }
+
+    public Product(String name) {
+        this.name = name;
+        this.synonyms = new HashSet<String>();
     }
 
     public Product(Company company, String name) {
@@ -52,7 +56,7 @@ public class Product implements Serializable {
         this.name = name;
     }
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = true)
     public Company getCompany() {
         return company;
     }

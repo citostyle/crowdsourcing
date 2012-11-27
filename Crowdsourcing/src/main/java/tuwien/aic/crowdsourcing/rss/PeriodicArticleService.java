@@ -35,6 +35,9 @@ import tuwien.aic.crowdsourcing.service.SetupService;
 @Component
 public class PeriodicArticleService {
 
+    public static final String RATE_PRODUCTS = "RATE_PRODUCTS";
+    public static final String RATE_COMPANIES = "RATE_COMPANIES";
+
     @Autowired
     private ArticleFetcher articleFetcher;
 
@@ -122,7 +125,7 @@ public class PeriodicArticleService {
         System.out.println("Posting " + names + " for " + article.getAddress());
         MWTask task = new MWTask();
         task.setTaskId("MWTask" + rand.nextInt());
-        task.setType("RATE_PRODUCTS");
+        task.setType(RATE_PRODUCTS);
         task.setArticle(article);
         task.setTaskState(TaskState.ACTIVE);
         task = taskManager.save(task);
@@ -149,7 +152,7 @@ public class PeriodicArticleService {
         System.out.println("Posting " + names + " for " + article.getAddress());
         MWTask task = new MWTask();
         task.setTaskId("MWTask" + rand.nextInt());
-        task.setType("RATE_COMPANIES");
+        task.setType(RATE_COMPANIES);
         task.setArticle(article);
         task.setTaskState(TaskState.ACTIVE);
         task = taskManager.save(task);

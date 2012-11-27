@@ -1,3 +1,4 @@
+
 package tuwien.aic.crowdsourcing.mobileworks.task;
 
 import java.util.List;
@@ -8,134 +9,134 @@ import tuwien.aic.crowdsourcing.mobileworks.json.deserializer.AnswerDeserializer
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 public class TaskResult {
-	
-	private Integer id;
-	
-	@JsonDeserialize(using=AnswerDeserializer.class)
-	private List<Map<String, ?>> answer;
-	
-	private String status;
-	private String instructions;
-	private Integer redundancy;
-	private String workflow;
-	private String resource;
-	private String resourcetype;
-	private String resource_url;
-	private String timeCreated;
-	private String timeFinished;
-	private Integer priority;
-	private String taskid;
-	
-	public Integer getId() {
-		return id;
-	}
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    private Integer id;
 
-	public List<Map<String, ?>> getAnswer() {
-		return answer;
-	}
-	
-	public void setAnswer(List<Map<String, ?>> answer) {
-		this.answer = answer;
-	}
-	
-	public String getStatus() {
-		return status;
-	}
-	
-	public void setStatus(String status) {
-		this.status = status;
-	}
-	
-	public String getInstructions() {
-		return instructions;
-	}
-	
-	public void setInstructions(String instructions) {
-		this.instructions = instructions;
-	}
-	
-	public Integer getRedundancy() {
-		return redundancy;
-	}
+    @JsonDeserialize(using = AnswerDeserializer.class)
+    private List<Map<String, String>> answer;
 
-	public void setRedundancy(Integer redundancy) {
-		this.redundancy = redundancy;
-	}
+    private String status;
+    private String instructions;
+    private Integer redundancy;
+    private String workflow;
+    private String resource;
+    private String resourcetype;
+    private String resource_url;
+    private String timeCreated;
+    private String timeFinished;
+    private Integer priority;
+    private String taskid;
 
-	public String getWorkflow() {
-		return workflow;
-	}
-	
-	public void setWorkflow(String workflow) {
-		this.workflow = workflow;
-	}
-	
-	public String getResource() {
-		return resource;
-	}
-	
-	public void setResource(String resource) {
-		this.resource = resource;
-	}
-	
-	public String getResourcetype() {
-		return resourcetype;
-	}
-	
-	public void setResourcetype(String resourcetype) {
-		this.resourcetype = resourcetype;
-	}
-	
-	public String getResource_url() {
-		return resource_url;
-	}
-	
-	public void setResource_url(String resource_url) {
-		this.resource_url = resource_url;
-	}
-	
-	public String getTimeCreated() {
-		return timeCreated;
-	}
-	
-	public void setTimeCreated(String timeCreated) {
-		this.timeCreated = timeCreated;
-	}
-	
-	public String getTimeFinished() {
-		return timeFinished;
-	}
-	
-	public void setTimeFinished(String timeFinished) {
-		this.timeFinished = timeFinished;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public Integer getPriority() {
-		return priority;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public void setPriority(Integer priority) {
-		this.priority = priority;
-	}
+    public List<Map<String, String>> getAnswer() {
+        return answer;
+    }
 
-	public String getTaskid() {
-		return taskid;
-	}
+    public void setAnswer(List<Map<String, String>> answer) {
+        this.answer = answer;
+    }
 
-	public void setTaskid(String taskid) {
-		this.taskid = taskid;
-	}
+    public String getStatus() {
+        return status;
+    }
 
-	@Override
-	public String toString() {
-		return "TaskResult [answer=" + answer + ", status=" + status
-				+ ", instructions=" + instructions + ", workflow=" + workflow
-				+ ", resource=" + resource + ", resourcetype=" + resourcetype
-				+ ", resource_url=" + resource_url + ", timeCreated="
-				+ timeCreated + ", timeFinished=" + timeFinished + "]";
-	}
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getInstructions() {
+        return instructions;
+    }
+
+    public void setInstructions(String instructions) {
+        this.instructions = instructions;
+    }
+
+    public Integer getRedundancy() {
+        return redundancy;
+    }
+
+    public void setRedundancy(Integer redundancy) {
+        this.redundancy = redundancy;
+    }
+
+    public String getWorkflow() {
+        return workflow;
+    }
+
+    public void setWorkflow(String workflow) {
+        this.workflow = workflow;
+    }
+
+    public String getResource() {
+        return resource;
+    }
+
+    public void setResource(String resource) {
+        this.resource = resource;
+    }
+
+    public String getResourcetype() {
+        return resourcetype;
+    }
+
+    public void setResourcetype(String resourcetype) {
+        this.resourcetype = resourcetype;
+    }
+
+    public String getResource_url() {
+        return resource_url;
+    }
+
+    public void setResource_url(String resource_url) {
+        this.resource_url = resource_url;
+    }
+
+    public String getTimeCreated() {
+        return timeCreated;
+    }
+
+    public void setTimeCreated(String timeCreated) {
+        this.timeCreated = timeCreated;
+    }
+
+    public String getTimeFinished() {
+        return timeFinished;
+    }
+
+    public void setTimeFinished(String timeFinished) {
+        this.timeFinished = timeFinished;
+    }
+
+    public Integer getPriority() {
+        return priority;
+    }
+
+    public void setPriority(Integer priority) {
+        this.priority = priority;
+    }
+
+    public String getTaskid() {
+        return taskid;
+    }
+
+    public void setTaskid(String taskid) {
+        this.taskid = taskid;
+    }
+
+    @Override
+    public String toString() {
+        return "TaskResult [answer=" + answer + ", status=" + status
+                + ", instructions=" + instructions + ", workflow=" + workflow
+                + ", resource=" + resource + ", resourcetype=" + resourcetype
+                + ", resource_url=" + resource_url + ", timeCreated="
+                + timeCreated + ", timeFinished=" + timeFinished + "]";
+    }
 }

@@ -1,3 +1,4 @@
+
 package tuwien.aic.crowdsourcing.persistence;
 
 import java.util.Date;
@@ -18,13 +19,22 @@ public interface ProductRatingManager extends
             Product product);
 
     List<ProductRating> findByProduct(Product product);
-    
+
     @Query("SELECT r FROM ProductRating r WHERE r.product = ?1 AND " +
-                "lastModified >= ?2")
+            "lastModified >= ?2")
     List<ProductRating> findByProduct(Product product, Date start);
 
     @Query("SELECT r FROM ProductRating r WHERE r.product = ?1 AND " +
-                "lastModified BETWEEN ?2 AND ?3")
+            "lastModified BETWEEN ?2 AND ?3")
     List<ProductRating> findByProduct(Product product, Date start, Date limit);
+
+    @Query("SELECT count(*) FROM ProductRating r WHERE r.product = ?1")
+    Long getNumRatings(Product product);
+
+    @Query("SELECT count(*) FROM ProductRating r WHERE r.product = ?1 AND lastModified >= ?2")
+    Long getNumRatings(Product product, Date start);
+
+    @Query("SELECT count(*) FROM ProductRating r WHERE r.product = ?1 AND lastModified BETWEEN ?2 AND ?3")
+    Long getNumRatings(Product product, Date start, Date limit);
 
 }

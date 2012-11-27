@@ -1,83 +1,54 @@
+
 package tuwien.aic.crowdsourcing.persistence.entities;
 
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.*;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
 
 @Entity
 public class ProductRating implements Serializable {
-    
+
     private static final long serialVersionUID = -8768336940282518893L;
-    
-    private ProductRatingID primaryKey = null;
-    
+    private Long id = null;
     private MWTask task = null;
-    
     private Worker worker = null;
-    
     private Product product = null;
-    
     private Date lastModified = null;
-    
     private Integer ratingValue = null;
-    
+
     public ProductRating() {
-        this.primaryKey = 
-            new ProductRatingID();
-        
         this.lastModified = new Date();
     }
-    
-    public ProductRating(MWTask task, 
-                         Worker worker, 
-                         Product product,
-                         Integer ratingValue) {
-        
-        this.primaryKey = 
-            new ProductRatingID(task.getId(),
-                                worker.getId(),
-                                product.getId());
-        
+
+    public ProductRating(MWTask task,
+            Product product,
+            Integer ratingValue, Date lastModified) {
         this.task = task;
-        this.worker = worker;
         this.product = product;
-        
         this.ratingValue = ratingValue;
-        
-        this.lastModified = new Date();
-    }
-    
-    public ProductRating(MWTask task, 
-                         Worker worker, 
-                         Product product,
-                         Date lastModified,
-                         Integer ratingValue) {
-        
-        this.primaryKey = 
-            new ProductRatingID(task.getId(),
-                                worker.getId(),
-                                product.getId());
-        
-        this.task = task;
-        this.worker = worker;
-        this.product = product;
-        
-        this.ratingValue = ratingValue;
-        
         this.lastModified = lastModified;
     }
 
-    @EmbeddedId
-    public ProductRatingID getPrimaryKey() {
-        return primaryKey;
-    }
-
-    public void setPrimaryKey(ProductRatingID primaryKey) {
-        this.primaryKey = primaryKey;
+    public ProductRating(MWTask task,
+            Worker worker,
+            Product product,
+            Date lastModified,
+            Integer ratingValue) {
+        this.task = task;
+        this.worker = worker;
+        this.product = product;
+        this.ratingValue = ratingValue;
+        this.lastModified = lastModified;
     }
 
     @ManyToOne(optional = false)
-    @MapsId("taskId")
     public MWTask getTask() {
         return task;
     }
@@ -86,8 +57,7 @@ public class ProductRating implements Serializable {
         this.task = task;
     }
 
-    @ManyToOne(optional = false)
-    @MapsId("workerId")
+    @ManyToOne(optional = true)
     public Worker getWorker() {
         return worker;
     }
@@ -97,7 +67,6 @@ public class ProductRating implements Serializable {
     }
 
     @ManyToOne(optional = false)
-    @MapsId("productId")
     public Product getProduct() {
         return product;
     }
@@ -106,7 +75,7 @@ public class ProductRating implements Serializable {
         this.product = product;
     }
 
-    @Column(nullable=false)
+    @Column(nullable = false)
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     public Date getLastModified() {
         return lastModified;
@@ -116,12 +85,22 @@ public class ProductRating implements Serializable {
         this.lastModified = lastModified;
     }
 
-    @Column(nullable=true)
+    @Column(nullable = true)
     public Integer getRatingValue() {
         return ratingValue;
     }
 
     public void setRatingValue(Integer ratingValue) {
         this.ratingValue = ratingValue;
+    }
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

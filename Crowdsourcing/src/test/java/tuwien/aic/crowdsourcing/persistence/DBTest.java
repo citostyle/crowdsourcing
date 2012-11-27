@@ -1,5 +1,7 @@
+
 package tuwien.aic.crowdsourcing.persistence;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -40,9 +42,6 @@ public class DBTest {
     private TaskManager taskManager;
 
     @Autowired
-    private CompanyRatingManager companyRatingManager;
-
-    @Autowired
     private CompanyManager companyManager;
 
     @Autowired
@@ -50,9 +49,6 @@ public class DBTest {
 
     @Autowired
     private CompanyRatingService companyRatingService;
-
-    @Autowired
-    private ProductManager productManager;
 
     @Autowired
     private ProductRatingService productRatingService;
@@ -178,22 +174,20 @@ public class DBTest {
                 "TestCompany");
 
         Assert.assertEquals(0.0,
-                companyRatingService.getCompanySentiment("TestCompany"), 0.001);
+                companyRatingService.getCompanySentiment(company), 0.001);
 
-        Assert.assertEquals(0.0, productRatingService.getProductSentiment(
-                "TestCompany", "TestProduct"), 0.001);
+        Assert.assertEquals(0.0, productRatingService.getProductSentiment(product), 0.001);
 
-        companyRatingService.addCompanySentiment(task1.getTaskId(),
-                "TestWorker1XYZ", "TestCompany", 5);
+        companyRatingService.addCompanySentiment(task1, "TestCompany", 5,
+                new Date().toString());
 
-        productRatingService.addProductSentiment(task1.getTaskId(),
-                "TestWorker1XYZ", "TestCompany", "TestProduct", -5);
+        productRatingService.addProductSentiment(task1, "TestProduct", -5,
+                new Date().toString());
 
         Assert.assertEquals(5.0,
-                companyRatingService.getCompanySentiment("TestCompany"), 0.001);
+                companyRatingService.getCompanySentiment(company), 0.001);
 
-        Assert.assertEquals(-5.0, productRatingService.getProductSentiment(
-                "TestCompany", "TestProduct"), 0.001);
+        Assert.assertEquals(-5.0, productRatingService.getProductSentiment(product), 0.001);
 
         Assert.assertEquals(1, productService.getProductNames("TestCompany")
                 .size());

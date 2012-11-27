@@ -1,3 +1,4 @@
+
 package tuwien.aic.crowdsourcing.persistence;
 
 import java.util.Date;
@@ -15,16 +16,25 @@ public interface CompanyRatingManager extends
         JpaRepository<CompanyRating, Long> {
 
     List<CompanyRating> findByCompany(Company company);
-    
+
     @Query("SELECT r FROM CompanyRating r WHERE r.company = ?1 AND " +
-                "lastModified >= ?2")
+            "lastModified >= ?2")
     List<CompanyRating> findByCompany(Company company, Date start);
 
     @Query("SELECT r FROM CompanyRating r WHERE r.company = ?1 AND " +
-                "lastModified BETWEEN ?2 AND ?3")
+            "lastModified BETWEEN ?2 AND ?3")
     List<CompanyRating> findByCompany(Company company, Date start, Date limit);
 
     CompanyRating findByTaskAndWorkerAndCompany(MWTask task, Worker worker,
             Company company);
-    
+
+    @Query("SELECT count(*) FROM CompanyRating r WHERE r.company = ?1")
+    Long getNumRatings(Company company);
+
+    @Query("SELECT count(*) FROM CompanyRating r WHERE r.company = ?1 AND lastModified >= ?2")
+    Long getNumRatings(Company company, Date start);
+
+    @Query("SELECT count(*) FROM CompanyRating r WHERE r.company = ?1 AND lastModified BETWEEN ?2 AND ?3")
+    Long getNumRatings(Company company, Date start, Date limit);
+
 }

@@ -1,5 +1,9 @@
+
 package tuwien.aic.crowdsourcing.service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -9,148 +13,70 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import tuwien.aic.crowdsourcing.persistence.CompanyManager;
 import tuwien.aic.crowdsourcing.persistence.ProductManager;
 import tuwien.aic.crowdsourcing.persistence.ProductRatingManager;
-import tuwien.aic.crowdsourcing.persistence.TaskManager;
-import tuwien.aic.crowdsourcing.persistence.WorkerManager;
-import tuwien.aic.crowdsourcing.persistence.entities.Company;
 import tuwien.aic.crowdsourcing.persistence.entities.MWTask;
 import tuwien.aic.crowdsourcing.persistence.entities.Product;
 import tuwien.aic.crowdsourcing.persistence.entities.ProductRating;
-import tuwien.aic.crowdsourcing.persistence.entities.Worker;
 
 @Service
 public class ProductRatingService {
 
     @Autowired
-    private TaskManager taskManager;
-
-    @Autowired
     private ProductManager productManager;
-
-    @Autowired
-    private WorkerManager workerManager;
 
     @Autowired
     private ProductRatingManager productRatingManager;
 
-    @Autowired
-    private CompanyManager companyManager;
-
     @Transactional
-    public void addProductSentiment(String taskId, String workerId,
-            String productName, String companyName, Integer result) {
-        MWTask task = taskManager.findByTaskId(taskId);
-        Worker worker = workerManager.findByWorkerId(workerId);
-        Company company = companyManager.findByName(companyName);
-
+    public void addProductSentiment(MWTask task,
+            String productName, Integer result, String date) {
         if (task == null) {
             throw new IllegalArgumentException(
                     "The provided task does not exist!");
         }
 
-        if (worker == null) {
-            worker = new Worker(workerId);
-            worker = workerManager.save(worker);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
+        Date d = null;
+        try {
+            d = formatter.parse(date);
+        } catch (ParseException e) {
+            System.out.println("Finished date wasn't parsed: " + e.getMessage());
+            d = Calendar.getInstance().getTime();
         }
 
-        if (company == null) {
-            company = new Company(companyName);
-            company = companyManager.save(company);
-        }
-        
-        Product product = productManager.findByCompanyAndName(company,
-                                                              productName);
+        Product product = productManager.findByName(productName);
 
         if (product == null) {
-            product = new Product(company, productName);
+            System.out.println("Have to create product " + productName);
+            product = new Product(productName);
             product = productManager.save(product);
         }
 
-        ProductRating rating = productRatingManager
-                .findByTaskAndWorkerAndProduct(task, worker, product);
-
-        if (rating == null) {
-            rating = new ProductRating(task, worker, product, result);
-            rating = productRatingManager.save(rating);
-        } else {
-            rating.setRatingValue(result);
-            productRatingManager.save(rating);
-        }
+        ProductRating rating = new ProductRating(task, product, result, d);
+        rating = productRatingManager.save(rating);
     }
 
     @Transactional
-    public double getProductSentiment(String companyName, 
-                                      String productName) {
-        Company company = companyManager.findByName(companyName);
-
-        if (company == null) {
-            company = new Company(companyName);
-            company = companyManager.save(company);
-        }
-
-        Product product = productManager.findByCompanyAndName(company,
-                productName);
-        
-        if (product == null) {
-            product = new Product(company, productName);
-            product = productManager.save(product);
-        }
-        
+    public double getProductSentiment(Product product) {
         List<ProductRating> ratings = productRatingManager
                 .findByProduct(product);
-        
         return getProductSentiment(ratings);
     }
 
     @Transactional
-    public double getProductSentiment(String companyName, 
-                                      String productName, 
-                                      Date start) {
-        Company company = companyManager.findByName(companyName);
-
-        if (company == null) {
-            company = new Company(companyName);
-            company = companyManager.save(company);
-        }
-
-        Product product = productManager.findByCompanyAndName(company,
-                productName);
-        
-        if (product == null) {
-            product = new Product(company, productName);
-            product = productManager.save(product);
-        }
-        
+    public double getProductSentiment(Product product,
+            Date start) {
         List<ProductRating> ratings = productRatingManager
                 .findByProduct(product, start);
-        
         return getProductSentiment(ratings);
     }
 
     @Transactional
-    public double getProductSentiment(String companyName, 
-                                      String productName, 
-                                      Date start, Date limit) {
-        Company company = companyManager.findByName(companyName);
-
-        if (company == null) {
-            company = new Company(companyName);
-            company = companyManager.save(company);
-        }
-
-        Product product = productManager.findByCompanyAndName(company,
-                productName);
-        
-        if (product == null) {
-            product = new Product(company, productName);
-            product = productManager.save(product);
-        }
-        
+    public double getProductSentiment(Product product,
+            Date start, Date limit) {
         List<ProductRating> ratings = productRatingManager
                 .findByProduct(product, start, limit);
-        
         return getProductSentiment(ratings);
     }
 
@@ -158,8 +84,8 @@ public class ProductRatingService {
     private double getProductSentiment(List<ProductRating> ratings) {
         long count = 0;
         long totalSum = 0;
-        
-        if (ratings == null || ratings.isEmpty()) {
+
+        if ((ratings == null) || ratings.isEmpty()) {
             return 0;
         }
 
@@ -176,9 +102,10 @@ public class ProductRatingService {
             }
 
         });
-        
+
         int lower = (int) Math.floor(((double) ratings.size()) / 4);
         int upper = (int) Math.ceil((3.0 * ratings.size()) / 4);
+        upper = Math.min(upper, ratings.size() - 1);
 
         for (int i = lower; i <= upper; i++) {
             ProductRating rating = ratings.get(i);
@@ -187,11 +114,11 @@ public class ProductRatingService {
                 totalSum += rating.getRatingValue();
             }
         }
-        
+
         if (count > 0) {
             return ((double) totalSum) / count;
         }
-        
+
         return 0;
     }
 
