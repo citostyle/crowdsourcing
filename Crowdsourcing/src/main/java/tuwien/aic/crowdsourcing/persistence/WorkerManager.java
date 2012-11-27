@@ -1,3 +1,4 @@
+
 package tuwien.aic.crowdsourcing.persistence;
 
 import org.springframework.data.jpa.repository.JpaRepository;

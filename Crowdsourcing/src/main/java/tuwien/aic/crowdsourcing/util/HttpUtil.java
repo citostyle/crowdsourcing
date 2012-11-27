@@ -1,3 +1,4 @@
+
 package tuwien.aic.crowdsourcing.util;
 
 import java.io.FileNotFoundException;
@@ -14,24 +15,26 @@ import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 public abstract class HttpUtil {
-	private static final String USER_AGENT = "tuwien-crowdsourcing";
-	
-	public static final int DEFAULT_TIMEOUT = 20000;
-	public static final Charset UTF8 = Charset.forName("UTF-8");
-	
-	public static HttpResponse request(String url, HttpRequestMethod method, Map<String, String> headers, Map<String, String> parameters, InputStream body, int timeout, boolean encodeParameters) {
+    private static final String USER_AGENT = "tuwien-crowdsourcing";
+
+    public static final int DEFAULT_TIMEOUT = 20000;
+    public static final Charset UTF8 = Charset.forName("UTF-8");
+
+    public static HttpResponse request(String url, HttpRequestMethod method,
+            Map<String, String> headers, Map<String, String> parameters, InputStream body,
+            int timeout, boolean encodeParameters) {
 
         String completeUrl = url;
-       
+
         String appendToken = "?";
-        if(url.contains("?")){
-        	appendToken = "&";
+        if (url.contains("?")) {
+            appendToken = "&";
         }
         if (parameters != null) {
             completeUrl = url + appendToken + buildQueryString(parameters, encodeParameters);
         }
-      
-//        System.out.println("URL sent: " + completeUrl);
+
+        // System.out.println("URL sent: " + completeUrl);
 
         try {
             URL u = new URL(completeUrl);
@@ -40,7 +43,7 @@ public abstract class HttpUtil {
             uc.setReadTimeout(timeout);
             uc.setRequestProperty("User-Agent", USER_AGENT);
             uc.setRequestMethod(method.toString());
-            
+
             if (headers != null) {
                 for (Map.Entry<String, String> entry : headers.entrySet()) {
                     uc.setRequestProperty(entry.getKey(), entry.getValue());
@@ -50,31 +53,32 @@ public abstract class HttpUtil {
             uc.setUseCaches(false);
             uc.setDoInput(true);
             uc.setDoOutput(true);
-            
-            if(body != null) {
-            	IOUtil.copy(body, uc.getOutputStream(), false);
+
+            if (body != null) {
+                IOUtil.copy(body, uc.getOutputStream(), false);
             }
-            
+
             uc.connect();
-//            if (!(uc.getResponseCode() == HttpURLConnection.HTTP_OK)) {
-//                System.out.println("HTTP Response Code: " + uc.getResponseCode() + " for URL: " + uc.getURL());
-//                return null;
-//            }
+            // if (!(uc.getResponseCode() == HttpURLConnection.HTTP_OK)) {
+            // System.out.println("HTTP Response Code: " + uc.getResponseCode()
+            // + " for URL: " + uc.getURL());
+            // return null;
+            // }
 
             InputStream is = null;
             try {
-            	is = uc.getInputStream();
-            } catch(IOException io) {
-            	is = uc.getErrorStream();
+                is = uc.getInputStream();
+            } catch (IOException io) {
+                is = uc.getErrorStream();
             }
-            
+
             String contentEncoding = uc.getContentEncoding();
-            if (contentEncoding != null && contentEncoding.equalsIgnoreCase("gzip")) {
+            if ((contentEncoding != null) && contentEncoding.equalsIgnoreCase("gzip")) {
                 is = new GZIPInputStream(is);
             }
-            
+
             return new HttpResponse(uc.getResponseCode(), is);
-            
+
         } catch (SocketTimeoutException e) {
             System.out.println("Socket timed out (" + e.getClass() + ") for URL " + completeUrl);
         } catch (FileNotFoundException e) {
@@ -84,14 +88,14 @@ public abstract class HttpUtil {
         }
 
         return null;
-	}
-    
+    }
+
     public static String buildQueryString(Map<String, String> parameters) {
-    	return buildQueryString(parameters, true);
+        return buildQueryString(parameters, true);
     }
 
     public static String buildQueryString(Map<String, String> parameters, Boolean encode) {
-        if (parameters == null || encode == null) {
+        if ((parameters == null) || (encode == null)) {
             return "";
         }
 
@@ -102,16 +106,16 @@ public abstract class HttpUtil {
             }
 
             String value = entry.getValue();
-            if (value != null && encode) {
+            if ((value != null) && encode) {
                 value = urlEncode(value);
             }
             builder.append(entry.getKey()).append("=").append(value);
         }
         return builder.toString();
     }
-    
+
     public static String urlEncode(String string) {
-        if(string == null){
+        if (string == null) {
             return null;
         }
         try {
@@ -122,7 +126,7 @@ public abstract class HttpUtil {
     }
 
     public static String urlDecode(String string) {
-        if(string == null){
+        if (string == null) {
             return null;
         }
         try {
@@ -131,35 +135,35 @@ public abstract class HttpUtil {
             throw new IllegalStateException("Impossible UTF-8 not available?", e);
         }
     }
-	
-	public static enum HttpRequestMethod {
-		POST, GET, PUT, DELETE
-	}
-	
-	public static class HttpResponse {
-		
-		private InputStream body;
-		private int responseCode;
-		
-		private HttpResponse(int responseCode, InputStream body) {
-			this.body = body;
-			this.responseCode = responseCode;
-		}
-		
-		public InputStream getBody() {
-			return body;
-		}
-		
-		public int getResponseCode() {
-			return responseCode;
-		}
-	}
-	
-	public static class HeaderFields {
-		public static class Request {
-			public static final String CONTENT_TYPE = "Content-Type";
-			public static final String CONTENT_LENGTH = "Content-Length";
-			public static final String AUTHORIZATION = "Authorization";
-		}
-	}
+
+    public static enum HttpRequestMethod {
+        POST, GET, PUT, DELETE
+    }
+
+    public static class HttpResponse {
+
+        private InputStream body;
+        private int responseCode;
+
+        private HttpResponse(int responseCode, InputStream body) {
+            this.body = body;
+            this.responseCode = responseCode;
+        }
+
+        public InputStream getBody() {
+            return body;
+        }
+
+        public int getResponseCode() {
+            return responseCode;
+        }
+    }
+
+    public static class HeaderFields {
+        public static class Request {
+            public static final String CONTENT_TYPE = "Content-Type";
+            public static final String CONTENT_LENGTH = "Content-Length";
+            public static final String AUTHORIZATION = "Authorization";
+        }
+    }
 }

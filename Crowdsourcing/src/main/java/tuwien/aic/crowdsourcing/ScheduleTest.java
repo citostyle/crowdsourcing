@@ -1,3 +1,4 @@
+
 package tuwien.aic.crowdsourcing;
 
 import org.slf4j.Logger;
@@ -10,7 +11,7 @@ public class ScheduleTest {
     private static final Logger logger = LoggerFactory
             .getLogger(ScheduleTest.class);
 
-    //@Scheduled(fixedRate = 5000)
+    // @Scheduled(fixedRate = 5000)
     public void doWork() {
         logger.info("Arbeit, Arbeit...");
     }

@@ -1,3 +1,4 @@
+
 package tuwien.aic.crowdsourcing.util;
 
 import java.io.BufferedReader;
@@ -7,7 +8,7 @@ import java.io.InputStreamReader;
 
 public abstract class StringUtil {
 
-	public static String streamToString(InputStream stream) throws IOException {
+    public static String streamToString(InputStream stream) throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stream));
         StringBuilder stringBuilder = new StringBuilder();
         String line = null;

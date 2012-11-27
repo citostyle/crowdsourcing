@@ -1,3 +1,4 @@
+
 package tuwien.aic.crowdsourcing.util;
 
 import java.io.BufferedInputStream;
@@ -10,34 +11,33 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 public abstract class IOUtil {
-	
-	public static void close(Closeable closeable) {
-		try {
-			closeable.close();
-		} catch(IOException e) {
-			;
-		}
-	}
-	
-	public static void flush(Flushable flushable) {
-		try {
-			flushable.flush();
-		} catch(IOException e) {
-			;
-		}
-	}
-	
-	public static void closeSocket(Socket socket) {
-		try {
-			socket.close();
-		} catch(IOException e) {
-			;
-		}
-	}
 
+    public static void close(Closeable closeable) {
+        try {
+            closeable.close();
+        } catch (IOException e) {
+            ;
+        }
+    }
+
+    public static void flush(Flushable flushable) {
+        try {
+            flushable.flush();
+        } catch (IOException e) {
+            ;
+        }
+    }
+
+    public static void closeSocket(Socket socket) {
+        try {
+            socket.close();
+        } catch (IOException e) {
+            ;
+        }
+    }
 
     public static void copy(InputStream source, OutputStream destination, boolean closeDestination) {
-        if (source == null || destination == null) {
+        if ((source == null) || (destination == null)) {
             close(source);
             close(destination);
 
@@ -53,20 +53,20 @@ public abstract class IOUtil {
             while ((len = source.read(buffer)) != -1) {
                 destination.write(buffer, 0, len);
             }
-//            LOGGER.debug("Flushing destination ."); 
+            // LOGGER.debug("Flushing destination .");
             flush(destination);
-//            LOGGER.debug("Destination flushed.");
+            // LOGGER.debug("Destination flushed.");
 
         } catch (final IOException e) {
-//           LOGGER.warn("Cannot flush: "+e.getMessage());
-        	e.getMessage();
+            // LOGGER.warn("Cannot flush: "+e.getMessage());
+            e.getMessage();
         } finally {
-//        	LOGGER.debug("Entered in finally clause.");
+            // LOGGER.debug("Entered in finally clause.");
             if (closeDestination) {
                 close(destination);
             }
             close(source);
-//        	LOGGER.debug("Finished finally clause.");
+            // LOGGER.debug("Finished finally clause.");
 
         }
     }

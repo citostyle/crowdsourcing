@@ -1,3 +1,4 @@
+
 package tuwien.aic.crowdsourcing.persistence.entities;
 
 import java.io.Serializable;

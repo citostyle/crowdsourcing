@@ -1,3 +1,4 @@
+
 package tuwien.aic.crowdsourcing.mobileworks;
 
 import java.io.ByteArrayInputStream;
