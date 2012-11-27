@@ -92,7 +92,7 @@ public class ArticleParser {
     @Transactional
     public List<Company> getCompaniesInArticle(Document document) {
         // System.out.println("Trying to parse companies in " + url);
-        List<Company> allProducts = companyManager.findAll();
+        List<Company> allCompanies = companyManager.findAll();
 
         List<Company> ret = new ArrayList<Company>();
         String text = "";
@@ -101,7 +101,7 @@ public class ArticleParser {
             Element e = es.get(i);
             text += e.text();
         }
-        for (Company p : allProducts) {
+        for (Company p : allCompanies) {
             if (foundCompany(text, p)) {
                 ret.add(p);
             }

@@ -77,7 +77,6 @@ public class DBTest {
     public void tearDown() {
         entityManager.createQuery("DELETE FROM CompanyRating").executeUpdate();
         entityManager.createQuery("DELETE FROM ProductRating").executeUpdate();
-
         entityManager.createQuery("DELETE FROM CompanyRecognition")
                 .executeUpdate();
         entityManager.createQuery("DELETE FROM ProductRecognition")
@@ -96,37 +95,25 @@ public class DBTest {
                 "http://test.test");
         Article article2 = articleManager.findOne(article1.getId());
         Article article3 = articleManager.findByAddress(article1.getAddress());
-
         Assert.assertNotNull(article1);
         Assert.assertNotNull(article2);
         Assert.assertNotNull(article3);
-
         Assert.assertEquals(article1.getId(), article2.getId());
         Assert.assertEquals(article1.getTitle(), article2.getTitle());
         Assert.assertEquals(article1.getAddress(), article2.getAddress());
-
         Assert.assertEquals(article1.getId(), article3.getId());
         Assert.assertEquals(article1.getTitle(), article3.getTitle());
         Assert.assertEquals(article1.getAddress(), article3.getAddress());
-
         MWTask task1 = articleService.addTask(article3, "taskId3XYZ", "Test");
-
         Assert.assertNotNull(task1);
         Assert.assertNotNull(task1.getArticle());
-
         Assert.assertEquals(article3.getId(), task1.getArticle().getId());
-
         Assert.assertEquals(article3.getTitle(), task1.getArticle().getTitle());
-
         Assert.assertEquals(article3.getAddress(), task1.getArticle()
                 .getAddress());
-
         Assert.assertEquals(article3.getId(), task1.getArticle().getId());
-
         List<MWTask> tasks = taskManager.findByTaskState(TaskState.ACTIVE);
-
         boolean found = false;
-
         for (MWTask task : tasks) {
             if ((task.getId() == task1.getId())
                     && task.getType().equals(task1.getType())
@@ -135,13 +122,9 @@ public class DBTest {
                 found = true;
             }
         }
-
         Assert.assertTrue(found);
-
         found = false;
-
         task1.setTaskState(TaskState.FINISHED);
-
         for (MWTask task : tasks) {
             if ((task.getId() == task1.getId())
                     && task.getType().equals(task1.getType())
@@ -150,13 +133,9 @@ public class DBTest {
                 found = true;
             }
         }
-
         Assert.assertFalse(found);
-
         found = false;
-
         task1.setTaskState(TaskState.ACTIVE);
-
         for (MWTask task : tasks) {
             if ((task.getId() == task1.getId())
                     && task.getType().equals(task1.getType())
@@ -165,45 +144,29 @@ public class DBTest {
                 found = true;
             }
         }
-
         Assert.assertTrue(found);
-
         Company company = new Company("TestCompany");
         company = companyManager.save(company);
         Product product = productService.addProduct("TestProduct",
-                "TestCompany");
-
+                company);
         Assert.assertEquals(0.0,
                 companyRatingService.getCompanySentiment(company), 0.001);
-
         Assert.assertEquals(0.0, productRatingService.getProductSentiment(product), 0.001);
-
         companyRatingService.addCompanySentiment(task1, "TestCompany", 5,
                 new Date().toString());
-
         productRatingService.addProductSentiment(task1, "TestProduct", -5,
                 new Date().toString());
-
         Assert.assertEquals(5.0,
                 companyRatingService.getCompanySentiment(company), 0.001);
-
         Assert.assertEquals(-5.0, productRatingService.getProductSentiment(product), 0.001);
-
         Assert.assertEquals(1, productService.getProductNames("TestCompany")
                 .size());
-
         List<String> products = productService.getProductNames("TestCompany");
-
         Assert.assertEquals(1, products.size());
-
         Assert.assertEquals("TestProduct", products.get(0));
-
-        productService.addProduct("TestCompany", "TestProduct");
-
+        productService.addProduct("TestProduct", company);
         List<String> products2 = productService.getProductNames("TestCompany");
-
         Assert.assertEquals(1, products2.size());
-
         Assert.assertEquals("TestProduct", products2.get(0));
     }
 }

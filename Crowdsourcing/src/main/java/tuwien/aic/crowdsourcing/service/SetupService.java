@@ -36,10 +36,7 @@ public class SetupService {
 
     @Transactional
     public void setupTestObjects() {
-        Company company1 = createCompanyIfNotExists("Microsoft");
-        HashSet<String> syns1 = new HashSet<String>();
-        syns1.add("bull-market.com");
-        company1.setSynonyms(syns1);
+        Company microsoft = createCompanyIfNotExists("Microsoft");
         Company company3 = createCompanyIfNotExists("BullMarket.com");
         HashSet<String> syns3 = new HashSet<String>();
         syns3.add("bull-market.com");
@@ -50,16 +47,22 @@ public class SetupService {
         createCompanyIfNotExists("McGraw-Hill");
         createCompanyIfNotExists("Apollo");
         createCompanyIfNotExists("Fusion Analytics");
+        Company corning = createCompanyIfNotExists("Corning");
 
         Product product1 =
-                productManager.findByCompanyAndName(company1,
+                productManager.findByCompanyAndName(microsoft,
                         "Microsoft Office");
         if (product1 == null) {
             product1 =
-                    productService.addProduct("Microsoft Office", "Microsoft");
+                    productService.addProduct("Microsoft Office", microsoft);
         }
-        company1.getProducts().add(product1);
-        company1 = companyManager.save(company1);
 
+        Product gorilla =
+                productManager.findByCompanyAndName(corning,
+                        "Gorilla glass");
+        if (gorilla == null) {
+            gorilla =
+                    productService.addProduct("Gorilla glass", corning);
+        }
     }
 }

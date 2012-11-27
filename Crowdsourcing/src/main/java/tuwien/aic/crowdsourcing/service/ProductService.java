@@ -1,3 +1,4 @@
+
 package tuwien.aic.crowdsourcing.service;
 
 import java.util.ArrayList;
@@ -59,19 +60,11 @@ public class ProductService {
     }
 
     @Transactional
-    public Product addProduct(String productName, String companyName) {
-        Company company = companyManager.findByName(companyName);
-        if (company == null) {
-            company = new Company(companyName);
-            company = companyManager.save(company);
-        }
-
+    public Product addProduct(String productName, Company company) {
         Product p = new Product(company, productName);
         p = productManager.save(p);
-
         company.getProducts().add(p);
         companyManager.save(company);
-
         return p;
     }
 

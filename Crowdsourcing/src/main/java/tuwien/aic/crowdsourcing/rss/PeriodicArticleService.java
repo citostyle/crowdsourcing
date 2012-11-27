@@ -119,7 +119,6 @@ public class PeriodicArticleService {
         List<String> names =
                 getProductNames(articleParser.getProductsInArticle(doc));
         if (names.isEmpty()) {
-            System.out.println("No products in " + article.getAddress());
             return;
         }
         System.out.println("Posting " + names + " for " + article.getAddress());
@@ -145,7 +144,6 @@ public class PeriodicArticleService {
         List<String> names =
                 getCompanyNames(articleParser.getCompaniesInArticle(doc));
         if (names.isEmpty()) {
-            System.out.println("No companies in " + article.getAddress());
             return;
         }
 
