@@ -20,6 +20,7 @@ public class Worker implements Serializable {
     private String city = "";
     private Gender gender = Gender.UNKNOWN;
     private int age = -1;
+    private int outOfIQRCount = 0;
 
     public Worker() {
 
@@ -92,5 +93,14 @@ public class Worker implements Serializable {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    @Column(nullable = false)
+    public int getOutOfIQRCount() {
+        return outOfIQRCount;
+    }
+
+    public void setOutOfIQRCount(int outOfIQRCount) {
+        this.outOfIQRCount = outOfIQRCount;
     }
 }

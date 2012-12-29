@@ -2,7 +2,7 @@
 package tuwien.aic.crowdsourcing.persistence.entities;
 
 public enum TaskState implements java.io.Serializable {
-    ACTIVE(0), FINISHED(1);
+    ACTIVE(0), FINISHED(1), PROCESSED(2);
 
     private final Integer value;
 
