@@ -186,15 +186,15 @@ public class PeriodicResultPuller {
     private void findBadWorkers(Map<String, Map<String, Integer>> answers) {
         for (Entry<String, Map<String, Integer>> answerEntry : answers.entrySet()) {
             // bad workers can only be found if enough answers were given
-            if (answerEntry.getValue().size() >= 3) {
+            //if (answerEntry.getValue().size() >= 3) {
                 int[] quartiles = MathUtil.quartiles(new ArrayList<Integer>(answerEntry.getValue().values()));
                 for (Entry<String, Integer> workerEntry : answerEntry.getValue().entrySet()) {
                     // save each worker
                     saveWorker(workerEntry.getKey(), workerEntry.getValue(), quartiles);
                 }
-            } else {
-                // TODO compare worker result with task result?
-            }
+            //} else {
+            //    // TODO compare worker result with task result?
+            //}
         }
     }
     
@@ -202,7 +202,7 @@ public class PeriodicResultPuller {
         Worker w = workerManager.findByWorkerId(workerId);
         if (w == null)
             w = new Worker(workerId);
-        if (answer < quartiles[0] || quartiles[2] < answer)    
+        if (quartiles.length > 0 && (answer < quartiles[0] || quartiles[2] < answer))    
             w.setOutOfIQRCount(w.getOutOfIQRCount() + 1);
         workerManager.save(w);
     }
