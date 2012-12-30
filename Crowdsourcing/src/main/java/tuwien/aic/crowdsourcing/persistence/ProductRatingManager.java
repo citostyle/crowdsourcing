@@ -10,13 +10,11 @@ import org.springframework.data.jpa.repository.Query;
 import tuwien.aic.crowdsourcing.persistence.entities.MWTask;
 import tuwien.aic.crowdsourcing.persistence.entities.Product;
 import tuwien.aic.crowdsourcing.persistence.entities.ProductRating;
-import tuwien.aic.crowdsourcing.persistence.entities.Worker;
 
 public interface ProductRatingManager extends
         JpaRepository<ProductRating, Long> {
 
-    ProductRating findByTaskAndWorkerAndProduct(MWTask task, Worker worker,
-            Product product);
+    ProductRating findByTaskAndProduct(MWTask task, Product product);
 
     List<ProductRating> findByProduct(Product product);
 

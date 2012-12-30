@@ -10,7 +10,6 @@ import org.springframework.data.jpa.repository.Query;
 import tuwien.aic.crowdsourcing.persistence.entities.Company;
 import tuwien.aic.crowdsourcing.persistence.entities.CompanyRating;
 import tuwien.aic.crowdsourcing.persistence.entities.MWTask;
-import tuwien.aic.crowdsourcing.persistence.entities.Worker;
 
 public interface CompanyRatingManager extends
         JpaRepository<CompanyRating, Long> {
@@ -25,8 +24,7 @@ public interface CompanyRatingManager extends
             "lastModified BETWEEN ?2 AND ?3")
     List<CompanyRating> findByCompany(Company company, Date start, Date limit);
 
-    CompanyRating findByTaskAndWorkerAndCompany(MWTask task, Worker worker,
-            Company company);
+    CompanyRating findByTaskAndCompany(MWTask task, Company company);
 
     @Query("SELECT count(*) FROM CompanyRating r WHERE r.company = ?1")
     Long getNumRatings(Company company);

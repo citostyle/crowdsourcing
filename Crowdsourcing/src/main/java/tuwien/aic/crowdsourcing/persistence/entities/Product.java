@@ -21,6 +21,7 @@ public class Product implements Serializable {
     private String name = "";
     private Company company = null;
     private Set<String> synonyms = new HashSet<String>();
+    private int averageTimeTaken = 0;
 
     public Product() {
 
@@ -76,5 +77,14 @@ public class Product implements Serializable {
         } else {
             this.synonyms = new HashSet<String>();
         }
+    }
+
+    @Column(nullable = false)
+    public int getAverageTimeTaken() {
+        return averageTimeTaken;
+    }
+
+    public void setAverageTimeTaken(int averageTimeTaken) {
+        this.averageTimeTaken = averageTimeTaken;
     }
 }

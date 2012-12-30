@@ -2,7 +2,9 @@
 package tuwien.aic.crowdsourcing.persistence.entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,15 +12,17 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 
 @Entity
 public class CompanyRating implements Serializable {
 
     private static final long serialVersionUID = 2596270620759191152L;
+    
     private Long id = null;
     private MWTask task = null;
-    private Worker worker = null;
+    private List<CompanyRatingIndividual> individualRatings = new ArrayList<CompanyRatingIndividual>();
     private Company company = null;
     private Date lastModified = null;
     private Integer ratingValue = null;
@@ -37,12 +41,10 @@ public class CompanyRating implements Serializable {
     }
 
     public CompanyRating(MWTask task,
-            Worker worker,
             Company company,
             Date lastModified,
             Integer ratingValue) {
         this.task = task;
-        this.worker = worker;
         this.company = company;
         this.ratingValue = ratingValue;
         this.lastModified = lastModified;
@@ -56,14 +58,14 @@ public class CompanyRating implements Serializable {
     public void setTask(MWTask task) {
         this.task = task;
     }
-
-    @ManyToOne(optional = true)
-    public Worker getWorker() {
-        return worker;
+    
+    @OneToMany(mappedBy = "rating")
+    public List<CompanyRatingIndividual> getIndividualRatings() {
+        return individualRatings;
     }
 
-    public void setWorker(Worker worker) {
-        this.worker = worker;
+    public void setIndividualRatings(List<CompanyRatingIndividual> individualRatings) {
+        this.individualRatings = individualRatings;
     }
 
     @ManyToOne(optional = false)
