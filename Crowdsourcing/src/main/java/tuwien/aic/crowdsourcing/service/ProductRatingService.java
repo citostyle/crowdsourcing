@@ -14,10 +14,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import tuwien.aic.crowdsourcing.persistence.ProductManager;
+import tuwien.aic.crowdsourcing.persistence.ProductRatingIndividualManager;
 import tuwien.aic.crowdsourcing.persistence.ProductRatingManager;
+import tuwien.aic.crowdsourcing.persistence.WorkerManager;
 import tuwien.aic.crowdsourcing.persistence.entities.MWTask;
 import tuwien.aic.crowdsourcing.persistence.entities.Product;
 import tuwien.aic.crowdsourcing.persistence.entities.ProductRating;
+import tuwien.aic.crowdsourcing.persistence.entities.ProductRatingIndividual;
+import tuwien.aic.crowdsourcing.persistence.entities.Worker;
 
 @Service
 public class ProductRatingService {
@@ -27,10 +31,15 @@ public class ProductRatingService {
 
     @Autowired
     private ProductRatingManager productRatingManager;
+    
+    @Autowired
+    private ProductRatingIndividualManager productRatingIndividualManager;
+    
+    @Autowired
+    private WorkerManager workerManager;
 
     @Transactional
-    public void addProductSentiment(MWTask task,
-            String productName, Integer result, String date) {
+    public ProductRating addProductSentiment(MWTask task, String productName, Integer result, String date) {
         if (task == null) {
             throw new IllegalArgumentException(
                     "The provided task does not exist!");
@@ -55,6 +64,34 @@ public class ProductRatingService {
 
         ProductRating rating = new ProductRating(task, product, result, d);
         rating = productRatingManager.save(rating);
+        return rating;
+    }
+
+    @Transactional
+    public ProductRatingIndividual addProductSentimentIndividual(ProductRating rating, Integer result, Integer timeTaken, String workerId) {
+        rating = productRatingManager.findOne(rating.getId());
+        if (rating == null)
+            throw new IllegalArgumentException("The provided ProductRating does not exist!");
+        
+        Worker worker = workerManager.findByWorkerId(workerId);
+        if (worker == null) {
+            System.out.println("Have to create worker " + workerId);
+            worker = new Worker(workerId);
+            worker = workerManager.save(worker);
+        }
+        
+        ProductRatingIndividual individual = new ProductRatingIndividual();
+        individual.setRating(rating);
+        individual.setRatingValue(result);
+        individual.setTimeTaken(timeTaken);
+        individual.setWorker(worker);
+        
+        rating.getIndividualRatings().add(individual);
+        
+        individual = productRatingIndividualManager.save(individual);
+        productRatingManager.save(rating);
+        
+        return individual;
     }
 
     @Transactional

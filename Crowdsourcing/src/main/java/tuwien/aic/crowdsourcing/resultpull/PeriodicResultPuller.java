@@ -1,8 +1,6 @@
 
 package tuwien.aic.crowdsourcing.resultpull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -25,13 +23,13 @@ import tuwien.aic.crowdsourcing.mobileworks.task.TaskResult;
 import tuwien.aic.crowdsourcing.mobileworks.task.WorkerResult;
 import tuwien.aic.crowdsourcing.persistence.TaskManager;
 import tuwien.aic.crowdsourcing.persistence.WorkerManager;
+import tuwien.aic.crowdsourcing.persistence.entities.CompanyRating;
 import tuwien.aic.crowdsourcing.persistence.entities.MWTask;
+import tuwien.aic.crowdsourcing.persistence.entities.ProductRating;
 import tuwien.aic.crowdsourcing.persistence.entities.TaskState;
-import tuwien.aic.crowdsourcing.persistence.entities.Worker;
 import tuwien.aic.crowdsourcing.rss.PeriodicArticleService;
 import tuwien.aic.crowdsourcing.service.CompanyRatingService;
 import tuwien.aic.crowdsourcing.service.ProductRatingService;
-import tuwien.aic.crowdsourcing.util.MathUtil;
 
 @Component
 public class PeriodicResultPuller {
@@ -110,100 +108,126 @@ public class PeriodicResultPuller {
         Scanner scanner = new Scanner(result);
         if (scanner.hasNextInt()) {
             int rating = scanner.nextInt();
-            companyRatingService.addCompanySentiment(task, name, rating, timeFinished);
+            CompanyRating companyRating = companyRatingService.addCompanySentiment(task, name, rating, timeFinished);
+            addIndividualCompanyRating(task, companyRating, rating);
         }
         scanner.close();
-        task.setTaskState(TaskState.FINISHED);
-        taskManager.save(task);
+        setTaskState(task, TaskState.FINISHED);
     }
 
-    private void rateProduct(String name, String result, String timeFinished, MWTask task) {
-        Scanner scanner = new Scanner(result);
-        if (scanner.hasNextInt()) {
-            int rating = scanner.nextInt();
-            productRatingService.addProductSentiment(task, name, rating, timeFinished);
-        }
-        scanner.close();
-        task.setTaskState(TaskState.FINISHED);
-        taskManager.save(task);
-    }
-    
-    @Scheduled(fixedRate = 30000)
-    @Transactional
-    public void fetchWorkerResults() {
-        List<MWTask> finishedTasks = taskManager.findByTaskState(TaskState.FINISHED);
-        for (MWTask t : finishedTasks) {
-            getWorkerResult(t);
-        }
-    }
-    
-    @Async
-    @Transactional
-    private void getWorkerResult(MWTask t) {
-        ResponseResult result = mobileWorks.getWorkerResultsForTask(t);
+    private void addIndividualCompanyRating(MWTask task, CompanyRating companyRating, Integer rating) {
+        ResponseResult result = mobileWorks.getWorkerResultsForTask(task);
         if (result == null) {
             return;
         }
         if (!result.getStatus().equals("d")) { // done
             return;
         }
-        System.out.println("Task " + t.getTaskId() + " is done.");
-        processWorkerAnswers(result.getResults(), t);
+        // process each workers answer
+        for (WorkerResult workerResult : result.getResults()) {
+            companyRatingService.addCompanySentimentIndividual(companyRating, rating, workerResult.getTimeTaken(), workerResult.getWorkerId());
+        }
+    }
+
+    private void rateProduct(String name, String result, String timeFinished, MWTask task) {
+        Scanner scanner = new Scanner(result);
+        if (scanner.hasNextInt()) {
+            int rating = scanner.nextInt();
+            ProductRating productRating = productRatingService.addProductSentiment(task, name, rating, timeFinished);
+            addIndividualProduct(task, productRating, rating);
+        }
+        scanner.close();
+        setTaskState(task, TaskState.FINISHED);
+    }
+
+    private void addIndividualProduct(MWTask task, ProductRating productRating, Integer rating) {
+        ResponseResult result = mobileWorks.getWorkerResultsForTask(task);
+        if (result == null) {
+            return;
+        }
+        if (!result.getStatus().equals("d")) { // done
+            return;
+        }
+        // process each workers answer
+        for (WorkerResult workerResult : result.getResults()) {
+            productRatingService.addProductSentimentIndividual(productRating, rating, workerResult.getTimeTaken(), workerResult.getWorkerId());
+        }
     }
     
-    private void processWorkerAnswers(List<WorkerResult> workerResults, MWTask task) {
-        // quality management
-        
-        // edit answer data
-        Map<String, Map<String, Integer>> computedAnswers = getAnswersPerCompanyOrProduct(workerResults);
-        // compute quartiles and compare them
-        findBadWorkers(computedAnswers);
-        
-        // TODO dynamic pricing based on the workers timeTaken
-        
-        // set task as processed
-        task.setTaskState(TaskState.PROCESSED);
+    private void setTaskState(MWTask task, TaskState state) {
+        task.setTaskState(state);
         taskManager.save(task);
     }
-
-    private Map<String, Map<String, Integer>> getAnswersPerCompanyOrProduct(List<WorkerResult> workerResults) {
-        Map<String, Map<String, Integer>> answers = new HashMap<String, Map<String, Integer>>();
-        for (WorkerResult result : workerResults) {
-            for (Map<String, String> workerAnswers : result.getAnswers()) {
-                for (Entry<String, String> answer : workerAnswers.entrySet()) {
-                    if (!answers.containsKey(answer.getKey()))
-                        answers.put(answer.getKey(), new HashMap<String, Integer>());
-                    Scanner s = new Scanner(answer.getValue());
-                    if (s.hasNextInt())
-                        answers.get(answer.getKey()).put(result.getWorkerId(), s.nextInt());
-                    s.close();
-                }
-            }
-        }
-        return answers;
-    }
-
-    private void findBadWorkers(Map<String, Map<String, Integer>> answers) {
-        for (Entry<String, Map<String, Integer>> answerEntry : answers.entrySet()) {
-            // bad workers can only be found if enough answers were given
-            //if (answerEntry.getValue().size() >= 3) {
-                int[] quartiles = MathUtil.quartiles(new ArrayList<Integer>(answerEntry.getValue().values()));
-                for (Entry<String, Integer> workerEntry : answerEntry.getValue().entrySet()) {
-                    // save each worker
-                    saveWorker(workerEntry.getKey(), workerEntry.getValue(), quartiles);
-                }
-            //} else {
-            //    // TODO compare worker result with task result?
-            //}
-        }
-    }
     
-    private void saveWorker(String workerId, int answer, int[] quartiles) {
-        Worker w = workerManager.findByWorkerId(workerId);
-        if (w == null)
-            w = new Worker(workerId);
-        if (quartiles.length > 0 && (answer < quartiles[0] || quartiles[2] < answer))    
-            w.setOutOfIQRCount(w.getOutOfIQRCount() + 1);
-        workerManager.save(w);
-    }
+//    private Worker getWorker(String workerId) {
+//        Worker w = workerManager.findByWorkerId(workerId);
+//        if (w == null) {
+//            w = new Worker(workerId);
+//            workerManager.save(w);
+//        }
+//        return w;
+//    }
+//    
+//    private void processWorkerAnswers(List<WorkerResult> workerResults, MWTask task, CompanyRating rating) {
+//        for (WorkerResult workerResult : workerResults) {
+//            
+//        }
+//        for (Map<String, String> res : answer) {
+//            fillInResults(res, timeFinished, task);
+//        }
+//        // quality management
+//        
+//        // edit answer data
+//        Map<String, Map<String, Integer>> computedAnswers = getAnswersPerCompanyOrProduct(workerResults);
+//        // compute quartiles and compare them
+//        findBadWorkers(computedAnswers);
+//        
+//        // TODO dynamic pricing based on the workers timeTaken
+//        setDynamicPrice(workerResults);
+//        
+//        // set task as processed
+//        task.setTaskState(TaskState.PROCESSED);
+//        taskManager.save(task);
+//    }
+//
+//    private Map<String, Map<String, Integer>> getAnswersPerCompanyOrProduct(List<WorkerResult> workerResults) {
+//        Map<String, Map<String, Integer>> answers = new HashMap<String, Map<String, Integer>>();
+//        for (WorkerResult result : workerResults) {
+//            for (Map<String, String> workerAnswers : result.getAnswers()) {
+//                for (Entry<String, String> answer : workerAnswers.entrySet()) {
+//                    if (!answers.containsKey(answer.getKey()))
+//                        answers.put(answer.getKey(), new HashMap<String, Integer>());
+//                    Scanner s = new Scanner(answer.getValue());
+//                    if (s.hasNextInt())
+//                        answers.get(answer.getKey()).put(result.getWorkerId(), s.nextInt());
+//                    s.close();
+//                }
+//            }
+//        }
+//        return answers;
+//    }
+//
+//    private void findBadWorkers(Map<String, Map<String, Integer>> answers) {
+//        for (Entry<String, Map<String, Integer>> answerEntry : answers.entrySet()) {
+//            // bad workers can only be found if enough answers were given
+//            //if (answerEntry.getValue().size() >= 3) {
+//                int[] quartiles = MathUtil.quartiles(new ArrayList<Integer>(answerEntry.getValue().values()));
+//                for (Entry<String, Integer> workerEntry : answerEntry.getValue().entrySet()) {
+//                    // save each worker
+//                    saveWorker(workerEntry.getKey(), workerEntry.getValue(), quartiles);
+//                }
+//            //} else {
+//            //    // TODO compare worker result with task result?
+//            //}
+//        }
+//    }
+//    
+//    private void saveWorker(String workerId, int answer, int[] quartiles) {
+//        Worker w = workerManager.findByWorkerId(workerId);
+//        if (w == null)
+//            w = new Worker(workerId);
+//        if (quartiles.length > 0 && (answer < quartiles[0] || quartiles[2] < answer))    
+//            w.setOutOfIQRCount(w.getOutOfIQRCount() + 1);
+//        workerManager.save(w);
+//    }
 }

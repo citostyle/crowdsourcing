@@ -14,10 +14,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import tuwien.aic.crowdsourcing.persistence.CompanyManager;
+import tuwien.aic.crowdsourcing.persistence.CompanyRatingIndividualManager;
 import tuwien.aic.crowdsourcing.persistence.CompanyRatingManager;
+import tuwien.aic.crowdsourcing.persistence.WorkerManager;
 import tuwien.aic.crowdsourcing.persistence.entities.Company;
 import tuwien.aic.crowdsourcing.persistence.entities.CompanyRating;
+import tuwien.aic.crowdsourcing.persistence.entities.CompanyRatingIndividual;
 import tuwien.aic.crowdsourcing.persistence.entities.MWTask;
+import tuwien.aic.crowdsourcing.persistence.entities.Worker;
 
 @Service
 public class CompanyRatingService {
@@ -27,9 +31,15 @@ public class CompanyRatingService {
 
     @Autowired
     private CompanyRatingManager companyRatingManager;
+    
+    @Autowired
+    private CompanyRatingIndividualManager companyRatingIndividualManager;
+    
+    @Autowired
+    private WorkerManager workerManager;
 
     @Transactional
-    public void addCompanySentiment(MWTask task, String companyName, Integer result, String date) {
+    public CompanyRating addCompanySentiment(MWTask task, String companyName, Integer result, String date) {
         Company company = companyManager.findByName(companyName);
         if (task == null) {
             throw new IllegalArgumentException(
@@ -53,6 +63,35 @@ public class CompanyRatingService {
 
         CompanyRating rating = new CompanyRating(task, company, result, d);
         rating = companyRatingManager.save(rating);
+        
+        return rating;
+    }
+    
+    @Transactional
+    public CompanyRatingIndividual addCompanySentimentIndividual(CompanyRating rating, Integer result, Integer timeTaken, String workerId) {
+        rating = companyRatingManager.findOne(rating.getId());
+        if (rating == null)
+            throw new IllegalArgumentException("The provided CompanyRating does not exist!");
+        
+        Worker worker = workerManager.findByWorkerId(workerId);
+        if (worker == null) {
+            System.out.println("Have to create worker " + workerId);
+            worker = new Worker(workerId);
+            worker = workerManager.save(worker);
+        }
+        
+        CompanyRatingIndividual individual = new CompanyRatingIndividual();
+        individual.setRating(rating);
+        individual.setRatingValue(result);
+        individual.setTimeTaken(timeTaken);
+        individual.setWorker(worker);
+        
+        rating.getIndividualRatings().add(individual);
+        
+        individual = companyRatingIndividualManager.save(individual);
+        companyRatingManager.save(rating);
+        
+        return individual;
     }
 
     @Transactional

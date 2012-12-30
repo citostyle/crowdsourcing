@@ -35,4 +35,7 @@ public interface CompanyRatingManager extends
     @Query("SELECT count(*) FROM CompanyRating r WHERE r.company = ?1 AND lastModified BETWEEN ?2 AND ?3")
     Long getNumRatings(Company company, Date start, Date limit);
 
+    @Query("SELECT avg(ir.timeTaken) FROM CompanyRating r JOIN r.individualRatings ir WHERE r.company = ?1")
+    Integer getAvgTimeTaken(Company company);
+
 }

@@ -35,4 +35,7 @@ public interface ProductRatingManager extends
     @Query("SELECT count(*) FROM ProductRating r WHERE r.product = ?1 AND lastModified BETWEEN ?2 AND ?3")
     Long getNumRatings(Product product, Date start, Date limit);
 
+    @Query("SELECT avg(ir.timeTaken) FROM ProductRating r JOIN r.individualRatings ir WHERE r.product = ?1")
+    Integer getAvgTimeTaken(Product product);
+
 }
