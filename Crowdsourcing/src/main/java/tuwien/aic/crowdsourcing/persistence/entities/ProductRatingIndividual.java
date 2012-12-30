@@ -19,6 +19,7 @@ public class ProductRatingIndividual implements Serializable {
     private Integer ratingValue = null;
     private Integer timeTaken = null;
     private Worker worker = null;
+    private boolean bad = false;
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -64,6 +65,15 @@ public class ProductRatingIndividual implements Serializable {
     
     public void setWorker(Worker worker) {
         this.worker = worker;
+    }
+
+    @Column(nullable = false)
+    public boolean isBad() {
+        return bad;
+    }
+
+    public void setBad(boolean bad) {
+        this.bad = bad;
     }
     
 }

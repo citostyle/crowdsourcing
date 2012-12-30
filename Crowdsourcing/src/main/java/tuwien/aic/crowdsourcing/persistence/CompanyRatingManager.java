@@ -24,6 +24,8 @@ public interface CompanyRatingManager extends
             "lastModified BETWEEN ?2 AND ?3")
     List<CompanyRating> findByCompany(Company company, Date start, Date limit);
 
+    List<CompanyRating> findByTask(MWTask task);
+
     CompanyRating findByTaskAndCompany(MWTask task, Company company);
 
     @Query("SELECT count(*) FROM CompanyRating r WHERE r.company = ?1")

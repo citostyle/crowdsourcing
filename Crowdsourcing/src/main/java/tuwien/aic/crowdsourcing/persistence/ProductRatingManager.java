@@ -14,9 +14,11 @@ import tuwien.aic.crowdsourcing.persistence.entities.ProductRating;
 public interface ProductRatingManager extends
         JpaRepository<ProductRating, Long> {
 
-    ProductRating findByTaskAndProduct(MWTask task, Product product);
-
     List<ProductRating> findByProduct(Product product);
+
+    List<ProductRating> findByTask(MWTask task);
+
+    ProductRating findByTaskAndProduct(MWTask task, Product product);
 
     @Query("SELECT r FROM ProductRating r WHERE r.product = ?1 AND " +
             "lastModified >= ?2")

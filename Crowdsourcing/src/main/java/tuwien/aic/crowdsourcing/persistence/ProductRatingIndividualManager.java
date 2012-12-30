@@ -18,4 +18,7 @@ public interface ProductRatingIndividualManager extends
     @Query("SELECT avg(timeTaken) FROM ProductRatingIndividual r WHERE r.rating = ?1")
     Long getAvgTimeTakenByRating(ProductRating rating);
 
+    @Query("SELECT w FROM ProductRatingIndividual r JOIN r.worker w WHERE r.bad = true GROUP BY w HAVING count(w) > 5")
+    List<Worker> findBadWorkers();
+
 }
