@@ -24,6 +24,7 @@ import tuwien.aic.crowdsourcing.mobileworks.task.TaskResult;
 import tuwien.aic.crowdsourcing.mobileworks.task.WorkflowType;
 import tuwien.aic.crowdsourcing.persistence.entities.Article;
 import tuwien.aic.crowdsourcing.persistence.entities.MWTask;
+import tuwien.aic.crowdsourcing.persistence.entities.Worker;
 import tuwien.aic.crowdsourcing.rss.ArticleFetcher;
 import tuwien.aic.crowdsourcing.util.HttpUtil;
 import tuwien.aic.crowdsourcing.util.HttpUtil.HttpRequestMethod;
@@ -31,6 +32,7 @@ import tuwien.aic.crowdsourcing.util.HttpUtil.HttpResponse;
 import tuwien.aic.crowdsourcing.util.StringUtil;
 
 import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -99,6 +101,16 @@ public class MobileWorks {
     public boolean postTask(MWTask task, String instructions,
             List<String> fieldNames, List<String> choices,
             WorkflowType workflowType) throws IllegalArgumentException {
+    	return postTask(task, instructions, fieldNames, choices, workflowType, -1, -1F, null, null, null);
+    }
+    
+    // additional parameters:
+    // redundancy must be greater than 0 if not default value is used
+    // payment (in cents) must be greater than 0 if not defaut vakue is used 
+    // if no blocked, location, language is wanted, put null instead
+    // languages need to be specified in ISO 639-1 http://en.wikipedia.org/wiki/ISO_639-1
+    // locations need to be specified in ISO 3166-1 alpha 2 http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
+    public boolean postTask(MWTask task, String instructions, List<String> fieldNames, List<String> choices, WorkflowType workflowType, int redundancy, float payment, List<Worker> blocked, List<String> languages, List<String> locations) throws IllegalArgumentException {
         // validations
         validateMWTask(task);
         if (instructions == null) {
@@ -170,6 +182,19 @@ public class MobileWorks {
                 wft = "p";
             }
             gen.writeStringField("workflow", wft);
+            
+            if(redundancy > 0) {
+            	gen.writeNumberField("redundancy", redundancy);
+            }
+            
+            if(payment > 0F) {
+            	gen.writeNumberField("payment", payment);
+            }
+            
+            // worker filtering fields
+            addBlocked(gen, blocked);
+            addStringArray(gen, "location", locations);
+            addStringArray(gen, "language", languages);
 
             gen.writeEndObject();
             gen.flush();
@@ -212,6 +237,32 @@ public class MobileWorks {
             return false;
         }
     }
+    
+    private void addBlocked(JsonGenerator gen, List<Worker> blocked) throws JsonGenerationException, IOException {
+    	if(blocked == null || blocked.isEmpty()) {
+    		return;
+    	}
+    	gen.writeArrayFieldStart("blocked");
+    	for(Worker w : blocked) {
+    		gen.writeString(String.valueOf(w.getId()));
+    	}
+    	gen.writeEndArray();
+    }
+    
+    private void addStringArray(JsonGenerator gen, String label, List<String> strings) throws JsonGenerationException, IOException {
+    	if(label == null || label.trim().isEmpty()) {
+    		throw new IllegalArgumentException("label is required");
+    	}
+    	if(strings == null) {
+    		return;
+    	}
+    	gen.writeArrayFieldStart(label);
+    	for(String str : strings) {
+    		gen.writeString(str);
+    	}
+    	gen.writeEndArray();
+    }
+    
 
     public TaskResult getResultsForTask(MWTask task)
             throws IllegalArgumentException {
