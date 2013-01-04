@@ -84,7 +84,7 @@ public class PeriodicQualityManagement {
 
     private void checkCompanyRatingIndividualsByIQR(List<CompanyRatingIndividual> ratings) {
         // check values by IQR
-        int[] quartiles = MathUtil.quartiles(getCompanyRatingValues(ratings));
+        float[] quartiles = MathUtil.quartiles(getCompanyRatingValues(ratings));
         for (CompanyRatingIndividual individual : ratings) {
             if (quartiles.length > 0 && (individual.getRatingValue() < quartiles[0] || quartiles[2] < individual.getRatingValue())) {
                 // mark rating as bad
@@ -136,7 +136,7 @@ public class PeriodicQualityManagement {
 
     private void checkProductRatingIndividualsByIQR(List<ProductRatingIndividual> ratings) {
         // check values by IQR
-        int[] quartiles = MathUtil.quartiles(getProductRatingValues(ratings));
+        float[] quartiles = MathUtil.quartiles(getProductRatingValues(ratings));
         for (ProductRatingIndividual individual : ratings) {
             if (quartiles.length > 0 && (individual.getRatingValue() < quartiles[0] || quartiles[2] < individual.getRatingValue())) {
                 // mark rating as bad

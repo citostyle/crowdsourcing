@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import tuwien.aic.crowdsourcing.persistence.CompanyManager;
 import tuwien.aic.crowdsourcing.persistence.ProductManager;
+import tuwien.aic.crowdsourcing.persistence.ProductRatingManager;
 import tuwien.aic.crowdsourcing.persistence.entities.Company;
 import tuwien.aic.crowdsourcing.persistence.entities.Product;
 
@@ -22,6 +23,9 @@ public class ProductService {
 
     @Autowired
     private ProductManager productManager;
+
+    @Autowired
+    private ProductRatingManager productRatingManager;
 
     @Transactional
     public void addProductSynonym(String companyName, String productName,
@@ -83,6 +87,22 @@ public class ProductService {
             sb.append(")");
         }
         return sb.toString();
+    }
+    
+    public float getPayment(String productName, int redundancy) {
+        Product product = productManager.findByName(productName);
+
+        if (product == null) {
+            throw new IllegalArgumentException(
+                    "The requested product does not exist!");
+        }
+        
+        // TODO: test what is returned if no ratings are available
+        int timeTaken = productRatingManager.getAvgTimeTaken(product);
+        if (timeTaken == 0)
+            timeTaken = 50; // TODO: default value
+        
+        return (timeTaken * (1 / 3600 * 500) * redundancy);
     }
 
 }

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import tuwien.aic.crowdsourcing.persistence.CompanyManager;
+import tuwien.aic.crowdsourcing.persistence.CompanyRatingManager;
 import tuwien.aic.crowdsourcing.persistence.entities.Company;
 
 @Service
@@ -15,6 +16,9 @@ public class CompanyService {
 
     @Autowired
     private CompanyManager companyManager;
+
+    @Autowired
+    private CompanyRatingManager companyRatingManager;
 
     @Transactional
     public void addCompanySynonym(String companyName, String synonym) {
@@ -44,5 +48,21 @@ public class CompanyService {
             sb.append(")");
         }
         return sb.toString();
+    }
+    
+    @Transactional
+    public double getPayment(String companyName, int redundancy) {
+        Company company = companyManager.findByName(companyName);
+
+        if (company == null) {
+            throw new IllegalArgumentException(
+                    "The requested company does not exist!");
+        }
+        
+        Double timeTaken = companyRatingManager.getAvgTimeTaken(company);
+        if (timeTaken == null || timeTaken == 0)
+            timeTaken = 120D; // default value
+        
+        return timeTaken * (1F / 3600F * 500F) * redundancy;
     }
 }

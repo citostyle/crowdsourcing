@@ -38,6 +38,6 @@ public interface CompanyRatingManager extends
     Long getNumRatings(Company company, Date start, Date limit);
 
     @Query("SELECT avg(ir.timeTaken) FROM CompanyRating r JOIN r.individualRatings ir WHERE r.company = ?1")
-    Integer getAvgTimeTaken(Company company);
+    Double getAvgTimeTaken(Company company);
 
 }
