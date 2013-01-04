@@ -27,10 +27,12 @@ import tuwien.aic.crowdsourcing.persistence.entities.Company;
 import tuwien.aic.crowdsourcing.persistence.entities.MWTask;
 import tuwien.aic.crowdsourcing.persistence.entities.Product;
 import tuwien.aic.crowdsourcing.persistence.entities.TaskState;
+import tuwien.aic.crowdsourcing.persistence.entities.Worker;
 import tuwien.aic.crowdsourcing.service.ArticleService;
 import tuwien.aic.crowdsourcing.service.CompanyService;
 import tuwien.aic.crowdsourcing.service.ProductService;
 import tuwien.aic.crowdsourcing.service.SetupService;
+import tuwien.aic.crowdsourcing.service.WorkerService;
 
 @Component
 public class PeriodicArticleService {
@@ -61,6 +63,9 @@ public class PeriodicArticleService {
 
     @Autowired
     private ProductService productService;
+    
+    @Autowired
+    private WorkerService workerService;
 
     private List<String> getDefaultChoices() {
         return Arrays.asList("-5", "-4", "-3", "-2", "-1", "0", "1", "2", "3",
@@ -132,10 +137,24 @@ public class PeriodicArticleService {
         task.setTaskId(task.getTaskId() + "," + task.getId());
         System.out.println("Posting Task " + task.getTaskId()
                 + " with products " + names);
+        
+        int redundancy = 5;
+        
+        float payment = 0F;
+        for (String name : names) {
+            payment += productService.getPayment(name, redundancy);
+        }
+        payment /= names.size();
+        
+        List<Worker> blocked = workerService.getBadWorkers();
 
+//        boolean res =
+//                mobileWorks.postTask(task, PRODUCT_INSTRUCTIONS, names,
+//                        getDefaultChoices(), WorkflowType.PARALLEL);
         boolean res =
-                mobileWorks.postTask(task, PRODUCT_INSTRUCTIONS, names,
-                        getDefaultChoices(), WorkflowType.PARALLEL);
+                mobileWorks.postTask(task, PRODUCT_INSTRUCTIONS, names, 
+                        getDefaultChoices(), WorkflowType.PARALLEL, 
+                        redundancy, payment, blocked, null, null);
         System.out.println("MobileWorks result: " + res);
     }
 
@@ -157,9 +176,23 @@ public class PeriodicArticleService {
         article.getTasks().add(task);
         task.setTaskId(task.getTaskId() + "," + task.getId());
 
+        int redundancy = 5;
+        
+        float payment = 0F;
+        for (String name : names) {
+            payment += companyService.getPayment(name, redundancy);
+        }
+        payment /= names.size();
+        
+        List<Worker> blocked = workerService.getBadWorkers();
+
+//        boolean res =
+//                mobileWorks.postTask(task, COMPANY_INSTRUCTIONS, names,
+//                        getDefaultChoices(), WorkflowType.PARALLEL);
         boolean res =
-                mobileWorks.postTask(task, COMPANY_INSTRUCTIONS, names,
-                        getDefaultChoices(), WorkflowType.PARALLEL);
+                mobileWorks.postTask(task, COMPANY_INSTRUCTIONS, names, 
+                        getDefaultChoices(), WorkflowType.PARALLEL, 
+                        redundancy, payment, blocked, null, null);
         System.out.println("MobileWorks result: " + res);
     }
 
