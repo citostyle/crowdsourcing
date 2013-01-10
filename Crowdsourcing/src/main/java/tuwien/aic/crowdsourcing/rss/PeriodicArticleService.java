@@ -71,6 +71,10 @@ public class PeriodicArticleService {
         return Arrays.asList("-5", "-4", "-3", "-2", "-1", "0", "1", "2", "3",
                 "4", "5");
     }
+    
+    private int getDefaultRedundancy() {
+        return 5;
+    }
 
     public static final String PRODUCT_INSTRUCTIONS =
             "Please read the article with"
@@ -138,7 +142,7 @@ public class PeriodicArticleService {
         System.out.println("Posting Task " + task.getTaskId()
                 + " with products " + names);
         
-        int redundancy = 5;
+        int redundancy = getDefaultRedundancy();
         
         float payment = 0F;
         for (String name : names) {
@@ -176,7 +180,7 @@ public class PeriodicArticleService {
         article.getTasks().add(task);
         task.setTaskId(task.getTaskId() + "," + task.getId());
 
-        int redundancy = 5;
+        int redundancy = getDefaultRedundancy();
         
         float payment = 0F;
         for (String name : names) {
