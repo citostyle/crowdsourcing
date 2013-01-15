@@ -122,13 +122,15 @@
 	    	   var items = ['<option id="0"> </option>'];
 	    	  
 	    	   $.each(data.companies, function(index, item) {
-	    	     items.push('<option value="' + item.id + '" onclick="CompanyController.init(' + item.id + ')">' + item.name + '</option>');
+	    	     items.push('<option value="' + item.id + '">' + item.name + '</option>');
 	    	   });
+	    	   //onclick="alert(\'test\'); CompanyController.init(' + item.id + ')"
 	    	  
 	    	   $('<select/>', {
 	    	     'id' : 'companySelection',
 	    	     html: items.join('')
 	    	   }).appendTo('#companySelectionForm');
+	    	   $('#companySelection').change(function() { CompanyController.init(this.value); });
 	    	   //alert(JSON.stringify(data));
 	    	 });
 	       
