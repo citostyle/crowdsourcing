@@ -12,6 +12,8 @@ import tuwien.aic.crowdsourcing.persistence.entities.Worker;
 
 public interface CompanyRatingIndividualManager extends
         JpaRepository<CompanyRatingIndividual, Long> {
+    
+    List<CompanyRatingIndividual> findByRating(CompanyRating rating);
 
     List<CompanyRatingIndividual> findByWorker(Worker worker);
 

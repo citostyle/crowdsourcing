@@ -3,6 +3,7 @@ package tuwien.aic.crowdsourcing.service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -95,24 +96,33 @@ public class CompanyRatingService {
     }
 
     @Transactional
+    public List<CompanyRating> getCompanySentiments(Company company) {
+        return companyRatingManager.findByCompany(company);
+    }
+
+    @Transactional
+    public List<CompanyRating> getCompanySentiments(Company company, Date start) {
+        return companyRatingManager.findByCompany(company, start);
+    }
+
+    @Transactional
+    public List<CompanyRating> getCompanySentiments(Company company, Date start, Date limit) {
+        return companyRatingManager.findByCompany(company, start, limit);
+    }
+
+    @Transactional
     public double getCompanySentiment(Company company) {
-        List<CompanyRating> ratings = companyRatingManager
-                .findByCompany(company);
-        return getCompanySentiment(ratings);
+        return getCompanySentiment(getCompanySentiments(company));
     }
 
     @Transactional
     public double getCompanySentiment(Company company, Date start) {
-        List<CompanyRating> ratings = companyRatingManager
-                .findByCompany(company, start);
-        return getCompanySentiment(ratings);
+        return getCompanySentiment(getCompanySentiments(company, start));
     }
 
     @Transactional
     public double getCompanySentiment(Company company, Date start, Date limit) {
-        List<CompanyRating> ratings = companyRatingManager
-                .findByCompany(company, start, limit);
-        return getCompanySentiment(ratings);
+        return getCompanySentiment(getCompanySentiments(company, start, limit));
     }
 
     @Transactional
@@ -155,5 +165,32 @@ public class CompanyRatingService {
         }
 
         return 0;
+    }
+
+    @Transactional
+    public List<CompanyRatingIndividual> getCompanySentimentIndividuals(Company company) {
+        List<CompanyRatingIndividual> individuals = new ArrayList<CompanyRatingIndividual>();
+        for (CompanyRating rating : getCompanySentiments(company)) {
+            individuals.addAll(companyRatingIndividualManager.findByRating(rating));
+        }
+        return individuals;
+    }
+
+    @Transactional
+    public List<CompanyRatingIndividual> getCompanySentimentIndividuals(Company company, Date start) {
+        List<CompanyRatingIndividual> individuals = new ArrayList<CompanyRatingIndividual>();
+        for (CompanyRating rating : getCompanySentiments(company, start)) {
+            individuals.addAll(companyRatingIndividualManager.findByRating(rating));
+        }
+        return individuals;
+    }
+
+    @Transactional
+    public List<CompanyRatingIndividual> getCompanySentimentIndividuals(Company company, Date start, Date limit) {
+        List<CompanyRatingIndividual> individuals = new ArrayList<CompanyRatingIndividual>();
+        for (CompanyRating rating : getCompanySentiments(company, start, limit)) {
+            individuals.addAll(companyRatingIndividualManager.findByRating(rating));
+        }
+        return individuals;
     }
 }

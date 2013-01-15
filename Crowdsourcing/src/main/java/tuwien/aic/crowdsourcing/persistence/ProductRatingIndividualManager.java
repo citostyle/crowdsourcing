@@ -13,6 +13,8 @@ import tuwien.aic.crowdsourcing.persistence.entities.Worker;
 public interface ProductRatingIndividualManager extends
         JpaRepository<ProductRatingIndividual, Long> {
 
+    List<ProductRatingIndividual> findByRating(ProductRating rating);
+
     List<ProductRatingIndividual> findByWorker(Worker worker);
 
     @Query("SELECT avg(timeTaken) FROM ProductRatingIndividual r WHERE r.rating = ?1")

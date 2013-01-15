@@ -3,6 +3,7 @@ package tuwien.aic.crowdsourcing.service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -95,26 +96,35 @@ public class ProductRatingService {
     }
 
     @Transactional
+    public List<ProductRating> getProductSentiments(Product product) {
+        return productRatingManager.findByProduct(product);
+    }
+
+    @Transactional
+    public List<ProductRating> getProductSentiments(Product product, Date start) {
+        return productRatingManager.findByProduct(product, start);
+    }
+
+    @Transactional
+    public List<ProductRating> getProductSentiments(Product product, Date start, Date limit) {
+        return productRatingManager.findByProduct(product, start, limit);
+    }
+
+    @Transactional
     public double getProductSentiment(Product product) {
-        List<ProductRating> ratings = productRatingManager
-                .findByProduct(product);
-        return getProductSentiment(ratings);
+        return getProductSentiment(getProductSentiments(product));
     }
 
     @Transactional
     public double getProductSentiment(Product product,
             Date start) {
-        List<ProductRating> ratings = productRatingManager
-                .findByProduct(product, start);
-        return getProductSentiment(ratings);
+        return getProductSentiment(getProductSentiments(product, start));
     }
 
     @Transactional
     public double getProductSentiment(Product product,
             Date start, Date limit) {
-        List<ProductRating> ratings = productRatingManager
-                .findByProduct(product, start, limit);
-        return getProductSentiment(ratings);
+        return getProductSentiment(getProductSentiments(product, start, limit));
     }
 
     @Transactional
@@ -157,6 +167,33 @@ public class ProductRatingService {
         }
 
         return 0;
+    }
+
+    @Transactional
+    public List<ProductRatingIndividual> getProductSentimentIndividuals(Product product) {
+        List<ProductRatingIndividual> individuals = new ArrayList<ProductRatingIndividual>();
+        for (ProductRating rating : getProductSentiments(product)) {
+            individuals.addAll(productRatingIndividualManager.findByRating(rating));
+        }
+        return individuals;
+    }
+
+    @Transactional
+    public List<ProductRatingIndividual> getProductSentimentIndividuals(Product product, Date start) {
+        List<ProductRatingIndividual> individuals = new ArrayList<ProductRatingIndividual>();
+        for (ProductRating rating : getProductSentiments(product, start)) {
+            individuals.addAll(productRatingIndividualManager.findByRating(rating));
+        }
+        return individuals;
+    }
+
+    @Transactional
+    public List<ProductRatingIndividual> getProductSentimentIndividuals(Product product, Date start, Date limit) {
+        List<ProductRatingIndividual> individuals = new ArrayList<ProductRatingIndividual>();
+        for (ProductRating rating : getProductSentiments(product, start, limit)) {
+            individuals.addAll(productRatingIndividualManager.findByRating(rating));
+        }
+        return individuals;
     }
 
 }

@@ -20,7 +20,9 @@ import tuwien.aic.crowdsourcing.persistence.CompanyRatingManager;
 import tuwien.aic.crowdsourcing.persistence.ProductManager;
 import tuwien.aic.crowdsourcing.persistence.ProductRatingManager;
 import tuwien.aic.crowdsourcing.persistence.entities.Company;
+import tuwien.aic.crowdsourcing.persistence.entities.CompanyRating;
 import tuwien.aic.crowdsourcing.persistence.entities.Product;
+import tuwien.aic.crowdsourcing.persistence.entities.ProductRating;
 import tuwien.aic.crowdsourcing.service.ApiService;
 import tuwien.aic.crowdsourcing.service.CompanyRatingService;
 import tuwien.aic.crowdsourcing.service.ProductRatingService;
@@ -28,6 +30,7 @@ import tuwien.aic.crowdsourcing.web.JsonCompany;
 import tuwien.aic.crowdsourcing.web.JsonCompanyDetailed;
 import tuwien.aic.crowdsourcing.web.JsonList;
 import tuwien.aic.crowdsourcing.web.JsonProduct;
+import tuwien.aic.crowdsourcing.web.JsonRating;
 
 /**
  * Handles requests for the application home page.
@@ -80,8 +83,7 @@ public class JSONController {
     @RequestMapping(value = "/company/{id}", method = RequestMethod.GET)
     @ResponseBody
     @Transactional
-    public JsonCompanyDetailed getCompany(@PathVariable
-    String id) {
+    public JsonCompanyDetailed getCompany(@PathVariable String id) {
         Long lid;
         try {
             lid = Long.valueOf(id);
@@ -90,7 +92,7 @@ public class JSONController {
             return null;
         }
 
-        logger.info("Generating JSON response for company with id %d", lid);
+        logger.info("Generating JSON response for company with id {}", lid);
 
         Company company;
         List<JsonProduct> products = new LinkedList<JsonProduct>();
@@ -114,6 +116,39 @@ public class JSONController {
         }
 
         return new JsonCompanyDetailed(company, rating, numRatings, products);
+    }
+
+    /**
+     * Returns info for the specified company
+     */
+    @RequestMapping(value = "/company/{id}/ratings", method = RequestMethod.GET)
+    @ResponseBody
+    @Transactional
+    public List<JsonRating> getCompanyRatings(@PathVariable String id) {
+        Long lid;
+        try {
+            lid = Long.valueOf(id);
+        } catch (NumberFormatException e)
+        {
+            return null;
+        }
+
+        logger.info("Generating JSON response for ratings for company {}", lid);
+
+        Company company;
+        List<JsonRating> ratings = new LinkedList<JsonRating>();
+
+        company = companyManager.findOne(lid);
+
+        if (company == null) {
+            return null;
+        }
+
+        for (CompanyRating rating : companyRatingService.getCompanySentiments(company)) {
+            ratings.add(new JsonRating(rating));
+        }
+        
+        return ratings;
     }
 
     /**
@@ -141,8 +176,7 @@ public class JSONController {
     @RequestMapping(value = "/product/{id}", method = RequestMethod.GET)
     @ResponseBody
     @Transactional
-    public JsonProduct getProduct(@PathVariable
-    String id) {
+    public JsonProduct getProduct(@PathVariable String id) {
         Long lid;
         try {
             lid = Long.valueOf(id);
@@ -150,7 +184,7 @@ public class JSONController {
         {
             return null;
         }
-        logger.info("Generating JSON response for product with id %d", lid);
+        logger.info("Generating JSON response for product with id {}", lid);
         Product product = productManager.findOne(lid);
         if (product == null) {
             return null;
@@ -162,6 +196,39 @@ public class JSONController {
         }
 
         return new JsonProduct(product, rating, numRatings);
+    }
+
+    /**
+     * Returns info for the specified company
+     */
+    @RequestMapping(value = "/product/{id}/ratings", method = RequestMethod.GET)
+    @ResponseBody
+    @Transactional
+    public List<JsonRating> getProductRatings(@PathVariable String id) {
+        Long lid;
+        try {
+            lid = Long.valueOf(id);
+        } catch (NumberFormatException e)
+        {
+            return null;
+        }
+
+        logger.info("Generating JSON response for ratings for company {}", lid);
+
+        Product product;
+        List<JsonRating> ratings = new LinkedList<JsonRating>();
+
+        product = productManager.findOne(lid);
+
+        if (product == null) {
+            return null;
+        }
+
+        for (ProductRating rating : productRatingService.getProductSentiments(product)) {
+            ratings.add(new JsonRating(rating));
+        }
+        
+        return ratings;
     }
 
     /**
@@ -194,8 +261,7 @@ public class JSONController {
     @RequestMapping(value = "/search/{expr}", method = RequestMethod.GET)
     @ResponseBody
     @Transactional
-    public JsonList searchCompaniesAndProducts(@PathVariable
-    String expr) {
+    public JsonList searchCompaniesAndProducts(@PathVariable String expr) {
 
         logger.info("Searching companies/prodcuts for: " + expr);
 
@@ -223,8 +289,7 @@ public class JSONController {
     @RequestMapping(value = "/search/{expr}/companies", method = RequestMethod.GET)
     @ResponseBody
     @Transactional
-    public JsonList searchCompanies(@PathVariable
-    String expr) {
+    public JsonList searchCompanies(@PathVariable String expr) {
 
         logger.info("Searching companies for: " + expr);
 
@@ -245,8 +310,7 @@ public class JSONController {
     @RequestMapping(value = "/search/{expr}/products", method = RequestMethod.GET)
     @ResponseBody
     @Transactional
-    public JsonList searchProducts(@PathVariable
-    String expr) {
+    public JsonList searchProducts(@PathVariable String expr) {
 
         logger.info("Searching products for: " + expr);
 
