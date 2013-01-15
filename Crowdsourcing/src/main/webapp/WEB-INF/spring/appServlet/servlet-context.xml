@@ -13,7 +13,7 @@
 	<!-- DispatcherServlet Context: defines this servlet's request-processing 
 		infrastructure -->
 
-	<resources location="/resources/**" mapping="/resources/" />
+	<!-- <resources location="/resources/**" mapping="/resources/" /> -->
 
 	<!-- Enables the Spring MVC @Controller programming model -->
 	<annotation-driven>
