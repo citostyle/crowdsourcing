@@ -221,6 +221,7 @@ public class PeriodicArticleService {
         if (firstRun) {
             setupService.setupTestObjects();
             firstRun = false;
+            return; // on first run only add setup objects
         }
 
         final Map<String, String> newArticles = articleFetcher.getNewArticles();
