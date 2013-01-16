@@ -99,9 +99,7 @@
         <script src="resources/js/vendor/bootstrap.min.js"></script>
 
         <script src="resources/js/main.js"></script>
- 
-        
-		<script src="resources/js/can.jquery.js"></script>
+
 		
 		<script src="http://code.highcharts.com/highcharts.js"></script>
 		<script src="http://code.highcharts.com/modules/exporting.js"></script>		
@@ -170,6 +168,7 @@
 	         var CompanyController = {
 	        	_contentId : 'companyDetail',
 	        	_company : null,
+	        	chart : null,
 	        		 
 	        	setCompany : function(company) {
 	        		this._company = company;
@@ -205,14 +204,14 @@
 		         		var products = companyData.products;
 		         		var productHtml = [];
 		         		for(var i = 0; i < products.length; i++) {
-		         			productHtml.push('<li>' + products[i].name + '</li>')
+		         			productHtml.push('<li>' + products[i].name + '</li>');
 		         		}
 		         		if(products.length > 0) {
 		       	    	    $('#productList').html(productHtml.join(''));		         			
-		         			$('#productList').show();
+		         			$('#products').show();
 		         		}
 		         		else {
-		         			$('#productList').hide();
+		         			$('#products').hide();
 		         		}
 		         	
 		         		//load company ratings
@@ -230,7 +229,7 @@
 		         				dataPoints[i] = ratingData[i].rating;
 		         			}
 		         		
-			         		var chart = new Highcharts.Chart({
+			         		CompanyController.chart = new Highcharts.Chart({
 			                    chart: {
 			                        renderTo: 'container',
 			                        type: 'line',
@@ -278,6 +277,19 @@
 			                    }]
 			                });
 		         		});
+		         		
+		         		var prodcutRatingsUrl;
+		         		for(var i = 0; i < products.length; i++) {
+		         			productRatingsUrl = '/crowdsourcing/product/' + products[i].id  +  '/ratings';
+			         		$.getJSON(productRatingsUrl, function(ratingData) {
+			         			var dataPoints = [];
+			         			for(var i = 0; i < ratingData.length; i++) {
+			         				dataPoints[i] = ratingData[i].rating;
+			         				
+			         			}	
+			         			CompanyController.chart.addSeries({name: '', data: dataPoints});
+			         		});
+		         		}		         		
 		         		
 		         		//$('#' + this._contentId).append(JSON.stringify(this._company));	         		
 		         	});
