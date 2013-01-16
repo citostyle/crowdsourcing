@@ -29,7 +29,7 @@
     <role rolename="manager-gui"/>
     <user username="admin" password="adminadmin" roles="system,manager,manager-gui,admin,admin-gui"/>
   
-* If tomcat is not running locally or you would like to change the deployment URL, change the pom.xml and change the lines
+* If tomcat is not running locally or you would like to change the deployment URL, change the pom.xml and change the lines in `pom.xml`
 
     <plugin>
       <groupId>org.codehaus.mojo</groupId>
@@ -41,8 +41,12 @@
         <path>/crowdsourcing</path>
         </configuration>
       </plugin>
+	  
+* Beware that for reasons of simplicity and testing, we deployed a static rss file called `yahoofeed` on `crowdsourcing/resources/yahoofeed.rss`
+* Therefore, if you change the deployment path from `/crowdsourcing`, be aware that this file will not be found by the application.
 
 * Open a postgres administration console and execute our `create-db.sql` script line by line. But **attention**: Read it first! It drops a database and recreates it!
-* If there is already an application running with the name `aic-crowdsourcing` on Tomcat, go to `localhost:8080/manager/html` with credentials `admin:adminadmin` and undeploy it
+* If there is already an application running with the name `crowdsourcing` on Tomcat, go to `localhost:8080/manager/html` with credentials `admin:adminadmin` and undeploy it
 * Go to the directory with our `pom.xml` and type `mvn tomcat:deploy`
 * To undeploy the application from Tomcat, goto `localhost:8080/manager/html` with credentials `admin:adminadmin` and undeploy it
+* To open the project in eclipse, type `mvn eclipse:eclipse` and then import it using the Eclipse Import Wizard
