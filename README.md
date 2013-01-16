@@ -41,5 +41,7 @@
         </configuration>
       </plugin>
 
-* Go to the directory with our pom.xml and type mvn tomcat:deploy
-* If there is already an application running with the name `aic-crowdsourcing`, go to `localhost:8080/manager/html` and undeploy it
+* Open a postgres administration console and execute our `create-db.sql` script. But **attention**: Read it first! It drops a database and recreates it!
+* If there is already an application running with the name `aic-crowdsourcing`, go to `localhost:8080/manager/html` with credentials `admin:adminadmin` and undeploy it
+* Go to the directory with our `pom.xml` and type `mvn tomcat:deploy`
+* To undeploy the application from Tomcat, goto `localhost:8080/manager/html` with credentials `admin:adminadmin` and undeploy it
