@@ -89,7 +89,8 @@ public class ProductService {
         return sb.toString();
     }
     
-    public float getPayment(String productName, int redundancy) {
+    @Transactional
+    public double getPayment(String productName, int redundancy) {
         Product product = productManager.findByName(productName);
 
         if (product == null) {
@@ -97,12 +98,11 @@ public class ProductService {
                     "The requested product does not exist!");
         }
         
-        // TODO: test what is returned if no ratings are available
-        int timeTaken = productRatingManager.getAvgTimeTaken(product);
-        if (timeTaken == 0)
-            timeTaken = 50; // TODO: default value
+        Double timeTaken = productRatingManager.getAvgTimeTaken(product);
+        if (timeTaken == null || timeTaken == 0)
+            timeTaken = 120D; // default value
         
-        return (timeTaken * (1 / 3600 * 500) * redundancy);
+        return (timeTaken * (1F / 3600F * 500F) * redundancy);
     }
 
 }
