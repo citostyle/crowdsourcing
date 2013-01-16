@@ -1,6 +1,6 @@
 * Assume that Maven 3 is installed
 * Assume that Apache Tomcat 7 is installed and running on `localhost:8080`
-* Assume Postgres 9.2 is installed
+* Assume Postgres 9.2 is installed and running on `localhost:5432`
 * Other versions of postgres might work. With Maven, Tomcat I'm not so sure
 
 * `cd ~/.m2`
@@ -10,7 +10,7 @@
     <settings>
 	  <servers>
         <server>
-          <id>localhost-tomcat</id>
+          <id>tomcat</id>
           <username>admin</username>
           <password>adminadmin</password>
         </server>
@@ -27,17 +27,18 @@
     <role rolename="admin-gui"/>
     <role rolename="manager"/>
     <role rolename="manager-gui"/>
-    <user username="admin" password="adminadmin" roles="system,manager,manager-gui,manager-script,admin,admin-gui"/>
+    <user username="admin" password="adminadmin" roles="system,manager,manager-gui,admin,admin-gui"/>
   
 * If tomcat is not running locally or you would like to change the deployment URL, change the pom.xml and change the lines
 
     <plugin>
       <groupId>org.codehaus.mojo</groupId>
       <artifactId>tomcat-maven-plugin</artifactId>
+	  <version>1.1</version>
       <configuration>
-        <url>http://localhost:8080/</url>
-        <server>localhost-tomcat</server>
-        <path>/aic-crowdsourcing</path>
+        <url>http://localhost:8080/manager/html</url>
+        <server>tomcat</server>
+        <path>/crowdsourcing</path>
         </configuration>
       </plugin>
 
