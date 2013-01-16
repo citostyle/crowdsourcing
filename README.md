@@ -27,7 +27,7 @@
     <role rolename="admin-gui"/>
     <role rolename="manager"/>
     <role rolename="manager-gui"/>
-    <user username="admin" password="adminadmin" roles="system,manager,manager-gui,admin,admin-gui"/>
+    <user username="admin" password="adminadmin" roles="system,manager,manager-gui,manager-script,admin,admin-gui"/>
   
 * If tomcat is not running locally or you would like to change the deployment URL, change the pom.xml and change the lines
 
