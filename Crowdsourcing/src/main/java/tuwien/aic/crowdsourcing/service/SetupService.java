@@ -26,8 +26,8 @@ import tuwien.aic.crowdsourcing.rss.PeriodicArticleService;
 @Service
 public class SetupService {
     
-    private static final int MAX_DAYS = 60;
-    private static final int MAX_RATINGS = 10;
+    private static final int MAX_DAYS = 15;
+    private static final int MAX_RATINGS = 2;
     
     @Autowired
     private ArticleService articleService;
