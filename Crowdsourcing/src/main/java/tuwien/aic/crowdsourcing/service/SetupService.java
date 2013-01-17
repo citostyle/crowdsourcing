@@ -90,6 +90,15 @@ public class SetupService {
                     productService.addProduct("Microsoft Office", microsoft);
         }
         addProductRatings(product1);
+        
+        Product product2 =
+                productManager.findByCompanyAndName(microsoft,
+                        "Windows 8");
+        if (product2 == null) {
+            product2 =
+                    productService.addProduct("Windows 8", microsoft);
+        }
+        addProductRatings(product2);        
 
         Product gorilla =
                 productManager.findByCompanyAndName(corning,

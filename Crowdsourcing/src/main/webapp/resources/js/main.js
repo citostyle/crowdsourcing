@@ -135,7 +135,7 @@
 	                    tooltip: {
 	                        formatter: function() {
 	                                return '<b>'+ this.series.name +'</b><br/>'+
-	                                this.x +': '+ this.y;
+	                                'Sentiment: '+ this.y;
 	                        }
 	                    },
 	                    legend: {
