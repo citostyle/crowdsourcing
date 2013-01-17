@@ -38,6 +38,6 @@ public interface ProductRatingManager extends
     Long getNumRatings(Product product, Date start, Date limit);
 
     @Query("SELECT avg(ir.timeTaken) FROM ProductRating r JOIN r.individualRatings ir WHERE r.product = ?1")
-    Integer getAvgTimeTaken(Product product);
+    Double getAvgTimeTaken(Product product);
 
 }
