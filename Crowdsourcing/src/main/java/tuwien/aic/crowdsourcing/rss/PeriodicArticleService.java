@@ -94,14 +94,16 @@ public class PeriodicArticleService {
 
     @PostConstruct
     public void postConstruct() {
-        articleFetcher.addFeed("http://finance.yahoo.com/rss/usmarkets");
-        articleFetcher.addFeed("http://feeds.finance.yahoo.com/rss/"
-                + "2.0/category-economy-govt-and-policy?region=US&lang=en-US");
+        //articleFetcher.addFeed("http://finance.yahoo.com/rss/usmarkets");
+        //articleFetcher.addFeed("http://feeds.finance.yahoo.com/rss/"
+        //        + "2.0/category-economy-govt-and-policy?region=US&lang=en-US");
         articleFetcher.addFeed("http://localhost:8080/crowdsourcing/resources/yahoofeed.rss");
-        articleFetcher.addFeed("http://finance.yahoo.com/rss/ApplicationSoftware");
-        articleFetcher.addFeed("http://finance.yahoo.com/rss/PersonalComputers");
+        //articleFetcher.addFeed("http://finance.yahoo.com/rss/ApplicationSoftware");
+        //articleFetcher.addFeed("http://finance.yahoo.com/rss/PersonalComputers");
+        
         mobileWorks.setEnvironment(new SandboxEnvironment());
-        mobileWorks.setCredentials("aic12", "aic12aic");
+        //mobileWorks.setCredentials("aic12", "aic12aic");
+        mobileWorks.setCredentials("aic12_2", "aic12aic");
     }
 
     private boolean firstRun = true;
@@ -215,7 +217,7 @@ public class PeriodicArticleService {
         }
     }
 
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = 60000)
     @Transactional
     public void fetchArticles() {
         if (firstRun) {
