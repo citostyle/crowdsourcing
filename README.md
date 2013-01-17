@@ -1,7 +1,16 @@
+# Sentiment Analysis via Crowdsourcing w/ Mobileworks
+[Crowdsourcing] is based on the assumption that there are tasks that are almost impossible to solve algorithmically, which can still be easily solved by any human (even without specific job training)
+In this project we perform sentiment analysis on companies and their products based on articles fetched from [Yahoo! Finance](http://finance.yahoo.com) leveraging the crowdsourcing platform [MobileWorks](https://www.mobileworks.com/). 
+
+# Installation Guide
+
+## Prerequisites
 * Assume that Maven 3 is installed
 * Assume that Apache Tomcat 7 is installed and running on `localhost:8080`
 * Assume Postgres 9.2 is installed and running on `localhost:5432`
 * Other versions of Postgres might work. Maven, Tomcat: Other versions will probably not work.
+
+## Maven and Tomcat
 
 * `cd ~/.m2`
 * (Create and) edit `settings.xml`
@@ -45,7 +54,12 @@
 * Beware that for reasons of simplicity and testing, we deployed a static rss file called `yahoofeed` on `crowdsourcing/resources/yahoofeed.rss`
 * Therefore, if you change the deployment path from `/crowdsourcing`, be aware that this file will not be found by the application. The reason for inserting this fake RSS feed is that sometimes, there aren't any companies found in the new articles. So we made a feed that would make sure we would find companies.
 
+## Postgres
+
 * Open a Postgres administration console and execute our `create-db.sql` script line by line. But **attention**: Read it first! It drops a database and recreates it!
+
+## Deployment
+
 * If there is already an application running with the name `crowdsourcing` on Tomcat, go to `localhost:8080/manager/html` with credentials `admin:adminadmin` and undeploy it
 * Go to the directory with our `pom.xml` and type `mvn tomcat:deploy`
 * To undeploy the application from Tomcat, goto `localhost:8080/manager/html` with credentials `admin:adminadmin` and undeploy it

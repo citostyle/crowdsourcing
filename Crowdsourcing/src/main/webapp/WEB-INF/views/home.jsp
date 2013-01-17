@@ -62,7 +62,7 @@
 	                	to solve algorithmically, which can still be easily solved by any human (even without specific job training).
 	                </p>
 	                <p>
-	                	In this project we perform sentiment analysis on companies and their products based on articles fetched from <a href="">Yahoo! Finance</a> leveraging the crowdsourcing platform <a href="https://www.mobileworks.com/">Mobileworks</a>. 
+	                	In this project we perform sentiment analysis on companies and their products based on articles fetched from <a href="http://finance.yahoo.com/">Yahoo! Finance</a> leveraging the crowdsourcing platform <a href="https://www.mobileworks.com/">Mobileworks</a>. 
 	                </p>
 	                <p>
 	                	Choose one of the companies on top of the page to get started.
